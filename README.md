@@ -1,5 +1,7 @@
 # Frontend Project
 
+This is an individual frontend project created by Aide Barniskyte as part of Integrify Full Stack Academy in 2025.
+
 The current template tech stack: React, TypeScript, Tailwind, Shadcn, tanstack/react-query.
 
 ## Requirements
