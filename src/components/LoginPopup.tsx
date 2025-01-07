@@ -3,16 +3,27 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface LoginPopupProps {
   onClose: () => void;
-  onLogin: (username: string, password: string) => void;
+  onLogin: (email: string, password: string) => void;
   errorMessage: string;
 }
 
 export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) {
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [emailError, setEmailError] = useState("")
 
   const handleLogin = () => {
-    onLogin(username, password)
+    if (!validateEmail(email)) {
+      setEmailError("Invalid email address")
+      return
+    }
+    setEmailError("")
+    onLogin(email, password)
+  }
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
   }
 
   return (
@@ -20,11 +31,12 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
       <div className="bg-white p-6 rounded shadow-md">
         <h2 className="text-xl mb-4">Login</h2>
         {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
+        {emailError && <p className="text-red-500 mb-2">{emailError}</p>}
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="mb-2 p-2 border rounded w-full"
         />
         <input

@@ -10,8 +10,8 @@ export function Home() {
   const [loginError, setLoginError] = useState("")
 
   const loginMutation = useMutation({
-    mutationFn: async ({ username, password }: { username: string; password: string }) => {
-      const response = await axios.post("/login", { username, password })
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const response = await axios.post("/login", { email, password })
       return response.data
     },
     onSuccess: () => {
@@ -37,14 +37,6 @@ export function Home() {
     }
   })
 
-  /*const handleWelcome = () => {
-    setMessage("Why did you?")
-  }
-
-  const handleCleanState = () => {
-    setMessage("")
-  }*/
-
   return (
     <div className="flex flex-col justify-center items-center gap-10 h-screen relative">
       <h1 className="text-2xl">Welcome to the Project Management System!</h1>
@@ -52,14 +44,6 @@ export function Home() {
         <p className="italic pb-0">Please <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowLoginPopup(true); }}>sign in</a> to view your account.</p>
         <p className="italic">No account? <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowLoginPopup(true); }}>Sign up.</a></p>
       </div>
-      {/*
-       }
-        {!message ? (
-        <Button onClick={handleWelcome}>Do not click me</Button>
-        ) : (
-        <Button onClick={handleCleanState}>Undo the damage</Button>
-        )}
-      */}
       <div className="absolute top-4 right-4">
       {!isLoggedIn ? (
         <Button onClick={() => setShowLoginPopup(true)}>Login</Button>
@@ -70,7 +54,7 @@ export function Home() {
       {showLoginPopup && (
       <LoginPopup
         onClose={ () => { setShowLoginPopup(false); setLoginError("") } }
-        onLogin={(username : string, password : string) => loginMutation.mutate({ username, password })}
+        onLogin={(email : string, password : string) => loginMutation.mutate({ email, password })}
         errorMessage={loginError}
       />
       )}
