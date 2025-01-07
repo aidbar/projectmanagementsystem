@@ -1,15 +1,19 @@
 import axios from 'axios'
 
 const isDevelopment = import.meta.env.MODE === 'development'
-let baseURL = 'http://localhost:5125/api/v1'
+let baseURL = 'http://localhost:5140/api/'
 
 if (!isDevelopment) {
-  // Update this later when you have a working backend server
-  baseURL = 'http://localhost:5125/api/v1'
+  baseURL = 'https://integrifyfullstackproject.azurewebsites.net/api/'
 }
 
 const api = axios.create({
-  baseURL
+  baseURL,
+  headers: {
+    'Content-Type': 'application/json'//,
+    //Authorization: `Bearer ${localStorage.getItem('token')}`
+  },
+  withCredentials: true
 })
 
 // use this to handle errors gracefully

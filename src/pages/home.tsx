@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { LoginPopup } from "../components/LoginPopup"
 import { SignupPopup } from "../components/SignupPopup"
+import api from "../api"
 
 export function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -14,7 +15,15 @@ export function Home() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await axios.post("/login", { email, password })
+      const response = await api.post("/v1/Authenticate/login", 
+        { "email": email, "password": password }//,
+        /*{
+          headers: {
+            'accept': 'text/plain',
+            'Content-Type': 'application/json'
+          }
+        }*/
+      )
       return response.data
     },
     onSuccess: () => {
@@ -29,7 +38,7 @@ export function Home() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.delete("/logout")
+      const response = await api.delete("/v1/Authenticate/logout")
       return response.data
     },
     onSuccess: () => {
