@@ -5,7 +5,6 @@ import axios from "axios"
 import { LoginPopup } from "../components/LoginPopup"
 
 export function Home() {
-  const [message, setMessage] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showLoginPopup, setShowLoginPopup] = useState(false)
   const [loginError, setLoginError] = useState("")
@@ -17,7 +16,6 @@ export function Home() {
     },
     onSuccess: () => {
       setIsLoggedIn(true)
-      setMessage("Logged in successfully")
       setShowLoginPopup(false)
       setLoginError("")
     },
@@ -33,41 +31,48 @@ export function Home() {
     },
     onSuccess: () => {
       setIsLoggedIn(false)
-      setMessage("Logged out successfully")
     },
     onError: () => {
-      setMessage("Logout failed")
+      console.error("Logout failed")
     }
   })
 
-  const handleWelcome = () => {
+  /*const handleWelcome = () => {
     setMessage("Why did you?")
   }
 
   const handleCleanState = () => {
     setMessage("")
-  }
+  }*/
 
   return (
-    <div className="flex flex-col justify-center items-center gap-10 h-screen">
-      <h1 className="text-2xl">Welcome!</h1>
-      {message && <p>{message}</p>}
-      {!message ? (
+    <div className="flex flex-col justify-center items-center gap-10 h-screen relative">
+      <h1 className="text-2xl">Welcome to the Project Management System!</h1>
+      <div className="gap-1 items-center flex flex-col">
+        <p className="italic pb-0">Please <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowLoginPopup(true); }}>sign in</a> to view your account.</p>
+        <p className="italic">No account? <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowLoginPopup(true); }}>Sign up.</a></p>
+      </div>
+      {/*
+       }
+        {!message ? (
         <Button onClick={handleWelcome}>Do not click me</Button>
-      ) : (
+        ) : (
         <Button onClick={handleCleanState}>Undo the damage</Button>
-      )}
+        )}
+      */}
+      <div className="absolute top-4 right-4">
       {!isLoggedIn ? (
         <Button onClick={() => setShowLoginPopup(true)}>Login</Button>
       ) : (
         <Button onClick={() => logoutMutation.mutate()}>Logout</Button>
       )}
+      </div>
       {showLoginPopup && (
-        <LoginPopup
-          onClose={() => setShowLoginPopup(false)}
-          onLogin={(username : string, password : string) => loginMutation.mutate({ username, password })}
-          errorMessage={loginError}
-        />
+      <LoginPopup
+        onClose={ () => { setShowLoginPopup(false); setLoginError("") } }
+        onLogin={(username : string, password : string) => loginMutation.mutate({ username, password })}
+        errorMessage={loginError}
+      />
       )}
     </div>
   )

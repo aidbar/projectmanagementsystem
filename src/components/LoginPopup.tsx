@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Button } from "./ui/button"
+import { Button, buttonVariants } from "./ui/button"
 
 interface LoginPopupProps {
   onClose: () => void;
@@ -35,7 +35,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
           className="mb-4 p-2 border rounded w-full"
         />
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Cancel</Button>
           <Button onClick={handleLogin}>Login</Button>
         </div>
       </div>
