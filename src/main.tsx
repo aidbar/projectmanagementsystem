@@ -7,6 +7,7 @@ import "./index.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Dashboard } from "./pages/Dashboard"
 import { Workspace } from "./pages/Workspace"
+import { ProjectBoard } from "./pages/ProjectBoard"
 
 const queryClient = new QueryClient()
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Route path="/" element={<App />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="workspace/:id" element={<Workspace />} />
+        <Route path="project-board/:id" element={<ProjectBoard />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
