@@ -6,6 +6,7 @@ import App from "./App"
 import "./index.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Dashboard } from "./pages/Dashboard"
+import { Workspace } from "./pages/Workspace"
 
 const queryClient = new QueryClient()
 
@@ -14,10 +15,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="dashboard" element={<Dashboard />}/>
-          {/*<Route index element={<DashboardPage />} />
-          <Route path="roles" element={<RoleSystemDash />} />
-        </Route>*/}
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="workspace/:id" element={<Workspace />} />
+        <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />
