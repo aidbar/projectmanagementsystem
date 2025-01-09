@@ -53,9 +53,9 @@ export function Home() {
   })
 
   const signupMutation = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await api.post("/v1/Authenticate/signup", 
-        { "email": email, "password": password }
+    mutationFn: async ({ firstname, lastname, username, email, password, confirmPassword }: { firstname: string; lastname: string; username: string; email: string; password: string; confirmPassword: string }) => {
+      const response = await api.post("/v1/Users", 
+        { "firstname" : firstname, "lastname" : lastname, "username": username, "email": email, "password": password, "confirmPassword": confirmPassword }
       )
       return response.data
     },
@@ -97,7 +97,7 @@ export function Home() {
       {showSignupPopup && (
       <SignupPopup
         onClose={ () => { setShowSignupPopup(false); setSignupError("") } }
-        onSignup={(email : string, password : string) => signupMutation.mutate({ email, password }) }
+        onSignup={(firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => signupMutation.mutate({ firstname, lastname, username, email, password, confirmPassword }) }
         errorMessage={signupError}
       />
       )}

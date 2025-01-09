@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface SignupPopupProps {
   onClose: () => void;
-  onSignup: (email: string, password: string) => void;
+  onSignup: (firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => void;
   errorMessage: string;
 }
 
@@ -36,7 +36,7 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
     }
     setEmailError("")
     setPasswordError("")
-    onSignup(email, password)
+    onSignup(firstName, lastName, username, email, password, confirmPassword)
   }
 
   const validateEmail = (email: string) => {
