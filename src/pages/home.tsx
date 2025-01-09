@@ -5,6 +5,7 @@ import axios from "axios"
 import { LoginPopup } from "../components/LoginPopup"
 import { SignupPopup } from "../components/SignupPopup"
 import api from "../api"
+import { useNavigate } from "react-router-dom"
 
 export function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -12,6 +13,7 @@ export function Home() {
   const [loginError, setLoginError] = useState("")
   const [showSignupPopup, setShowSignupPopup] = useState(false)
   const [signupError, setSignupError] = useState("")
+  const navigate = useNavigate()
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
@@ -30,6 +32,7 @@ export function Home() {
       setIsLoggedIn(true)
       setShowLoginPopup(false)
       setLoginError("")
+      navigate("/dashboard")
     },
     onError: () => {
       setLoginError("Login failed")
@@ -46,6 +49,24 @@ export function Home() {
     },
     onError: () => {
       console.error("Logout failed")
+    }
+  })
+
+  const signupMutation = useMutation({
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      const response = await api.post("/v1/Authenticate/signup", 
+        { "email": email, "password": password }
+      )
+      return response.data
+    },
+    onSuccess: () => {
+      setIsLoggedIn(true)
+      setShowSignupPopup(false)
+      setSignupError("")
+      navigate("/dashboard")
+    },
+    onError: () => {
+      setSignupError("Signup failed")
     }
   })
 
@@ -76,7 +97,7 @@ export function Home() {
       {showSignupPopup && (
       <SignupPopup
         onClose={ () => { setShowSignupPopup(false); setSignupError("") } }
-        onSignup={(email : string, password : string) => {/* handle signup */}}
+        onSignup={(email : string, password : string) => signupMutation.mutate({ email, password }) }
         errorMessage={signupError}
       />
       )}
