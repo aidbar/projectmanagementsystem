@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+//import styled from "styled-components"
 
 import { BoardColumn, BoardContainer } from "./ui/board-column"
 import {
@@ -38,30 +39,8 @@ const defaultCols = [
 
 export type ColumnId = (typeof defaultCols)[number]["id"]
 
-const initialTasks: Task[] = [
-{
-  id: "task-1",
-  columnId: "WIP",
-  content: "Task 1 content"
-},
-{
-  id: "task-2",
-  columnId: "WIP",
-  content: "Task 2 content"
-},
-{
-  id: "task-3",
-  columnId: "done",
-  content: "Task 3 content"
-},
-{
-  id: "task-4",
-  columnId: "done",
-  content: "Task 4 content"
-}
-]
-
 export function KanbanBoard() {
+  console.log("KanbanBoard")
   const { tasks } = useTasksFindAll()
   console.log("data:", tasks)
 
@@ -187,7 +166,7 @@ export function KanbanBoard() {
             <BoardColumn
               key={col.id}
               column={col}
-              tasks={tasks.filter((task) => task.columnId === col.id)}
+              tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
             />
           ))}
         </SortableContext>
@@ -200,7 +179,7 @@ export function KanbanBoard() {
               <BoardColumn
                 isOverlay
                 column={activeColumn}
-                tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
+                tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
               />
             )}
             {activeTask && <TaskCard task={activeTask} isOverlay />}
@@ -241,15 +220,29 @@ export function KanbanBoard() {
     if (activeId === overId) return
 
     const isActiveAColumn = activeData?.type === "Column"
-    if (!isActiveAColumn) return
+    if (isActiveAColumn) {
+      setColumns((columns) => {
+        const activeColumnIndex = columns.findIndex((col) => col.id === activeId)
+        const overColumnIndex = columns.findIndex((col) => col.id === overId)
+        return arrayMove(columns, activeColumnIndex, overColumnIndex)
+      })
+      return
+    }
 
-    setColumns((columns) => {
-      const activeColumnIndex = columns.findIndex((col) => col.id === activeId)
-
-      const overColumnIndex = columns.findIndex((col) => col.id === overId)
-
-      return arrayMove(columns, activeColumnIndex, overColumnIndex)
-    })
+    const isActiveATask = activeData?.type === "Task"
+    if (isActiveATask) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId)
+        const overIndex = tasks.findIndex((t) => t.id === overId)
+        const activeTask = tasks[activeIndex]
+        const overTask = tasks[overIndex]
+        if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
+          activeTask.columnId = overTask.columnId
+          return arrayMove(tasks, activeIndex, overIndex - 1)
+        }
+        return arrayMove(tasks, activeIndex, overIndex)
+      })
+    }
   }
 
   function onDragOver(event: DragOverEvent) {
@@ -282,7 +275,6 @@ export function KanbanBoard() {
           activeTask.columnId = overTask.columnId
           return arrayMove(tasks, activeIndex, overIndex - 1)
         }
-
         return arrayMove(tasks, activeIndex, overIndex)
       })
     }
