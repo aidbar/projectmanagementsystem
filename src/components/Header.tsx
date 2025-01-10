@@ -12,7 +12,9 @@ import { Button, buttonVariants } from "@/components/ui/button"
 export function Header() {
   return (
     <header className="w-full p-4 bg-primary text-white text-left">
-      <h1 className="text-xl">Project Management System</h1>
+      <a href="/" className="text-xl text-white no-underline hover:underline">
+        Project Management System
+      </a>
       {/*<NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>

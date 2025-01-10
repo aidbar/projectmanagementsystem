@@ -13,9 +13,7 @@ export function Workspace() {
       <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
         <h1 className="text-2xl">Workspace Page</h1>
         <p>Workspace ID: {id}</p>
-        <Button className="w-28" onClick={() => navigate("/dashboard")}>
-          Back to Dashboard
-        </Button>
+        <Button className="w-1/6" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
         <ProjectBoardsTable />
       </div>
     </div>

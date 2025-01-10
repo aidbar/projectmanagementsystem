@@ -82,7 +82,7 @@ export const columns: ColumnDef<ProjectBoard>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="capitalize w-full">{row.getValue("description")}</div>
+      <div className="w-full">{row.getValue("description")}</div>
     ),
   },
   {

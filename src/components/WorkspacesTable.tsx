@@ -51,7 +51,7 @@ const data: Workspace[] = [
   {
     id: "derv1ws0",
     public: true,
-    description: "processing",
+    description: "processing jhguygyyugyug",
     name: "yuguyg",
   },
   {
@@ -117,7 +117,7 @@ export const columns: ColumnDef<Workspace>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("description")}</div>
+      <div>{row.getValue("description")}</div>
     ),
   },
   {
