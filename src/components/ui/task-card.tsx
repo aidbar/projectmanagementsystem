@@ -41,6 +41,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
   })
 
   const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const style = {
     transition,
@@ -54,7 +55,8 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         overlay: "ring-2 ring-primary"
       },
       hover: {
-        true: "bg-accent-foreground/10"
+        true: "bg-accent-foreground/10",
+        false: ""
       }
     }
   })
@@ -67,15 +69,19 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     setIsPopupOpen(false)
   }
 
+  const handleMouseHoverEvents = (isHovered: boolean) => () => {
+    setIsHovered(isHovered)
+  }
+
   return (
     <>
-      <div onClick={handleClick}>
+      <div onClick={handleClick} onMouseEnter={handleMouseHoverEvents(true)} onMouseLeave={handleMouseHoverEvents(false)}>
         <Card
           ref={setNodeRef}
           style={style}
           className={variants({
             dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
-            hover: true
+            hover: isHovered
           })}
         >
           <CardHeader className="px-3 py-3 space-between flex flex-row relative">
