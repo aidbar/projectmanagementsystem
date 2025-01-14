@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface LoginPopupProps {
   onClose: () => void;
-  onLogin: (email: string, password: string) => Promise<{ token: { refreshToken: string, accessToken: string } }>;
+  onLogin: (email: string, password: string) => Promise<{ token: { refreshToken: string, accessToken: string }, userInfo: { id: string, firstName: string, lastName: string, username: string, email: string, createdAt: string, updatedAt: string } }>;
   errorMessage: string;
 }
 
@@ -28,6 +28,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
       const response = await onLogin(email, password)
       localStorage.setItem('refreshToken', response.token.refreshToken)
       localStorage.setItem('accessToken', response.token.accessToken)
+      localStorage.setItem('userInfo', JSON.stringify(response.userInfo))
     } catch (error) {
       console.error("Login failed", error)
     }

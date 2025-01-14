@@ -10,7 +10,7 @@ export function Dashboard() {
     <div>
         <Header />
         <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
-            <h1 className="text-2xl">Welcome, USER!</h1>
+            <h1 className="text-2xl">Welcome, {JSON.parse(localStorage.getItem('userInfo') || '{}').firstName} {JSON.parse(localStorage.getItem('userInfo') || '{}').lastName}!</h1>
             <Button className="w-28" onClick={() => navigate("/")}>New workspace</Button>
             <WorkspaceTable />
         </div>
