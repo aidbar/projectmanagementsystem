@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface LoginPopupProps {
   onClose: () => void;
-  onLogin: (email: string, password: string) => void;
+  onLogin: (email: string, password: string) => Promise<{ token: { refreshToken: string, accessToken: string } }>;
   errorMessage: string;
 }
 
@@ -13,7 +13,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateEmail(email)) {
       setEmailError("Invalid email address")
       return
@@ -24,7 +24,13 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
     }
     setEmailError("")
     setPasswordError("")
-    onLogin(email, password)
+    try {
+      const response = await onLogin(email, password)
+      localStorage.setItem('refreshToken', response.token.refreshToken)
+      localStorage.setItem('accessToken', response.token.accessToken)
+    } catch (error) {
+      console.error("Login failed", error)
+    }
   }
 
   const validateEmail = (email: string) => {

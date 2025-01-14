@@ -18,13 +18,7 @@ export function Home() {
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
       const response = await api.post("/v1/Authenticate/login", 
-        { "email": email, "password": password }//,
-        /*{
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json'
-          }
-        }*/
+        { "email": email, "password": password }
       )
       return response.data
     },
@@ -34,8 +28,8 @@ export function Home() {
       setLoginError("")
       navigate("/dashboard")
     },
-    onError: () => {
-      setLoginError("Login failed")
+    onError: (error: any) => {
+      setLoginError(error.response.data || "Login failed")
     }
   })
 
@@ -90,7 +84,7 @@ export function Home() {
       {showLoginPopup && (
       <LoginPopup
         onClose={ () => { setShowLoginPopup(false); setLoginError("") } }
-        onLogin={(email : string, password : string) => loginMutation.mutate({ email, password }) }
+        onLogin={(email : string, password : string) => loginMutation.mutateAsync({ email, password }) }
         errorMessage={loginError}
       />
       )}
