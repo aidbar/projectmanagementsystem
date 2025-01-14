@@ -25,6 +25,7 @@ import { coordinateGetter } from "../lib/dnd"
 import { useQuery } from "@tanstack/react-query"
 import { useTasksFindAll } from "../api/task-management"
 import { z } from "zod"
+import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
 
 const defaultCols = [
   {
@@ -53,6 +54,9 @@ export function KanbanBoard() {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
 
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
+  const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -151,52 +155,69 @@ export function KanbanBoard() {
   }
 
   function handleAddTask(columnId: UniqueIdentifier) {
-    const newTask: Task = {
-      id: `task-${tasksLegacy.length + 1}`,
-      content: "New Task",
-      columnId: columnId as ColumnId
+    setNewTaskColumnId(columnId as ColumnId)
+    setShowCreateTaskPopup(true)
+  }
+
+  function handleCreateTask(taskDetails: TaskDetailsState) {
+    if (newTaskColumnId) {
+      const newTask: Task = {
+        id: `task-${tasksLegacy.length + 1}`,
+        content: taskDetails.title,
+        columnId: newTaskColumnId,
+        // ...other task details...
+      }
+      setTasks((prevTasks) => [...prevTasks, newTask])
     }
-    setTasks((prevTasks) => [...prevTasks, newTask])
   }
 
   return (
-    <DndContext
-      accessibility={{
-        announcements
-      }}
-      sensors={sensors}
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragOver={onDragOver}
-    >
-      <BoardContainer>
-        <SortableContext items={columnsId}>
-          {columns.map((col) => (
-            <BoardColumn
-              key={col.id}
-              column={col}
-              tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
-              onAddTask={handleAddTask}
-            />
-          ))}
-        </SortableContext>
-      </BoardContainer>
-
-      {"document" in window &&
-        createPortal(
-          <DragOverlay>
-            {activeColumn && (
+    <>
+      <DndContext
+        accessibility={{
+          announcements
+        }}
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <BoardContainer>
+          <SortableContext items={columnsId}>
+            {columns.map((col) => (
               <BoardColumn
-                isOverlay
-                column={activeColumn}
-                tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
+                key={col.id}
+                column={col}
+                tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
+                onAddTask={handleAddTask}
               />
-            )}
-            {activeTask && <TaskCard task={activeTask} isOverlay />}
-          </DragOverlay>,
-          document.body
-        )}
-    </DndContext>
+            ))}
+          </SortableContext>
+        </BoardContainer>
+
+        {"document" in window &&
+          createPortal(
+            <DragOverlay>
+              {activeColumn && (
+                <BoardColumn
+                  isOverlay
+                  column={activeColumn}
+                  tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
+                />
+              )}
+              {activeTask && <TaskCard task={activeTask} isOverlay />}
+            </DragOverlay>,
+            document.body
+          )}
+      </DndContext>
+
+      {showCreateTaskPopup && (
+        <CreateTaskPopup
+          onClose={() => setShowCreateTaskPopup(false)}
+          onCreate={handleCreateTask}
+        />
+      )}
+    </>
   )
 
   function onDragStart(event: DragStartEvent) {

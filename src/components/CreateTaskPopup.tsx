@@ -1,0 +1,156 @@
+import React, { useState } from "react"
+import { Button, buttonVariants } from "./ui/button"
+
+interface CreateTaskPopupProps {
+  onClose: () => void
+  onCreate: (taskDetails: TaskDetailsState) => void
+}
+
+export interface TaskDetailsState {
+  title: string
+  description: string
+  status: string
+  priority: string
+  dueDate: string
+  assignedUsers: string
+}
+
+export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
+  const [taskDetails, setTaskDetails] = useState<TaskDetailsState>({
+    title: "",
+    description: "",
+    status: "",
+    priority: "",
+    dueDate: "",
+    assignedUsers: "",
+  })
+
+  const [errors, setErrors] = useState({
+    title: "",
+    description: "",
+    status: "",
+    priority: "",
+    dueDate: "",
+    assignedUsers: "",
+  })
+
+  const handleChange = (e: { target: { name: any; value: any } }): void => {
+    const { name, value } = e.target
+    setTaskDetails((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSave = () => {
+    // Input validation
+    let error = ""
+    if (!taskDetails.title.trim()) {
+      error = "Title is required and cannot be empty."
+    } else if (!taskDetails.description.trim() || taskDetails.description.length > 500) {
+      error = "Description is required and its maximum length is 500."
+    } else if (!taskDetails.priority.trim()) {
+      error = "Priority is required and cannot be empty."
+    } else if (!taskDetails.status.trim()) {
+      error = "Status is required and cannot be empty."
+    }
+
+    if (error) {
+      setErrors((prev) => ({ ...prev, title: error }))
+      return
+    }
+
+    setErrors({
+      title: "",
+      description: "",
+      status: "",
+      priority: "",
+      dueDate: "",
+      assignedUsers: "",
+    })
+
+    onCreate(taskDetails)
+    onClose()
+  }
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded shadow-md w-96 relative">
+        <div className="flex justify-between items-center mb-4 absolute top-4 right-4">
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
+        </div>
+        <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
+          {errors.title && <p className="text-red-500 text-sm italic">{errors.title}</p>}
+          <div className="font-bold text-2xl">
+            <input
+              type="text"
+              name="title"
+              value={taskDetails.title}
+              onChange={handleChange}
+              placeholder="Title"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-2 italic">
+            {errors.description && <p className="text-red-500">{errors.description}</p>}
+            <textarea
+              name="description"
+              value={taskDetails.description}
+              onChange={handleChange}
+              placeholder="Description"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-6">
+            {errors.status && <p className="text-red-500">{errors.status}</p>}
+            <strong>Status: </strong>
+            <input
+              type="text"
+              name="status"
+              value={taskDetails.status}
+              onChange={handleChange}
+              placeholder="Status"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-4">
+            {errors.priority && <p className="text-red-500">{errors.priority}</p>}
+            <strong>Priority: </strong>
+            <input
+              type="text"
+              name="priority"
+              value={taskDetails.priority}
+              onChange={handleChange}
+              placeholder="Priority"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-4">
+            <strong>Due Date: </strong>
+            <input
+              type="text"
+              name="dueDate"
+              value={taskDetails.dueDate}
+              onChange={handleChange}
+              placeholder="Due Date"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-4">
+            <strong>Assigned Users: </strong>
+            <input
+              type="text"
+              name="assignedUsers"
+              value={taskDetails.assignedUsers}
+              onChange={handleChange}
+              placeholder="Assigned Users"
+              className="border border-gray-500 p-3 w-full"
+            />
+          </div>
+          <div className="mt-4 flex justify-start">
+            <Button onClick={handleSave} className={buttonVariants({ variant: "default" })}>
+              Create Task
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
