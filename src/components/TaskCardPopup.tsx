@@ -28,6 +28,15 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
     assignedUsers: task.content, //task.assignedUsers.join(", "),
   });
 
+  const [errors, setErrors] = useState({
+    title: "",
+    description: "",
+    status: "",
+    priority: "",
+    dueDate: "",
+    assignedUsers: "",
+  });
+
   interface IsEditingState {
     title: boolean;
     description: boolean;
@@ -56,6 +65,24 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   };
 
   const handleSave = (field: keyof IsEditingState) => {
+    // Input validation
+    let error = "";
+    if (field === 'title' && !taskDetails.title.trim()) {
+      error = 'Title is required and cannot be empty.';
+    } else if (field === 'description' && (!taskDetails.description.trim() || taskDetails.description.length > 500)) {
+      error = 'Description is required and its maximum length is 500.';
+    } else if (field === 'priority' && !taskDetails.priority.trim()) {
+      error = 'Priority is required and cannot be empty.';
+    } else if (field === 'status' && !taskDetails.status.trim()) {
+      error = 'Status is required and cannot be empty.';
+    }
+
+    if (error) {
+      setErrors((prev) => ({ ...prev, [field]: error }));
+      return;
+    }
+
+    setErrors((prev) => ({ ...prev, [field]: "" }));
     // Save changes to the backend or state management
     handleEditToggle(field);
   };
@@ -67,31 +94,37 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
+        {errors.title && <p className="text-red-500 text-sm italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
             {isEditing.title ? (
-              <input
-              type="text"
-              name="title"
-              value={taskDetails.title}
-              onChange={handleChange}
-              onBlur={() => handleSave('title')}
-              className="border border-gray-500 p-3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="title"
+                  value={taskDetails.title}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('title')}
+                  className="border border-gray-500 p-3"
+                />
+              </>
             ) : (
               <>
-              {taskDetails.title} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
+                {taskDetails.title} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-2 italic">
+          {errors.description && <p className="text-red-500">{errors.description}</p>}
             {isEditing.description ? (
-              <textarea
-                name="description"
-                value={taskDetails.description}
-                onChange={handleChange}
-                onBlur={() => handleSave('description')}
-                className="border border-gray-500 p-3"
-              />
+              <>
+                <textarea
+                  name="description"
+                  value={taskDetails.description}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('description')}
+                  className="border border-gray-500 p-3"
+                />
+              </>
             ) : (
               <>
                 {taskDetails.description} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')}>Edit</a></span>
@@ -99,16 +132,19 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-6">
+          {errors.status && <p className="text-red-500">{errors.status}</p>}
             <strong>Status: </strong>
             {isEditing.status ? (
-              <input
-                type="text"
-                name="status"
-                value={taskDetails.status}
-                onChange={handleChange}
-                onBlur={() => handleSave('status')}
-                className="border border-gray-500 p-3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="status"
+                  value={taskDetails.status}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('status')}
+                  className="border border-gray-500 p-3"
+                />
+              </>
             ) : (
               <>
                 {taskDetails.status} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')}>Edit</a></span>
@@ -116,16 +152,19 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-4">
+          {errors.priority && <p className="text-red-500">{errors.priority}</p>}
             <strong>Priority: </strong>
             {isEditing.priority ? (
-              <input
-                type="text"
-                name="priority"
-                value={taskDetails.priority}
-                onChange={handleChange}
-                onBlur={() => handleSave('priority')}
-                className="border border-gray-500 p-3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="priority"
+                  value={taskDetails.priority}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('priority')}
+                  className="border border-gray-500 p-3"
+                />
+              </>
             ) : (
               <>
                 {taskDetails.priority} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')}>Edit</a></span>
@@ -135,14 +174,16 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           <div className="mt-4">
             <strong>Due Date: </strong>
             {isEditing.dueDate ? (
-              <input
-                type="text"
-                name="dueDate"
-                value={taskDetails.dueDate}
-                onChange={handleChange}
-                onBlur={() => handleSave('dueDate')}
-                className="border border-gray-500 p-3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="dueDate"
+                  value={taskDetails.dueDate}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('dueDate')}
+                  className="border border-gray-500 p-3"
+                />
+              </>
             ) : (
               <>
                 {taskDetails.dueDate} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('dueDate')}>Edit</a></span>
@@ -150,22 +191,25 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-4">
-            <strong>Created At: </strong> { task.content /*new Date(task.createdAt).toLocaleString()*/}
+            <strong>Created At: </strong> { task.content /*new Date(task.createdAt).toLocaleString()*/ }
           </div>
           <div className="mt-4">
-            <strong>Updated At: </strong> {task.content /*new Date(task.updatedAt).toLocaleString()*/}
+            <strong>Updated At: </strong> { task.content /*new Date(task.updatedAt).toLocaleString()*/ }
           </div>
           <div className="mt-4">
             <strong>Assigned Users: </strong>
             {isEditing.assignedUsers ? (
-              <input
-                type="text"
-                name="assignedUsers"
-                value={taskDetails.assignedUsers}
-                onChange={handleChange}
-                onBlur={() => handleSave('assignedUsers')}
-                className="border border-gray-500 p-3"
-              />
+              <>
+                <input
+                  type="text"
+                  name="assignedUsers"
+                  value={taskDetails.assignedUsers}
+                  onChange={handleChange}
+                  onBlur={() => handleSave('assignedUsers')}
+                  className="border border-gray-500 p-3"
+                />
+                {errors.assignedUsers && <p className="text-red-500">{errors.assignedUsers}</p>}
+              </>
             ) : (
               <>
                 {taskDetails.assignedUsers} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('assignedUsers')}>Edit</a></span>
