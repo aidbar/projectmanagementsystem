@@ -78,7 +78,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-          {errors.title && <p className="text-red-500 text-sm italic">{errors.title}</p>}
+          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
             <input
               type="text"
@@ -90,8 +90,8 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               className="border border-gray-500 p-3 w-full"
             />
           </div>
-          <div className="mt-2 italic">
-            {errors.description && <p className="text-red-500">{errors.description}</p>}
+          <div className="mt-2">
+            {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
             <textarea
               name="description"
               value={taskDetails.description}
@@ -102,7 +102,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
             />
           </div>
           <div className="mt-6">
-            {errors.status && <p className="text-red-500">{errors.status}</p>}
+            {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
             <strong>Status: </strong>
             <input
               type="text"
@@ -115,7 +115,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
             />
           </div>
           <div className="mt-4">
-            {errors.priority && <p className="text-red-500">{errors.priority}</p>}
+            {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
             <strong>Priority: </strong>
             <input
               type="text"

@@ -94,7 +94,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-        {errors.title && <p className="text-red-500 text-sm italic">{errors.title}</p>}
+        {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
             {isEditing.title ? (
               <>
@@ -113,8 +113,8 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
               </>
             )}
           </div>
-          <div className="mt-2 italic">
-          {errors.description && <p className="text-red-500">{errors.description}</p>}
+          <div className="mt-2">
+          {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
             {isEditing.description ? (
               <>
                 <textarea
@@ -127,12 +127,12 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
               </>
             ) : (
               <>
-                {taskDetails.description} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')}>Edit</a></span>
+                {taskDetails.description} <span className="ml-2 italic"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')}>Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-6">
-          {errors.status && <p className="text-red-500">{errors.status}</p>}
+          {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
             <strong>Status: </strong>
             {isEditing.status ? (
               <>
@@ -152,7 +152,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-4">
-          {errors.priority && <p className="text-red-500">{errors.priority}</p>}
+          {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
             <strong>Priority: </strong>
             {isEditing.priority ? (
               <>
@@ -208,7 +208,6 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                   onBlur={() => handleSave('assignedUsers')}
                   className="border border-gray-500 p-3"
                 />
-                {errors.assignedUsers && <p className="text-red-500">{errors.assignedUsers}</p>}
               </>
             ) : (
               <>
