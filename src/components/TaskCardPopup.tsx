@@ -70,15 +70,16 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           <div className="font-bold text-2xl">
             {isEditing.title ? (
               <input
-                type="text"
-                name="title"
-                value={taskDetails.title}
-                onChange={handleChange}
-                onBlur={() => handleSave('title')}
+              type="text"
+              name="title"
+              value={taskDetails.title}
+              onChange={handleChange}
+              onBlur={() => handleSave('title')}
+              className="border border-gray-500 p-3"
               />
             ) : (
               <>
-                {taskDetails.title} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
+              {taskDetails.title} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
               </>
             )}
           </div>
@@ -89,6 +90,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 value={taskDetails.description}
                 onChange={handleChange}
                 onBlur={() => handleSave('description')}
+                className="border border-gray-500 p-3"
               />
             ) : (
               <>
@@ -105,6 +107,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 value={taskDetails.status}
                 onChange={handleChange}
                 onBlur={() => handleSave('status')}
+                className="border border-gray-500 p-3"
               />
             ) : (
               <>
@@ -121,6 +124,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 value={taskDetails.priority}
                 onChange={handleChange}
                 onBlur={() => handleSave('priority')}
+                className="border border-gray-500 p-3"
               />
             ) : (
               <>
@@ -137,6 +141,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 value={taskDetails.dueDate}
                 onChange={handleChange}
                 onBlur={() => handleSave('dueDate')}
+                className="border border-gray-500 p-3"
               />
             ) : (
               <>
@@ -159,6 +164,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 value={taskDetails.assignedUsers}
                 onChange={handleChange}
                 onBlur={() => handleSave('assignedUsers')}
+                className="border border-gray-500 p-3"
               />
             ) : (
               <>
