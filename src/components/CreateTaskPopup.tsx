@@ -34,38 +34,39 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
     assignedUsers: "",
   })
 
+  const [isFormValid, setIsFormValid] = useState(false)
+
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target
     setTaskDetails((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSave = () => {
-    // Input validation
+  const handleBlur = (e: { target: { name: string; value: string } }): void => {
+    const { name, value } = e.target
     let error = ""
-    if (!taskDetails.title.trim()) {
+
+    if (name === "title" && !value.trim()) {
       error = "Title is required and cannot be empty."
-    } else if (!taskDetails.description.trim() || taskDetails.description.length > 500) {
+    } else if (name === "description" && (!value.trim() || value.length > 500)) {
       error = "Description is required and its maximum length is 500."
-    } else if (!taskDetails.priority.trim()) {
+    } else if (name === "priority" && !value.trim()) {
       error = "Priority is required and cannot be empty."
-    } else if (!taskDetails.status.trim()) {
+    } else if (name === "status" && !value.trim()) {
       error = "Status is required and cannot be empty."
     }
 
-    if (error) {
-      setErrors((prev) => ({ ...prev, title: error }))
-      return
-    }
+    setErrors((prev) => ({ ...prev, [name]: error }))
+    setIsFormValid(
+      !!taskDetails.title.trim() &&
+      !!taskDetails.description.trim() &&
+      taskDetails.description.length <= 500 &&
+      !!taskDetails.priority.trim() &&
+      !!taskDetails.status.trim() &&
+      !error
+    )
+  }
 
-    setErrors({
-      title: "",
-      description: "",
-      status: "",
-      priority: "",
-      dueDate: "",
-      assignedUsers: "",
-    })
-
+  const handleSave = () => {
     onCreate(taskDetails)
     onClose()
   }
@@ -84,6 +85,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="title"
               value={taskDetails.title}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Title"
               className="border border-gray-500 p-3 w-full"
             />
@@ -94,6 +96,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="description"
               value={taskDetails.description}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Description"
               className="border border-gray-500 p-3 w-full"
             />
@@ -106,6 +109,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="status"
               value={taskDetails.status}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Status"
               className="border border-gray-500 p-3 w-full"
             />
@@ -118,6 +122,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="priority"
               value={taskDetails.priority}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Priority"
               className="border border-gray-500 p-3 w-full"
             />
@@ -129,6 +134,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="dueDate"
               value={taskDetails.dueDate}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Due Date"
               className="border border-gray-500 p-3 w-full"
             />
@@ -140,12 +146,17 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               name="assignedUsers"
               value={taskDetails.assignedUsers}
               onChange={handleChange}
+              onBlur={handleBlur}
               placeholder="Assigned Users"
               className="border border-gray-500 p-3 w-full"
             />
           </div>
           <div className="mt-4 flex justify-start">
-            <Button onClick={handleSave} className={buttonVariants({ variant: "default" })}>
+            <Button
+              onClick={handleSave}
+              className={buttonVariants({ variant: "default" })}
+              disabled={!isFormValid}
+            >
               Create Task
             </Button>
           </div>
