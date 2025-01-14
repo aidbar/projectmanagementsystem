@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from "./card"
 import { Button } from "./button"
 import { GripVertical } from "lucide-react"
 import { ScrollArea, ScrollBar } from "./scroll-area"
+import { ColumnId } from "../KanbanBoard"
 
 export interface Column {
   id: UniqueIdentifier
@@ -25,9 +26,11 @@ interface BoardColumnProps {
   column: Column
   tasks: Task[]
   isOverlay?: boolean
+  onAddTask?: (columnId: UniqueIdentifier) => void
 }
 
-export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
+
+export function BoardColumn({ column, tasks, isOverlay, onAddTask }: BoardColumnProps) {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id)
   }, [tasks])
@@ -79,6 +82,9 @@ export function BoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
           <span className="sr-only">{`Move column: ${column.title}`}</span>
           <GripVertical />
         </Button>
+        <Button onClick={() => onAddTask?.(column.id)} className="mt-2">
+            Add Task
+          </Button>
         <span className="ml-auto"> {column.title}</span>
       </CardHeader>
       <ScrollArea>

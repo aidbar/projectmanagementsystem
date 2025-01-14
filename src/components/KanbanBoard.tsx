@@ -150,6 +150,15 @@ export function KanbanBoard() {
     }
   }
 
+  function handleAddTask(columnId: UniqueIdentifier) {
+    const newTask: Task = {
+      id: `task-${tasksLegacy.length + 1}`,
+      content: "New Task",
+      columnId: columnId as ColumnId
+    }
+    setTasks((prevTasks) => [...prevTasks, newTask])
+  }
+
   return (
     <DndContext
       accessibility={{
@@ -167,6 +176,7 @@ export function KanbanBoard() {
               key={col.id}
               column={col}
               tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
+              onAddTask={handleAddTask}
             />
           ))}
         </SortableContext>
