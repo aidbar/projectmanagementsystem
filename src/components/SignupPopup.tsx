@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface SignupPopupProps {
   onClose: () => void;
-  onSignup: (firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => void;
+  onSignup: (firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => Promise<{ message: string, data: { id: string, firstName: string, lastName: string, username: string, email: string, createdAt: string, updatedAt: string } }>;
   errorMessage: string;
 }
 
@@ -21,7 +21,7 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
   const [lastNameError, setLastNameError] = useState("")
   const [usernameError, setUsernameError] = useState("")
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!validateEmail(email)) {
       setEmailError("Invalid email address")
       return
@@ -36,7 +36,11 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
     }
     setEmailError("")
     setPasswordError("")
-    onSignup(firstName, lastName, username, email, password, confirmPassword)
+    try {
+      await onSignup(firstName, lastName, username, email, password, confirmPassword)
+    } catch (error) {
+      console.error("Signup failed", error)
+    }
   }
 
   const validateEmail = (email: string) => {

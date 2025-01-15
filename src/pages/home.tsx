@@ -53,14 +53,14 @@ export function Home() {
       )
       return response.data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setIsLoggedIn(true)
       setShowSignupPopup(false)
       setSignupError("")
       navigate("/dashboard")
     },
-    onError: () => {
-      setSignupError("Signup failed")
+    onError: (error : any) => {
+      setSignupError(error.response.data || "Signup failed")
     }
   })
 
@@ -91,7 +91,7 @@ export function Home() {
       {showSignupPopup && (
       <SignupPopup
         onClose={ () => { setShowSignupPopup(false); setSignupError("") } }
-        onSignup={(firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => signupMutation.mutate({ firstname, lastname, username, email, password, confirmPassword }) }
+        onSignup={(firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => signupMutation.mutateAsync({ firstname, lastname, username, email, password, confirmPassword }) }
         errorMessage={signupError}
       />
       )}
