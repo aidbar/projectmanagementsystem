@@ -50,7 +50,7 @@ export function WorkspacePopup({ onClose, onCreate }: WorkspacePopupProps) {
                   setNameError("Workspace name must not exceed 200 characters.")
                 } else {
                   setNameError("")
-                }
+                } 
               }}
               required
             />
