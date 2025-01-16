@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Button, buttonVariants } from "../components/ui/button"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { LoginPopup } from "../components/LoginPopup"
 import { SignupPopup } from "../components/SignupPopup"
 import api from "../api"
@@ -28,8 +28,8 @@ export function Home() {
       setLoginError("")
       navigate("/dashboard")
     },
-    onError: (error: any) => {
-      setLoginError(error.response.data || "Login failed")
+    onError: (error: AxiosError) => {
+      setLoginError(typeof error.response?.data === 'string' ? error.response.data : "Login failed")
     }
   })
 
@@ -59,8 +59,8 @@ export function Home() {
       setSignupError("")
       navigate("/dashboard")
     },
-    onError: (error : any) => {
-      setSignupError(error.response.data || "Signup failed")
+    onError: (error : AxiosError) => {
+      setSignupError(typeof error.response?.data === 'string' ? error.response.data : "Signup failed")
     }
   })
 
