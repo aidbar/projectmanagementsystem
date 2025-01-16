@@ -1,3 +1,4 @@
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,7 +13,6 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
 import api from "../api"
 
 // import { Checkbox } from "./ui/checkbox"
@@ -35,7 +35,6 @@ import {
   TableRow,
 } from "./ui/table"
 import { Button } from "./ui/button"
-import React from "react"
 
 export type Workspace = {
   id: string
@@ -146,7 +145,7 @@ export const columns: ColumnDef<Workspace>[] = [
   },
 ]
 
-export function WorkspacesTable() {
+export const WorkspacesTable = forwardRef((props, ref) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -156,19 +155,23 @@ export function WorkspacesTable() {
 
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
-        const response = await api.get(`/v1/Workspaces/user/${userId}`)
-        setData(response.data)
-      } catch (error) {
-        console.error("Error fetching workspaces:", error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    try {
+      const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
+      const response = await api.get(`/v1/Workspaces/user/${userId}`)
+      setData(response.data)
+    } catch (error) {
+      console.error("Error fetching workspaces:", error)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useImperativeHandle(ref, () => ({
+    fetchData
+  }))
+
+  useEffect(() => {
     fetchData()
   }, [])
 
@@ -311,4 +314,4 @@ export function WorkspacesTable() {
       </div>
     </div>
   )
-}
+})
