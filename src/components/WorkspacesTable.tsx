@@ -14,6 +14,7 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import api from "../api"
+import * as Toast from "@radix-ui/react-toast"
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -106,40 +107,50 @@ export const columns: ColumnDef<Workspace>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const workspace = row.original
+      const [open, setOpen] = useState(false)
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Go to workspace</DropdownMenuItem>
-            <DropdownMenuItem
-              disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
-            >
-              Edit workspace details
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={(e) => {
-              e.stopPropagation();
-              navigator.clipboard.writeText(workspace.id);
-              }}
-            >
-              Copy workspace ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-red-500"
-              disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
-            >
-              Delete workspace
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem>Go to workspace</DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+              >
+                Edit workspace details
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(workspace.id);
+                  setOpen(true);
+                }}
+              >
+                Copy workspace ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-500"
+                disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+              >
+                Delete workspace
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Toast.Provider>
+            <Toast.Root open={open} onOpenChange={setOpen} className="bg-black text-white p-2 rounded">
+              <Toast.Title>Copied!</Toast.Title>
+            </Toast.Root>
+            <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+          </Toast.Provider>
+        </>
       )
     },
   },
