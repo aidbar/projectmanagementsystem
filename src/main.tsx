@@ -7,12 +7,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Dashboard } from "./pages/Dashboard"
 import { Workspace } from "./pages/Workspace"
 import { ProjectBoard } from "./pages/ProjectBoard"
+import { Home } from "./pages/home"
 
 const queryClient = new QueryClient()
 
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const isLoggedIn = localStorage.getItem("accessToken") ? true : false
-  return isLoggedIn ? element : <h1>Access Denied</h1>;
+  return isLoggedIn ? element : <Home />;
 };
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
