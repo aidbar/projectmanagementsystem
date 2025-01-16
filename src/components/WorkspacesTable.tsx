@@ -12,6 +12,8 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import api from "../api"
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -35,42 +37,9 @@ import {
 import { Button } from "./ui/button"
 import React from "react"
 
-const data: Workspace[] = [
-  {
-    id: "m5gr84i9",
-    public: true,
-    description: "description 1",
-    name: "workspace",
-  },
-  {
-    id: "3u1reuv4",
-    public: true,
-    description: "success",
-    name: "ufgure",
-  },
-  {
-    id: "derv1ws0",
-    public: true,
-    description: "processing jhguygyyugyug",
-    name: "yuguyg",
-  },
-  {
-    id: "5kma53ae",
-    public: false,
-    description: "success",
-    name: "bbbbbbbbbb",
-  },
-  {
-    id: "bhqecj4p",
-    public: true,
-    description: "uygyuguygyu",
-    name: "c",
-  },
-]
-
 export type Workspace = {
   id: string
-  public: boolean
+  isPublic: boolean
   description: string
   name: string
 }
@@ -121,12 +90,12 @@ export const columns: ColumnDef<Workspace>[] = [
     ),
   },
   {
-    accessorKey: "public",
+    accessorKey: "isPublic",
     header: () => <div className="text-center">Public</div>,
     cell: ({ row }) => {
 
-      // Format the public as a dollar public
-      const formatted = row.getValue("public") ? "Yes" : "No"
+      // Format the isPublic as a dollar isPublic
+      const formatted = row.getValue("isPublic") ? "Yes" : "No"
 
       return <div className="text-center font-medium">{formatted}</div>
     },
@@ -151,7 +120,10 @@ export const columns: ColumnDef<Workspace>[] = [
             <DropdownMenuItem>Go to workspace</DropdownMenuItem>
             <DropdownMenuItem>Edit workspace details</DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(workspace.id)}
+              onClick={(e) => {
+              e.stopPropagation();
+              navigator.clipboard.writeText(workspace.id);
+              }}
             >
               Copy workspace ID
             </DropdownMenuItem>
@@ -164,16 +136,31 @@ export const columns: ColumnDef<Workspace>[] = [
   },
 ]
 
-export function WorkspaceTable() {
+export function WorkspacesTable() {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [data, setData] = useState<Workspace[]>([])
+  const [loading, setLoading] = useState(true)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
+        const response = await api.get(`/v1/Workspaces/user/${userId}`)
+        setData(response.data)
+      } catch (error) {
+        console.error("Error fetching workspaces:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const table = useReactTable({
     data,
@@ -193,6 +180,10 @@ export function WorkspaceTable() {
       rowSelection,
     },
   })
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="w-full">
@@ -277,7 +268,7 @@ export function WorkspaceTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No workspaces to show.
                 </TableCell>
               </TableRow>
             )}
