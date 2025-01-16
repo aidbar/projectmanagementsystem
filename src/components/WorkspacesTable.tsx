@@ -42,6 +42,7 @@ export type Workspace = {
   isPublic: boolean
   description: string
   name: string
+  creatorUserId: string
 }
 
 export const columns: ColumnDef<Workspace>[] = [
@@ -118,7 +119,11 @@ export const columns: ColumnDef<Workspace>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Go to workspace</DropdownMenuItem>
-            <DropdownMenuItem>Edit workspace details</DropdownMenuItem>
+            <DropdownMenuItem
+              disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+            >
+              Edit workspace details
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={(e) => {
               e.stopPropagation();
@@ -128,7 +133,12 @@ export const columns: ColumnDef<Workspace>[] = [
               Copy workspace ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500">Delete workspace</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-500"
+              disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+            >
+              Delete workspace
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
