@@ -51,12 +51,20 @@ export function Home() {
       const response = await api.post("/v1/Users", 
         { "firstname" : firstname, "lastname" : lastname, "username": username, "email": email, "password": password, "confirmPassword": confirmPassword }
       )
-      return response.data
+      return { data: response.data, email, password }
     },
-    onSuccess: (data) => {
+    onSuccess: async ({ data, email, password }) => {
       setIsLoggedIn(true)
       setShowSignupPopup(false)
       setSignupError("")
+      try {
+        const response = await loginMutation.mutateAsync({ email, password })
+        localStorage.setItem('refreshToken', response.token.refreshToken)
+        localStorage.setItem('accessToken', response.token.accessToken)
+        localStorage.setItem('userInfo', JSON.stringify(response.userInfo))
+      } catch (error) {
+        console.error("Auto-login failed", error)
+      }
       navigate("/dashboard")
     },
     onError: (error : AxiosError) => {

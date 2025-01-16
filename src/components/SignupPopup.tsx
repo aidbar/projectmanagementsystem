@@ -3,7 +3,7 @@ import { Button, buttonVariants } from "./ui/button"
 
 interface SignupPopupProps {
   onClose: () => void;
-  onSignup: (firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => Promise<{ message: string, data: { id: string, firstName: string, lastName: string, username: string, email: string, createdAt: string, updatedAt: string } }>;
+  onSignup: (firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => Promise<{ data: any; email: string; password: string; }>;
   errorMessage: string;
 }
 
