@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react"
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,6 +15,7 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
+import { WorkspacePopup } from "./WorkspacePopup"
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -36,6 +37,8 @@ import {
   TableRow,
 } from "./ui/table"
 import { Button } from "./ui/button"
+import { set } from "zod"
+import { WorkspacesTableRef } from "@/pages/Dashboard"
 
 export type Workspace = {
   id: string
@@ -45,7 +48,7 @@ export type Workspace = {
   creatorUserId: string
 }
 
-export const columns: ColumnDef<Workspace>[] = [
+export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<Workspace>[] => [
   // {
   //   id: "select",
   //   header: ({ table }) => (
@@ -120,9 +123,16 @@ export const columns: ColumnDef<Workspace>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>Go to workspace</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/workspace/${workspace.id}`)}>
+                Go to workspace
+              </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setEditWorkspace(workspace)
+                  setOpenPopup(true)
+                }}
               >
                 Edit workspace details
               </DropdownMenuItem>
@@ -156,16 +166,28 @@ export const columns: ColumnDef<Workspace>[] = [
   },
 ]
 
-export const WorkspacesTable = forwardRef((props, ref) => {
+type WorkspacesTableProps = {
+  onEdit: (workspace: Workspace) => void;
+  setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>;
+};
+
+export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTableProps>(({ onEdit, setOpenPopup, setEditWorkspace }, ref) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [data, setData] = useState<Workspace[]>([])
   const [loading, setLoading] = useState(true)
+  const workspacesTableRef = useRef<WorkspacesTableRef>(null)
+
+  function handleUpdate() {
+    if (workspacesTableRef.current) {
+      workspacesTableRef.current.fetchData()
+    }
+  }
 
   const navigate = useNavigate()
-
   const fetchData = async () => {
     try {
       const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
@@ -186,6 +208,7 @@ export const WorkspacesTable = forwardRef((props, ref) => {
     fetchData()
   }, [])
 
+  const columns = createColumns(navigate, setEditWorkspace, setOpenPopup);
   const table = useReactTable({
     data,
     columns,
