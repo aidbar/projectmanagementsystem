@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { Header } from "../components/Header"
 import { WorkspacesTable, Workspace } from "../components/WorkspacesTable"
 import { WorkspacePopup } from "../components/WorkspacePopup"
+import { DeleteConfirmationPopup } from "../components/DeleteConfirmationPopup"
+import api from "@/api"
 
 export type WorkspacesTableRef = {
   fetchData: () => void;
@@ -13,6 +15,8 @@ export function Dashboard() {
   const navigate = useNavigate()
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [editWorkspace, setEditWorkspace] = useState<Workspace | undefined>(undefined)
+  const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
   const workspacesTableRef = useRef<WorkspacesTableRef>(null)
 
   const handleCreate = () => {
@@ -25,6 +29,22 @@ export function Dashboard() {
     setEditWorkspace(workspace)
     setIsPopupOpen(true)
   }
+
+  const handleDelete = async () => {
+    if (deleteWorkspace) {
+      try {
+        await api.delete(`/v1/Workspaces/${deleteWorkspace.id}`);
+        if (workspacesTableRef.current) {
+          workspacesTableRef.current.fetchData();
+        }
+      } catch (error) {
+        console.error("Error deleting workspace:", error);
+      } finally {
+        setDeletePopupOpen(false);
+        setDeleteWorkspace(undefined);
+      }
+    }
+  };
 
   return (
     <div>
@@ -47,6 +67,15 @@ export function Dashboard() {
             }}
             onCreate={handleCreate}
             workspace={editWorkspace}
+          />
+        )}
+        {deletePopupOpen && deleteWorkspace && (
+          <DeleteConfirmationPopup
+            onClose={() => setDeletePopupOpen(false)}
+            deleteItem={deleteWorkspace}
+            fetchData={() => workspacesTableRef.current?.fetchData()}
+            itemName={deleteWorkspace.name}
+            entity="Workspaces"
           />
         )}
     </div>

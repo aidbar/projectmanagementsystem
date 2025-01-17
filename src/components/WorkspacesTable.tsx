@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom"
 import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
 import { WorkspacePopup } from "./WorkspacePopup"
+import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -48,7 +49,7 @@ export type Workspace = {
   creatorUserId: string
 }
 
-export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<Workspace>[] => [
+export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>, setDeleteWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setDeletePopupOpen: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<Workspace>[] => [
   // {
   //   id: "select",
   //   header: ({ table }) => (
@@ -149,6 +150,11 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
               <DropdownMenuItem
                 className="text-red-500"
                 disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteWorkspace(workspace);
+                  setDeletePopupOpen(true);
+                }}
               >
                 Delete workspace
               </DropdownMenuItem>
@@ -180,6 +186,8 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
   const [data, setData] = useState<Workspace[]>([])
   const [loading, setLoading] = useState(true)
   const workspacesTableRef = useRef<WorkspacesTableRef>(null)
+  const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
 
   function handleUpdate() {
     if (workspacesTableRef.current) {
@@ -208,7 +216,21 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
     fetchData()
   }, [])
 
-  const columns = createColumns(navigate, setEditWorkspace, setOpenPopup);
+  const handleDelete = async () => {
+    if (deleteWorkspace) {
+      try {
+        await api.delete(`/v1/Workspaces/${deleteWorkspace.id}`);
+        fetchData();
+      } catch (error) {
+        console.error("Error deleting workspace:", error);
+      } finally {
+        setDeletePopupOpen(false);
+        setDeleteWorkspace(undefined);
+      }
+    }
+  };
+
+  const columns = createColumns(navigate, setEditWorkspace, setOpenPopup, setDeleteWorkspace, setDeletePopupOpen);
   const table = useReactTable({
     data,
     columns,
@@ -346,6 +368,15 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
           </Button>
         </div>
       </div>
+      {deletePopupOpen && deleteWorkspace && (
+        <DeleteConfirmationPopup
+          onClose={() => setDeletePopupOpen(false)}
+          deleteItem={deleteWorkspace}
+          fetchData={fetchData}
+          itemName={deleteWorkspace.name}
+          entity="Workspaces"
+        />
+      )}
     </div>
   )
 })
