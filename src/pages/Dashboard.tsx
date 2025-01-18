@@ -30,7 +30,7 @@ export function Dashboard() {
     setIsPopupOpen(true)
   }
 
-  const handleDelete = async () => {
+  /*const handleDelete = async () => {
     if (deleteWorkspace) {
       try {
         await api.delete(`/v1/Workspaces/${deleteWorkspace.id}`);
@@ -44,7 +44,7 @@ export function Dashboard() {
         setDeleteWorkspace(undefined);
       }
     }
-  };
+  };*/
 
   return (
     <div>
