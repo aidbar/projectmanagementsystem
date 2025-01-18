@@ -103,7 +103,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditP
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigate(`/projectBoard/${projectBoard.id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/project-board/${projectBoard.id}`)}>
                 Go to project board
               </DropdownMenuItem>
               <DropdownMenuItem
