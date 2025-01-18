@@ -1,3 +1,4 @@
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,7 +12,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import api from "../api"
+import * as Toast from "@radix-ui/react-toast"
+import { ProjectBoardPopup } from "./ProjectBoardPopup"
+import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
+
+// import { Checkbox } from "./ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -31,37 +38,19 @@ import {
   TableRow,
 } from "./ui/table"
 import { Button } from "./ui/button"
-import React from "react"
-
-const data: ProjectBoard[] = [
-  {
-    id: "p1",
-    name: "Project Board 1",
-    description: "Description 1",
-    public: true,
-  },
-  {
-    id: "pjnjkn",
-    name: "Project Board hbub",
-    description: "Description uyguygy",
-    public: true,
-  },
-  {
-    id: "pjnjkuygyug",
-    name: "Project Board hbiuhuihuihub",
-    description: "Description gvhgvvghvhghgvhg",
-    public: true,
-  }
-]
+import { set } from "zod"
+import { ProjectBoardsTableRef } from "@/pages/Workspace"
 
 export type ProjectBoard = {
   id: string
-  name: string
+  isPublic: boolean
   description: string
-  public: boolean
+  name: string
+  creatorUserId: string,
+  workspaceId: string
 }
 
-export const columns: ColumnDef<ProjectBoard>[] = [
+export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditProjectBoard: React.Dispatch<React.SetStateAction<ProjectBoard | undefined>>, setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>, setDeleteProjectBoard: React.Dispatch<React.SetStateAction<ProjectBoard | undefined>>, setDeletePopupOpen: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<ProjectBoard>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -69,28 +58,30 @@ export const columns: ColumnDef<ProjectBoard>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full"
         >
           Name
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase w-full">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="w-full">{row.getValue("description")}</div>
+      <div>{row.getValue("description")}</div>
     ),
   },
   {
-    accessorKey: "public",
-    header: () => <div className="text-center w-full">Public</div>,
+    accessorKey: "isPublic",
+    header: () => <div className="text-center">Public</div>,
     cell: ({ row }) => {
-      const formatted = row.getValue("public") ? "Yes" : "No"
-      return <div className="text-center font-medium w-full">{formatted}</div>
+
+      // Format the isPublic as a dollar isPublic
+      const formatted = row.getValue("isPublic") ? "Yes" : "No"
+
+      return <div className="text-center font-medium">{formatted}</div>
     },
   },
   {
@@ -99,40 +90,109 @@ export const columns: ColumnDef<ProjectBoard>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const projectBoard = row.original
+      const [open, setOpen] = useState(false)
+
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Go to project board</DropdownMenuItem>
-            <DropdownMenuItem>Edit project board details</DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(projectBoard.id)}
-            >
-              Copy project board ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500">Delete project board</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => navigate(`/projectBoard/${projectBoard.id}`)}>
+                Go to project board
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== projectBoard.creatorUserId}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setEditProjectBoard(projectBoard)
+                  setOpenPopup(true)
+                }}
+              >
+                Edit project board details
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(projectBoard.id);
+                  setOpen(true);
+                }}
+              >
+                Copy project board ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-500"
+                disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== projectBoard.creatorUserId}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteProjectBoard(projectBoard);
+                  setDeletePopupOpen(true);
+                }}
+              >
+                Delete project board
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Toast.Provider>
+            <Toast.Root open={open} onOpenChange={setOpen} className="bg-black text-white p-2 rounded">
+              <Toast.Title>Copied!</Toast.Title>
+            </Toast.Root>
+            <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+          </Toast.Provider>
+        </>
       )
     },
   },
 ]
 
-export function ProjectBoardsTable() {
+type ProjectBoardsTableProps = {
+  onEdit: (projectBoard: ProjectBoard) => void;
+  setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditProjectBoard: React.Dispatch<React.SetStateAction<ProjectBoard | undefined>>;
+  workspaceId: string; // Added workspaceId to props
+};
+
+export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoardsTableProps>(({ onEdit, setOpenPopup, setEditProjectBoard, workspaceId }, ref) => { // Added workspaceId to destructured props
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [data, setData] = useState<ProjectBoard[]>([])
+  const [loading, setLoading] = useState(true)
+  const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
+  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const { workspaceId: paramWorkspaceId } = useParams<{ workspaceId: string }>();
 
   const navigate = useNavigate()
+  const fetchData = async () => {
+    try {
+      //const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
+      const response = await api.get(`/v1/ProjectBoards/workspace/${workspaceId || paramWorkspaceId}`) // Use workspaceId from props or params
+      setData(response.data)
+    } catch (error) {
+      console.error("Error fetching project boards:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
+  useImperativeHandle(ref, () => ({
+    fetchData
+  }))
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+
+  const columns = createColumns(navigate, setEditProjectBoard, setOpenPopup, setDeleteProjectBoard, setDeletePopupOpen);
   const table = useReactTable({
     data,
     columns,
@@ -151,6 +211,10 @@ export function ProjectBoardsTable() {
       rowSelection,
     },
   })
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className="w-full">
@@ -197,7 +261,7 @@ export function ProjectBoardsTable() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="w-1/4">
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -219,16 +283,14 @@ export function ProjectBoardsTable() {
                   onClick={() => navigate(`/project-board/${row.original.id}`)}
                   className="cursor-pointer"
                 >
-                  <>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="w-1/4">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (
@@ -237,13 +299,17 @@ export function ProjectBoardsTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No project boards to show.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+      {/* <div className="flex-1 text-sm text-muted-foreground">
+        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+        {table.getFilteredRowModel().rows.length} row(s) selected.
+      </div> */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
           <Button
@@ -264,6 +330,15 @@ export function ProjectBoardsTable() {
           </Button>
         </div>
       </div>
+      {deletePopupOpen && deleteProjectBoard && (
+        <DeleteConfirmationPopup
+          onClose={() => setDeletePopupOpen(false)}
+          deleteItem={deleteProjectBoard}
+          fetchData={fetchData}
+          itemName={deleteProjectBoard.name}
+          entity="ProjectBoards"
+        />
+      )}
     </div>
   )
-}
+})

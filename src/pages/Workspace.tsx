@@ -1,23 +1,44 @@
 import { Button } from "../components/ui/button"
 import { useNavigate, useParams } from "react-router-dom"
 import { Header } from "../components/Header"
-import { ProjectBoardsTable } from "../components/ProjectBoardsTable"
-import { useEffect, useState } from "react"
+import { ProjectBoardsTable, ProjectBoard } from "../components/ProjectBoardsTable"
+import { useEffect, useRef, useState } from "react"
 import api from "../api"
 import { AxiosError } from "axios"
 
+export type ProjectBoardsTableRef = {
+  fetchData: () => void; 
+};
+
 export function Workspace() {
   const navigate = useNavigate()
-  const { id } = useParams<{ id: string }>()
-  const [workspaceData, setWorkspaceData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
+  const { id = "" } = useParams<{ id: string }>()
+  const [workspaceData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
   const [fetchError, setFetchError] = useState("")
+    
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [editProjectBoard, setEditProjectBoard] = useState<ProjectBoard | undefined>(undefined)
+  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
+  
+  const handleCreate = () => {
+      if (projectBoardsTableRef.current) {
+        projectBoardsTableRef.current.fetchData()
+      }
+    }
+  
+  const handleEdit = (projectBoard: ProjectBoard) => {
+      setEditProjectBoard(projectBoard)
+      setIsPopupOpen(true)
+    }
 
   useEffect(() => {
     async function fetchWorkspaceData() {
       setFetchError("")
       try {
         const response = await api.get(`/v1/Workspaces/${id}`)
-        setWorkspaceData(response.data)
+        setProjectBoardData(response.data)
       } catch (error) {
         if (error instanceof AxiosError) {
           if (error.response?.data) {
@@ -53,10 +74,15 @@ export function Workspace() {
             <p>Workspace ID: {id}</p>
           </div>
         ) : (
-          <p>Loading workspace data...</p>
+          <p>Loading project board data...</p>
         )}
         <Button className="w-1/6" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
-        <ProjectBoardsTable />
+        <ProjectBoardsTable ref={projectBoardsTableRef}
+              onEdit={handleEdit}
+              setOpenPopup={setIsPopupOpen}
+              setEditProjectBoard={setEditProjectBoard}
+              workspaceId={id}
+        />
       </div>
     </div>
   )
