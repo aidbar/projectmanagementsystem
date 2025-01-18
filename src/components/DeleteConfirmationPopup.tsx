@@ -14,26 +14,25 @@ type DeleteConfirmationPopupProps = {
 export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ onClose, deleteItem, fetchData, itemName, entity }) => {
   const [deleteError, setDeleteError] = useState("");
 
-  const handleDelete = async () => {
+const handleDelete = async () => {
     setDeleteError("");
     try {
-      await api.delete(`/v1/${entity}/${deleteItem.id}`);
-      fetchData();
+        await api.delete(`/v1/${entity}/${deleteItem.id}`);
+        fetchData();
+        onClose();
     } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.data) {
-          setDeleteError(error.response.data);
+        if (error instanceof AxiosError) {
+            if (error.response?.data) {
+                setDeleteError(error.response.data);
+            } else {
+                setDeleteError("Error deleting item");
+            }
         } else {
-          setDeleteError("Error deleting item");
+            setDeleteError("An error occurred");
         }
-      } else {
-        setDeleteError("An error occurred");
-      }
-      console.error("Error deleting item:", error);
-    } finally {
-      onClose();
+        console.error("Error deleting item:", error);
     }
-  };
+};
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
