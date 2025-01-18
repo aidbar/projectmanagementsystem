@@ -15,7 +15,6 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
-import { WorkspacePopup } from "./WorkspacePopup"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 
 // import { Checkbox } from "./ui/checkbox"

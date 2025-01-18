@@ -5,6 +5,8 @@ import { ProjectBoardsTable, ProjectBoard } from "../components/ProjectBoardsTab
 import { useEffect, useRef, useState } from "react"
 import api from "../api"
 import { AxiosError } from "axios"
+import { ProjectBoardPopup } from "../components/ProjectBoardPopup"
+import { DeleteConfirmationPopup } from "@/components/DeleteConfirmationPopup"
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void; 
@@ -74,9 +76,9 @@ export function Workspace() {
             <p>Workspace ID: {id}</p>
           </div>
         ) : (
-          <p>Loading project board data...</p>
+          <p>Loading workspace data...</p>
         )}
-        <Button className="w-1/6" onClick={() => navigate("/dashboard")}>Back to Dashboard</Button>
+        <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>New project board</Button>
         <ProjectBoardsTable ref={projectBoardsTableRef}
               onEdit={handleEdit}
               setOpenPopup={setIsPopupOpen}
@@ -84,6 +86,26 @@ export function Workspace() {
               workspaceId={id}
         />
       </div>
+      {isPopupOpen && (
+        <ProjectBoardPopup
+          onClose={() => {
+            setEditProjectBoard(undefined)
+            setIsPopupOpen(false)
+          }}
+          onCreate={handleCreate}
+          projectBoard={editProjectBoard}
+          workspaceId={id}
+        />
+      )}
+      {deletePopupOpen && deleteProjectBoard && (
+        <DeleteConfirmationPopup
+          onClose={() => setDeletePopupOpen(false)}
+          deleteItem={deleteProjectBoard}
+          fetchData={() => projectBoardsTableRef.current?.fetchData()}
+          itemName={deleteProjectBoard.name}
+          entity="ProjectBoards"
+        />
+      )}
     </div>
   )
 }

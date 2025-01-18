@@ -10,22 +10,19 @@ import { useLocation } from "react-router-dom"
 interface ProjectBoardPopupProps {
   onClose: () => void
   onCreate: () => void
-  projectBoard?: ProjectBoard /*{
-    id: string
-    name: string
-    description: string
-    isPublic: boolean
-  }*/
+  projectBoard?: ProjectBoard
+  workspaceId: string // Add workspaceId to props
 }
 
-export function ProjectBoardPopup({ onClose, onCreate, projectBoard }: ProjectBoardPopupProps) {
+export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId }: ProjectBoardPopupProps) {
   const [name, setName] = useState(projectBoard?.name || "")
   const [description, setDescription] = useState(projectBoard?.description || "")
   const [isPublic, setIsPublic] = useState(projectBoard?.isPublic || false)
   const [nameError, setNameError] = useState("")
 
   const location = useLocation()
-  const workspaceId = new URLSearchParams(location.search).get("workspaceId")
+  // Remove the following line as workspaceId is now passed as a prop
+  // const workspaceId = new URLSearchParams(location.search).get("workspaceId")
 
   useEffect(() => {
     if (projectBoard) {
@@ -75,12 +72,12 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard }: ProjectBo
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-md shadow-md">
-        <h2 className="text-xl mb-4">{projectBoard ? "Edit projectBoard" : "Create a new projectBoard"}</h2>
+        <h2 className="text-xl mb-4">{projectBoard ? "Edit project board" : "Create a new project board"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             {nameError && <p className="text-red-500 mb-2 italic">{nameError}</p>}
             <Input
-              placeholder="ProjectBoard name"
+              placeholder="Project board name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               onBlur={() => {
