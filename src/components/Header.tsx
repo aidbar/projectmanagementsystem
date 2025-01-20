@@ -16,7 +16,7 @@ export function Header() {
       localStorage.removeItem("accessToken")
       localStorage.removeItem("refreshToken")
       localStorage.removeItem("userInfo")
-      navigate("/")
+      navigate("/logged-out")
     },
     onError: () => {
       console.error("Logout failed")

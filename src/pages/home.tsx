@@ -8,7 +8,6 @@ import api from "../api"
 import { useNavigate } from "react-router-dom"
 
 export function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showLoginPopup, setShowLoginPopup] = useState(false)
   const [loginError, setLoginError] = useState("")
   const [showSignupPopup, setShowSignupPopup] = useState(false)
@@ -23,26 +22,12 @@ export function Home() {
       return response.data
     },
     onSuccess: () => {
-      setIsLoggedIn(true)
       setShowLoginPopup(false)
       setLoginError("")
       navigate("/dashboard")
     },
     onError: (error: AxiosError) => {
       setLoginError(typeof error.response?.data === 'string' ? error.response.data : "Login failed")
-    }
-  })
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.delete("/v1/Authenticate/logout")
-      return response.data
-    },
-    onSuccess: () => {
-      setIsLoggedIn(false)
-    },
-    onError: () => {
-      console.error("Logout failed")
     }
   })
 
@@ -54,7 +39,6 @@ export function Home() {
       return { data: response.data, email, password }
     },
     onSuccess: async ({ data, email, password }) => {
-      setIsLoggedIn(true)
       setShowSignupPopup(false)
       setSignupError("")
       try {
@@ -80,14 +64,10 @@ export function Home() {
         <p className="italic">No account? <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowSignupPopup(true); }}>Sign up.</a></p>
       </div>
       <div className="absolute top-4 right-4">
-      {!isLoggedIn ? (
         <div className="flex gap-2">
           <Button className={buttonVariants({variant: "secondary"})} onClick={() => setShowSignupPopup(true)}>Sign Up</Button>
           <Button onClick={() => setShowLoginPopup(true)}>Login</Button>
         </div>
-      ) : (
-        <Button onClick={() => logoutMutation.mutate()}>Logout</Button>
-      )}
       </div>
       {showLoginPopup && (
       <LoginPopup
