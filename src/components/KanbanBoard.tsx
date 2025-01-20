@@ -1,5 +1,6 @@
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState, useEffect } from "react"
 import { createPortal } from "react-dom"
+import axios from "axios"
 //import styled from "styled-components"
 
 import { BoardColumn, BoardContainer } from "./ui/board-column"
@@ -26,6 +27,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useTasksFindAll } from "../api/task-management"
 import { z } from "zod"
 import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
+import api from "@/api"
 
 const defaultCols = [
   {
@@ -65,6 +67,22 @@ export function KanbanBoard() {
       coordinateGetter: coordinateGetter
     })
   )
+
+  useEffect(() => {
+    async function fetchColumns() {
+      try {
+        const response = await api.get('/Status')
+        const columnsData = response.data.data.map((col: { id: string, name: string }) => ({
+          id: col.name as ColumnId,
+          title: col.name
+        }))
+        setColumns(columnsData)
+      } catch (error) {
+        console.error("Error fetching columns:", error)
+      }
+    }
+    fetchColumns()
+  }, [])
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)

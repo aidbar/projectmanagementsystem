@@ -5,12 +5,14 @@ import { KanbanBoard } from "@/components/KanbanBoard"
 import { useEffect, useState } from "react"
 import api from "../api"
 import { AxiosError } from "axios"
+import { StatusPopup } from "../components/StatusPopup"
 
 export function ProjectBoard() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const [projectBoardData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
   const [fetchError, setFetchError] = useState("")
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
 
   useEffect(() => {
     async function fetchProjectBoardData() {
@@ -54,10 +56,11 @@ export function ProjectBoard() {
         ) : (
           <p>Loading project board data...</p>
         )}
-        <Button className="w-1/6" onClick={() => navigate(-1)}>
+        <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
           New status column
         </Button>
         <KanbanBoard />
+        {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
       </div>
     </div>
   )
