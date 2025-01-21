@@ -1,10 +1,18 @@
 import { z } from "zod"
 
 export const taskSchema = z.object({
-  id: z.number(),
-  completed: z.boolean(),
+  id: z.string().uuid(),
+  description: z.string(),
+  listId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
   title: z.string(),
-  userId: z.number()
+  priorityId: z.string().uuid(),
+  dueDate: z.string().datetime(),
+  statusId: z.string().uuid(),
+  activities: z.array(z.unknown()),
+  status: z.null(),
+  labels: z.null()
 })
 
 export const taskReponseSchema = z.array(taskSchema)

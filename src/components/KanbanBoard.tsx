@@ -31,13 +31,13 @@ import api from "@/api"
 
 const defaultCols = [
   {
-    id: "WIP" as const,
+    id: crypto.randomUUID(),
     title: "WIP"
-  },
+  }/*,
   {
-    id: "done" as const,
-    title: "Done"
-  }
+    id: crypto.randomUUID(),
+    name: "Done"
+  }*/
 ] satisfies Column[]
 
 export type ColumnId = (typeof defaultCols)[number]["id"]
@@ -73,15 +73,41 @@ export function KanbanBoard() {
       try {
         const response = await api.get('/Status')
         const columnsData = response.data.data.map((col: { id: string, name: string }) => ({
-          id: col.name as ColumnId,
+          id: col.id as ColumnId,
           title: col.name
         }))
+        console.log("columnsData", columnsData)
         setColumns(columnsData)
       } catch (error) {
         console.error("Error fetching columns:", error)
       }
     }
     fetchColumns()
+  }, [])
+
+  useEffect(() => {
+    async function fetchTasks() {
+      try {
+        const response = await api.get('/TaskCard')
+        console.log("fetchTasks response.data.data", response.data.data)
+        const tasksData = response.data.data.map((task: any) => ({
+          id: task.id,
+          columnId: task.statusId,
+          title: task.title,
+          description: task.description,
+          priorityId: task.priorityId,
+          listId: task.listId,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+          dueDate: task.dueDate
+        }))
+        setTasks(tasksData)
+        console.log("tasksData", tasksData)
+      } catch (error) {
+        console.error("Error fetching tasks:", error)
+      }
+    }
+    fetchTasks()
   }, [])
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
@@ -110,7 +136,7 @@ export function KanbanBoard() {
           active.id,
           pickedUpTaskColumn.current
         )
-        return `Picked up Task ${active.data.current.task.content} at position: ${
+        return `Picked up Task ${active.data.current.task.title} at position: ${
           taskPosition + 1
         } of ${tasksInColumn.length} in column ${column?.title}`
       }
@@ -129,7 +155,7 @@ export function KanbanBoard() {
           over.data.current.task.columnId
         )
         if (over.data.current.task.columnId !== pickedUpTaskColumn.current) {
-          return `Task ${active.data.current.task.content} was moved over column ${
+          return `Task ${active.data.current.task.title} was moved over column ${
             column?.title
           } in position ${taskPosition + 1} of ${tasksInColumn.length}`
         }
@@ -179,13 +205,37 @@ export function KanbanBoard() {
 
   function handleCreateTask(taskDetails: TaskDetailsState) {
     if (newTaskColumnId) {
-      const newTask: Task = {
-        id: `task-${tasksLegacy.length + 1}`,
-        content: taskDetails.title,
-        columnId: newTaskColumnId,
-        // ...other task details...
+      const taskData = {
+        description: taskDetails.description || "",
+        listId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        title: taskDetails.title,
+        priorityId: taskDetails.priority || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        statusId: newTaskColumnId,
+        dueDate: taskDetails.dueDate
       }
-      setTasks((prevTasks) => [...prevTasks, newTask])
+
+      api.post('/TaskCard', taskData)
+        .then(response => {
+          const task = response.data.data
+          const newTask: Task = {
+            id: task.id,
+            columnId: task.statusId,
+            title: task.title,
+            description: task.description,
+            listId: task.listId,
+            createdAt: task.createdAt,
+            updatedAt: task.updatedAt,
+            dueDate: task.dueDate,
+            priorityId: task.priorityId,
+            activities: task.activities,
+            labels: task.labels,
+            status: task.status
+          }
+          setTasks((prevTasks) => [...prevTasks, newTask])
+        })
+        .catch(error => {
+          console.error("Error creating task:", error)
+        })
     }
   }
 

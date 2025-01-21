@@ -10,10 +10,29 @@ import { ColumnId } from "@/components/KanbanBoard"
 import React, { useState } from "react"
 import { TaskCardPopup } from "../TaskCardPopup"
 
+export interface Status {
+  id: UniqueIdentifier
+  name: string
+}
+
+export interface Label {
+  id: UniqueIdentifier
+  name: string
+}
+
 export interface Task {
   id: UniqueIdentifier
   columnId: ColumnId
-  content: string
+  title: string
+  description: string
+  listId: string
+  createdAt: string
+  updatedAt: string
+  priorityId: string
+  dueDate: string
+  activities: any[]
+  status: Status | null
+  labels: Label[] | null
 }
 
 interface TaskCardProps {
@@ -99,7 +118,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
             </Badge>
           </CardHeader>
           <CardContent className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-            {task.content}
+            {task.title}
           </CardContent>
         </Card>
       </div>

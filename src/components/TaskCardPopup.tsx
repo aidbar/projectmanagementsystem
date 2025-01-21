@@ -20,12 +20,12 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   });
 
   const [taskDetails, setTaskDetails] = useState({
-    title: task.content, //task.title,
-    description: task.content, //task.description,
-    status: task.content, //task.columnId,
-    priority: task.content, //task.priority,
-    dueDate: task.content, //new Date(task.dueDate).toLocaleDateString(),
-    assignedUsers: task.content, //task.assignedUsers.join(", "),
+    title: task.title, //task.title,
+    description: task.description, //task.description,
+    status: task.status || "", //task.columnId,
+    priority: task.priorityId, //task.priority,
+    dueDate: new Date(task.dueDate).toLocaleDateString(),
+    assignedUsers: "", //task.assignedUsers.join(", "),
   });
 
   const [errors, setErrors] = useState({
@@ -73,7 +73,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
       error = 'Description is required and its maximum length is 500.';
     } else if (field === 'priority' && !taskDetails.priority.trim()) {
       error = 'Priority is required and cannot be empty.';
-    } else if (field === 'status' && !taskDetails.status.trim()) {
+    } else if (field === 'status' && !taskDetails.status.toString().trim()) {
       error = 'Status is required and cannot be empty.';
     }
 
@@ -139,7 +139,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
                 <input
                   type="text"
                   name="status"
-                  value={taskDetails.status}
+                  value={taskDetails.status.toString()}
                   onChange={handleChange}
                   onBlur={() => handleSave('status')}
                   className="border border-gray-500 p-3"
@@ -191,10 +191,10 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-4">
-            <strong>Created At: </strong> { task.content /*new Date(task.createdAt).toLocaleString()*/ }
+            <strong>Created At: </strong> { new Date(task.createdAt).toLocaleString() }
           </div>
           <div className="mt-4">
-            <strong>Updated At: </strong> { task.content /*new Date(task.updatedAt).toLocaleString()*/ }
+            <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
           <div className="mt-4">
             <strong>Assigned Users: </strong>

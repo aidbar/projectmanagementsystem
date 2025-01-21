@@ -4,9 +4,9 @@ import { taskReponseSchema } from "../schemas/tasks"
 
 export default {
   findAll: async (): Promise<Task[]> => {
-    const res = await api.get("https://jsonplaceholder.typicode.com/todos")
+    const res = await api.get("/TaskCard")
 
-    const validatedTasks = taskReponseSchema.safeParse(res.data)
+    const validatedTasks = taskReponseSchema.safeParse(res.data.data)
     console.log("validatedTasks:", validatedTasks)
 
     if (!validatedTasks.success) {
@@ -15,8 +15,17 @@ export default {
 
     const mappedTasks = validatedTasks.data.map((task) => ({
       id: task.id,
-      columnId: task.completed ? "done" : "WIP",
-      content: task.title
+      columnId: task.statusId, // Map statusId to columnId
+      title: task.title,
+      description: task.description,
+      listId: task.listId,
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      priorityId: task.priorityId,
+      dueDate: task.dueDate,
+      activities: task.activities,
+      status: task.status,
+      labels: task.labels
     }))
 
     return mappedTasks as Task[]
