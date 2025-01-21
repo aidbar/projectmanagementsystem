@@ -27,10 +27,11 @@ interface BoardColumnProps {
   tasks: Task[]
   isOverlay?: boolean
   onAddTask?: (columnId: UniqueIdentifier) => void
+  columnsData: Column[] //{ id: string, title: string }[] // Add columnsData prop
 }
 
 
-export function BoardColumn({ column, tasks, isOverlay, onAddTask }: BoardColumnProps) {
+export function BoardColumn({ column, tasks, isOverlay, onAddTask, columnsData }: BoardColumnProps) {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id)
   }, [tasks])
@@ -91,7 +92,7 @@ export function BoardColumn({ column, tasks, isOverlay, onAddTask }: BoardColumn
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
             {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
+              <TaskCard key={task.id} task={task} columnsData={columnsData}/>
             ))}
           </SortableContext>
         </CardContent>

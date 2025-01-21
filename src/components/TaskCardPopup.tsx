@@ -2,14 +2,16 @@ import React, { useState } from "react"
 import { Task } from "./ui/task-card"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
+import { Column } from "./ui/board-column"
 
 interface TaskCardPopupProps {
   task: Task
   onClose: () => void
   onDelete: () => void
+  columnsData: Column[] //{ id: string, title: string }[] // Add columnsData prop
 }
 
-export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
+export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCardPopupProps) {
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,
@@ -20,12 +22,12 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   });
 
   const [taskDetails, setTaskDetails] = useState({
-    title: task.title, //task.title,
-    description: task.description, //task.description,
-    status: task.status || "", //task.columnId,
-    priority: task.priorityId, //task.priority,
+    title: task.title,
+    description: task.description,
+    status: task.columnId, //.status || "",
+    priority: task.priorityId,
     dueDate: new Date(task.dueDate).toLocaleDateString(),
-    assignedUsers: "", //task.assignedUsers.join(", "),
+    assignedUsers: "",
   });
 
   const [errors, setErrors] = useState({
@@ -65,7 +67,6 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   };
 
   const handleSave = (field: keyof IsEditingState) => {
-    // Input validation
     let error = "";
     if (field === 'title' && !taskDetails.title.trim()) {
       error = 'Title is required and cannot be empty.';
@@ -83,8 +84,12 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
     }
 
     setErrors((prev) => ({ ...prev, [field]: "" }));
-    // Save changes to the backend or state management
     handleEditToggle(field);
+  };
+
+  const getStatusTitle = (statusId: string) => {
+    const status = columnsData.find(col => col.id === statusId);
+    return status ? status.title : "Unknown Status";
   };
 
   return (
@@ -94,7 +99,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-        {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
+          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
             {isEditing.title ? (
               <>
@@ -114,7 +119,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-2">
-          {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
+            {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
             {isEditing.description ? (
               <>
                 <textarea
@@ -132,7 +137,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-6">
-          {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
+            {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
             <strong>Status: </strong>
             {isEditing.status ? (
               <>
@@ -147,12 +152,12 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
               </>
             ) : (
               <>
-                {taskDetails.status} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')}>Edit</a></span>
+                {getStatusTitle(taskDetails.status.toString())} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')}>Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-4">
-          {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
+            {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
             <strong>Priority: </strong>
             {isEditing.priority ? (
               <>
@@ -195,25 +200,6 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           </div>
           <div className="mt-4">
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
-          </div>
-          <div className="mt-4">
-            <strong>Assigned Users: </strong>
-            {isEditing.assignedUsers ? (
-              <>
-                <input
-                  type="text"
-                  name="assignedUsers"
-                  value={taskDetails.assignedUsers}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('assignedUsers')}
-                  className="border border-gray-500 p-3"
-                />
-              </>
-            ) : (
-              <>
-                {taskDetails.assignedUsers} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('assignedUsers')}>Edit</a></span>
-              </>
-            )}
           </div>
           <div className="mt-4 flex justify-start">
             <Button onClick={onDelete} className={buttonVariants({ variant: "destructive" })}>

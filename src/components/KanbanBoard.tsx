@@ -258,6 +258,7 @@ export function KanbanBoard() {
                 column={col}
                 tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
+                columnsData={columns}
               />
             ))}
           </SortableContext>
@@ -271,9 +272,10 @@ export function KanbanBoard() {
                   isOverlay
                   column={activeColumn}
                   tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
+                  columnsData={columns}
                 />
               )}
-              {activeTask && <TaskCard task={activeTask} isOverlay />}
+              {activeTask && <TaskCard task={activeTask} isOverlay columnsData={columns} />}
             </DragOverlay>,
             document.body
           )}
