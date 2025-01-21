@@ -3,6 +3,7 @@ import { Task } from "./ui/task-card"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
 import { Column } from "./ui/board-column"
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
 
 interface TaskCardPopupProps {
   task: Task
@@ -24,7 +25,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCard
   const [taskDetails, setTaskDetails] = useState({
     title: task.title,
     description: task.description,
-    status: task.columnId, //.status || "",
+    status: task.columnId as `${string}-${string}-${string}-${string}-${string}`, //.status || "",
     priority: task.priorityId,
     dueDate: new Date(task.dueDate).toLocaleDateString(),
     assignedUsers: "",
@@ -141,14 +142,21 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCard
             <strong>Status: </strong>
             {isEditing.status ? (
               <>
-                <input
-                  type="text"
-                  name="status"
-                  value={taskDetails.status.toString()}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('status')}
-                  className="border border-gray-500 p-3"
-                />
+                <Select
+                  value={taskDetails.status}
+                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}
+                >
+                  <SelectTrigger className="border border-gray-500 p-3">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {columnsData.map((column) => (
+                      <SelectItem key={column.id} value={column.id.toString()}>
+                        {column.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </>
             ) : (
               <>
