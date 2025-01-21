@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import axios from "axios"
 import { Task } from "./ui/task-card"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
@@ -9,6 +10,7 @@ import { Calendar } from "./ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import api from "@/api"
 
 interface TaskCardPopupProps {
   task: Task
@@ -46,7 +48,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
     assignedUsers: "",
   });
 
-  const [date, setDate] = useState<Date | undefined>(new Date(task.dueDate));
+  const [date, setDate] = useState<Date>(new Date(task.dueDate));
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
 
   useEffect(() => {
@@ -60,9 +62,19 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
     setIsSaveEnabled(hasChanges);
   }, [taskDetails, task, date]);
 
-  const handleSaveChanges = () => {
-    // Implement save logic here
-    console.log("Changes saved:", taskDetails);
+  const handleSaveChanges = async () => {
+    try {
+      const response = await api.put(`/TaskCard/${task.id}`, {
+        description: taskDetails.description,
+        title: taskDetails.title,
+        priorityId: taskDetails.priority,
+        dueDate: date.toISOString(),
+        statusId: taskDetails.status
+      });
+      console.log("Changes saved:", response.data);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+    }
   };
 
   interface IsEditingState {
@@ -242,7 +254,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
                     mode="single"
                     selected={date}
                     onSelect={(selectedDate) => {
-                      setDate(selectedDate);
+                      if (selectedDate) setDate(selectedDate);
                       setTaskDetails((prev) => ({ ...prev, dueDate: selectedDate ? selectedDate.toLocaleDateString() : "" }));
                     }}
                   />
