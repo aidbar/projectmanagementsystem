@@ -42,6 +42,11 @@ const defaultCols = [
 
 export type ColumnId = (typeof defaultCols)[number]["id"]
 
+export interface Priority {
+  id: string
+  name: string
+}
+
 export function KanbanBoard() {
   console.log("KanbanBoard")
   const { tasks } = useTasksFindAll()
@@ -59,6 +64,8 @@ export function KanbanBoard() {
 
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
   const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
+
+  const [priorities, setPriorities] = useState<Priority[]>([])
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -108,6 +115,23 @@ export function KanbanBoard() {
       }
     }
     fetchTasks()
+  }, [])
+
+  useEffect(() => {
+    async function fetchPriorities() {
+      try {
+        const response = await api.get('/Priority')
+        const prioritiesData = response.data.data.map((priority: { id: string, name: string }) => ({
+          id: priority.id,
+          name: priority.name
+        }))
+        setPriorities(prioritiesData)
+        console.log("prioritiesData", prioritiesData)
+      } catch (error) {
+        console.error("Error fetching priorities:", error)
+      }
+    }
+    fetchPriorities()
   }, [])
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
@@ -259,6 +283,7 @@ export function KanbanBoard() {
                 tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
                 columnsData={columns}
+                priorities={priorities}
               />
             ))}
           </SortableContext>
@@ -273,9 +298,10 @@ export function KanbanBoard() {
                   column={activeColumn}
                   tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
                   columnsData={columns}
+                  priorities={priorities}
                 />
               )}
-              {activeTask && <TaskCard task={activeTask} isOverlay columnsData={columns} />}
+              {activeTask && <TaskCard task={activeTask} isOverlay columnsData={columns} priorities={priorities} />}
             </DragOverlay>,
             document.body
           )}
@@ -285,6 +311,7 @@ export function KanbanBoard() {
         <CreateTaskPopup
           onClose={() => setShowCreateTaskPopup(false)}
           onCreate={handleCreateTask}
+          //priorities={priorities}
         />
       )}
     </>

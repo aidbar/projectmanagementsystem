@@ -39,7 +39,8 @@ export interface Task {
 interface TaskCardProps {
   task: Task
   isOverlay?: boolean
-  columnsData: Column[] //{ id: string, title: string }[] // Add columnsData prop
+  columnsData: Column[]
+  priorities: { id: string, name: string }[] // Add priorities prop
 }
 
 export type TaskType = "Task"
@@ -49,7 +50,7 @@ export interface TaskDragData {
   task: Task
 }
 
-export function TaskCard({ task, isOverlay, columnsData }: TaskCardProps) {
+export function TaskCard({ task, isOverlay, columnsData, priorities }: TaskCardProps) {
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: {
@@ -124,7 +125,7 @@ export function TaskCard({ task, isOverlay, columnsData }: TaskCardProps) {
           </CardContent>
         </Card>
       </div>
-      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => { /* handle delete */ }} columnsData={columnsData} />}
+      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => { /* handle delete */ }} columnsData={columnsData} priorities={priorities} />}
     </>
   )
 }

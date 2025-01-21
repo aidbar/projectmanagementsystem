@@ -10,9 +10,10 @@ interface TaskCardPopupProps {
   onClose: () => void
   onDelete: () => void
   columnsData: Column[] //{ id: string, title: string }[] // Add columnsData prop
+  priorities: { id: string, name: string }[] // Add priorities prop
 }
 
-export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCardPopupProps) {
+export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities }: TaskCardPopupProps) {
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,
@@ -93,6 +94,11 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCard
     return status ? status.title : "Unknown Status";
   };
 
+  const getPriorityName = (priorityId: string) => {
+    const priority = priorities.find(p => p.id === priorityId);
+    return priority ? priority.name : "Unknown Priority";
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded shadow-md w-96 relative">
@@ -169,18 +175,25 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData }: TaskCard
             <strong>Priority: </strong>
             {isEditing.priority ? (
               <>
-                <input
-                  type="text"
-                  name="priority"
+                <Select
                   value={taskDetails.priority}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('priority')}
-                  className="border border-gray-500 p-3"
-                />
+                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}
+                >
+                  <SelectTrigger className="border border-gray-500 p-3">
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priorities.map((priority) => (
+                      <SelectItem key={priority.id} value={priority.id}>
+                        {priority.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </>
             ) : (
               <>
-                {taskDetails.priority} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')}>Edit</a></span>
+                {getPriorityName(taskDetails.priority)} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')}>Edit</a></span>
               </>
             )}
           </div>
