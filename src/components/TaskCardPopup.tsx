@@ -4,6 +4,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
 import { Column } from "./ui/board-column"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
+import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
+import { Calendar } from "./ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 interface TaskCardPopupProps {
   task: Task
@@ -40,6 +45,8 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
     dueDate: "",
     assignedUsers: "",
   });
+
+  const [date, setDate] = useState<Date | undefined>(new Date(task.dueDate));
 
   interface IsEditingState {
     title: boolean;
@@ -200,16 +207,27 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
           <div className="mt-4">
             <strong>Due Date: </strong>
             {isEditing.dueDate ? (
-              <>
-                <input
-                  type="text"
-                  name="dueDate"
-                  value={taskDetails.dueDate}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('dueDate')}
-                  className="border border-gray-500 p-3"
-                />
-              </>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                  />
+                </PopoverContent>
+              </Popover>
             ) : (
               <>
                 {taskDetails.dueDate} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('dueDate')}>Edit</a></span>

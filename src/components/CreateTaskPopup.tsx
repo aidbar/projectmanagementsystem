@@ -1,5 +1,10 @@
 import React, { useState } from "react"
 import { Button, buttonVariants } from "./ui/button"
+import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
+import { Calendar } from "./ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 interface CreateTaskPopupProps {
   onClose: () => void
@@ -35,6 +40,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
   })
 
   const [isFormValid, setIsFormValid] = useState(false)
+  const [date, setDate] = useState<Date | undefined>(undefined)
 
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target
@@ -67,7 +73,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
   }
 
   const handleSave = () => {
-    onCreate(taskDetails)
+    onCreate({ ...taskDetails, dueDate: date ? format(date, "yyyy-MM-dd") : "" })
     onClose()
   }
 
@@ -129,15 +135,27 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
           </div>
           <div className="mt-4">
             <strong>Due Date: </strong>
-            <input
-              type="text"
-              name="dueDate"
-              value={taskDetails.dueDate}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Due Date"
-              className="border border-gray-500 p-3 w-full"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="mt-4">
             <strong>Assigned Users: </strong>
