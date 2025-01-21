@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Task } from "./ui/task-card"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
@@ -47,6 +47,23 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
   });
 
   const [date, setDate] = useState<Date | undefined>(new Date(task.dueDate));
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false);
+
+  useEffect(() => {
+    const hasChanges = 
+      taskDetails.title !== task.title ||
+      taskDetails.description !== task.description ||
+      taskDetails.status !== task.columnId ||
+      taskDetails.priority !== task.priorityId ||
+      taskDetails.dueDate !== new Date(task.dueDate).toLocaleDateString() ||
+      (date ? date.toLocaleDateString() !== new Date(task.dueDate).toLocaleDateString() : false);
+    setIsSaveEnabled(hasChanges);
+  }, [taskDetails, task, date]);
+
+  const handleSaveChanges = () => {
+    // Implement save logic here
+    console.log("Changes saved:", taskDetails);
+  };
 
   interface IsEditingState {
     title: boolean;
@@ -224,7 +241,10 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
                   <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={(selectedDate) => {
+                      setDate(selectedDate);
+                      setTaskDetails((prev) => ({ ...prev, dueDate: selectedDate ? selectedDate.toLocaleDateString() : "" }));
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -240,11 +260,14 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
           <div className="mt-4">
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
-          <div className="mt-4 flex justify-start">
+            <div className="mt-4 flex justify-between">
             <Button onClick={onDelete} className={buttonVariants({ variant: "destructive" })}>
               Delete Task
             </Button>
-          </div>
+            <Button onClick={handleSaveChanges} disabled={!isSaveEnabled} className={buttonVariants({ variant: "secondary" })}>
+              Save changes
+            </Button>
+            </div>
         </div>
       </div>
     </div>
