@@ -23,9 +23,9 @@ export default {
       updatedAt: task.updatedAt,
       priorityId: task.priorityId,
       dueDate: task.dueDate,
-      activities: task.activities,
+      /*activities: task.activities,
       status: task.status,
-      labels: task.labels
+      labels: task.labels*/
     }))
 
     return mappedTasks as Task[]

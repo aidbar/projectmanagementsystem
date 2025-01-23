@@ -29,6 +29,7 @@ import { z } from "zod"
 import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
 import api from "@/api"
 import { usePriorities } from "../context/PrioritiesContext"
+import { useTasks } from "../context/TasksContext"
 
 const defaultCols = [
   {
@@ -48,21 +49,33 @@ export interface Priority {
   name: string
 }
 
+const exampleTasks: Task[] = [
+  {
+    id: '1',
+    columnId: '00000000-0000-0000-0000-000000000001',
+    title: 'Example Task 1',
+    description: 'This is an example task',
+    priorityId: '1',
+    listId: 'list-1',
+    createdAt: '2023-01-01T00:00:00Z',
+    updatedAt: '2023-01-01T00:00:00Z',
+    dueDate: '2023-01-10T00:00:00Z',
+  },
+  // Add more example tasksLegacy as needed
+];
+
 export function KanbanBoard() {
   console.log("KanbanBoard")
-  const { tasks } = useTasksFindAll()
-  console.log("data:", tasks)
+  //const { tasksLegacy } = useTasksFindAll()
+  //console.log("data:", tasksLegacy)
 
   const { columns, setColumns } = useColumns() //useState<Column[]>(defaultCols)
   const pickedUpTaskColumn = useRef<ColumnId | null>(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
 
-  const [tasksLegacy, setTasks] = useState<Task[]>(tasks) //initialTasks
-
+  const { tasks, setTasks } = useTasks() // Use global state for tasks
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
-
   const [activeTask, setActiveTask] = useState<Task | null>(null)
-
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
   const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
 
@@ -99,7 +112,7 @@ export function KanbanBoard() {
       }
     }
     fetchTasks()
-  }, [])
+  }, [setTasks])
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)
@@ -218,9 +231,9 @@ export function KanbanBoard() {
             updatedAt: task.updatedAt,
             dueDate: task.dueDate,
             priorityId: task.priorityId,
-            activities: task.activities,
+            /*activities: task.activities,
             labels: task.labels,
-            status: task.status
+            status: task.status*/
           }
           setTasks((prevTasks) => [...prevTasks, newTask])
         })
@@ -247,7 +260,7 @@ export function KanbanBoard() {
               <BoardColumn
                 key={col.id}
                 column={col}
-                tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
+                //tasks={tasks.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
               />
             ))}
@@ -261,7 +274,7 @@ export function KanbanBoard() {
                 <BoardColumn
                   isOverlay
                   column={activeColumn}
-                  tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
+                  //tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
                 />
               )}
               {activeTask && <TaskCard task={activeTask} isOverlay />}

@@ -32,9 +32,9 @@ export interface Task {
   updatedAt: string
   priorityId: string
   dueDate: string
-  activities: any[]
+  /*activities: any[]
   status: Status | null
-  labels: Label[] | null
+  labels: Label[] | null*/
 }
 
 interface TaskCardProps {

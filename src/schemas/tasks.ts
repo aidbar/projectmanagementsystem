@@ -10,9 +10,9 @@ export const taskSchema = z.object({
   priorityId: z.string().uuid(),
   dueDate: z.string().datetime(),
   statusId: z.string().uuid(),
-  activities: z.array(z.unknown()),
+  /*activities: z.array(z.unknown()),
   status: z.null(),
-  labels: z.null()
+  labels: z.null()*/
 })
 
 export const taskReponseSchema = z.array(taskSchema)

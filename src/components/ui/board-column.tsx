@@ -11,6 +11,7 @@ import { ScrollArea, ScrollBar } from "./scroll-area"
 import { ColumnId } from "../KanbanBoard"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "../../context/PrioritiesContext"
+import { useTasks } from "../../context/TasksContext"
 
 export interface Column {
   id: UniqueIdentifier
@@ -26,18 +27,22 @@ export interface ColumnDragData {
 
 interface BoardColumnProps {
   column: Column
-  tasks: Task[]
   isOverlay?: boolean
   onAddTask?: (columnId: UniqueIdentifier) => void
 }
 
-export function BoardColumn({ column, tasks, isOverlay, onAddTask }: BoardColumnProps) {
+export function BoardColumn({ column, isOverlay, onAddTask }: BoardColumnProps) {
   const { columns } = useColumns()
   const { priorities } = usePriorities()
+  const { tasks } = useTasks() // Use global state for tasks
+
+  const tasksInColumn = useMemo(() => {
+    return tasks.filter((task) => task.columnId === column.id)
+  }, [tasks, column.id])
 
   const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id)
-  }, [tasks])
+    return tasksInColumn.map((task) => task.id)
+  }, [tasksInColumn])
 
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: column.id,
@@ -94,7 +99,7 @@ export function BoardColumn({ column, tasks, isOverlay, onAddTask }: BoardColumn
       <ScrollArea>
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
-            {tasks.map((task) => (
+            {tasksInColumn.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}
           </SortableContext>

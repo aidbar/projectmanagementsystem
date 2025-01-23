@@ -8,6 +8,8 @@ import { AxiosError } from "axios"
 import { StatusPopup } from "../components/StatusPopup"
 import { ColumnsProvider } from "@/context/ColumnsContext"
 import { PrioritiesProvider } from "@/context/PrioritiesContext"
+import Tasks from "@/api/tasks"
+import { TasksProvider } from "@/context/TasksContext"
 
 export function ProjectBoard() {
   const navigate = useNavigate()
@@ -63,7 +65,9 @@ export function ProjectBoard() {
         </Button>
         <ColumnsProvider>
           <PrioritiesProvider>
-            <KanbanBoard />
+            <TasksProvider>
+              <KanbanBoard />
+            </TasksProvider>
           </PrioritiesProvider>
         </ColumnsProvider>
         {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
