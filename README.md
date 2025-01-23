@@ -11,7 +11,7 @@
     <a href="https://github.com/aidbar/fs19_frontend"><strong>Explore the repository »</strong></a>
     <br />
     <br />
-    <a href="deployment.com">View Demo</a>
+    <a href="https://integrifyfrontendproject-3gjsl1qfw.vercel.app/">View Demo</a>
     &middot;
     <a href="mailto:aide.barniskyte@integrify.io">Report Bug</a>
     &middot;
