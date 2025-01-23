@@ -101,7 +101,7 @@ export function Workspace() {
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
           deleteItem={deleteProjectBoard}
-          fetchData={() => projectBoardsTableRef.current?.fetchData()}
+          updateState={() => projectBoardsTableRef.current?.fetchData()}
           itemName={deleteProjectBoard.name}
           entity="ProjectBoards"
         />

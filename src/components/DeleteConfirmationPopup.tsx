@@ -6,19 +6,19 @@ import { AxiosError } from "axios";
 type DeleteConfirmationPopupProps = {
   onClose: () => void;
   deleteItem: { id: string };
-  fetchData: () => void;
+  updateState: () => void;
   itemName: string;
   entity: string;
 };
 
-export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ onClose, deleteItem, fetchData, itemName, entity }) => {
+export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ onClose, deleteItem, updateState, itemName, entity }) => {
   const [deleteError, setDeleteError] = useState("");
 
 const handleDelete = async () => {
     setDeleteError("");
     try {
         await api.delete(`/v1/${entity}/${deleteItem.id}`);
-        fetchData();
+        updateState();
         onClose();
     } catch (error) {
         if (error instanceof AxiosError) {

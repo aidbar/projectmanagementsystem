@@ -14,6 +14,7 @@ import api from "@/api"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
+import { useTasks } from "../context/TasksContext"
 
 interface TaskCardPopupProps {
   task: Task
@@ -24,6 +25,7 @@ interface TaskCardPopupProps {
 export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   const { columns } = useColumns()
   const { priorities } = usePriorities()
+  const { tasks, setTasks } = useTasks() // Use global state for tasks
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,
@@ -76,6 +78,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
         statusId: taskDetails.status
       });
       console.log("Changes saved:", response.data);
+      setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString() } : t))
     } catch (error) {
       console.error("Error saving changes:", error);
     }
@@ -94,6 +97,10 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
       console.error("Error fetching data:", error);
     }
   };
+
+  const updateState = async () => {
+    setTasks((prevTasks) => prevTasks.filter(t => t.id !== task.id))
+  }
 
   interface IsEditingState {
     title: boolean;
@@ -305,7 +312,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           </div>
         </div>
       </div>
-      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} fetchData={fetchData} itemName={task.title} entity="TaskCard" />}
+      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" />}
     </div>
   )
 }

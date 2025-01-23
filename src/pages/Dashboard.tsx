@@ -73,7 +73,7 @@ export function Dashboard() {
           <DeleteConfirmationPopup
             onClose={() => setDeletePopupOpen(false)}
             deleteItem={deleteWorkspace}
-            fetchData={() => workspacesTableRef.current?.fetchData()}
+            updateState={() => workspacesTableRef.current?.fetchData()}
             itemName={deleteWorkspace.name}
             entity="Workspaces"
           />

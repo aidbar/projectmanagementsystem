@@ -334,7 +334,7 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
           deleteItem={deleteProjectBoard}
-          fetchData={fetchData}
+          updateState={fetchData}
           itemName={deleteProjectBoard.name}
           entity="ProjectBoards"
         />

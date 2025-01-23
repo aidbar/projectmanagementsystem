@@ -371,7 +371,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
           deleteItem={deleteWorkspace}
-          fetchData={fetchData}
+          updateState={fetchData}
           itemName={deleteWorkspace.name}
           entity="Workspaces"
         />
