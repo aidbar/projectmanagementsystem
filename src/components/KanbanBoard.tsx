@@ -101,23 +101,6 @@ export function KanbanBoard() {
     fetchTasks()
   }, [])
 
-  useEffect(() => {
-    async function fetchPriorities() {
-      try {
-        const response = await api.get('/Priority')
-        const prioritiesData = response.data.data.map((priority: { id: string, name: string }) => ({
-          id: priority.id,
-          name: priority.name
-        }))
-        setPriorities(prioritiesData)
-        console.log("prioritiesData", prioritiesData)
-      } catch (error) {
-        console.error("Error fetching priorities:", error)
-      }
-    }
-    fetchPriorities()
-  }, [setPriorities])
-
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)
     const taskPosition = tasksInColumn.findIndex((task) => task.id === taskId)
