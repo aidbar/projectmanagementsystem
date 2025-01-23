@@ -11,6 +11,7 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import api from "@/api"
+import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 
 interface TaskCardPopupProps {
   task: Task
@@ -50,6 +51,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
 
   const [date, setDate] = useState<Date>(new Date(task.dueDate));
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false)
 
   useEffect(() => {
     const hasChanges = 
@@ -64,7 +66,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
 
   const handleSaveChanges = async () => {
     try {
-      const response = await api.put(`/TaskCard/${task.id}`, {
+      const response = await api.put(`/v1/TaskCard/${task.id}`, {
         description: taskDetails.description,
         title: taskDetails.title,
         priorityId: taskDetails.priority,
@@ -74,6 +76,20 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
       console.log("Changes saved:", response.data);
     } catch (error) {
       console.error("Error saving changes:", error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await api.get('/v1/TaskCard/');
+      // Assuming the response contains the updated columns data
+      const updatedColumnsData = response.data.data;
+      // Update the columnsData state or prop here
+      // setColumnsData(updatedColumnsData); // Uncomment and use this if columnsData is a state
+      columnsData = updatedColumnsData; // Use this if columnsData is a prop
+      console.log("Data fetched successfully:", updatedColumnsData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -134,6 +150,14 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
     const priority = priorities.find(p => p.id === priorityId);
     return priority ? priority.name : "Unknown Priority";
   };
+
+  const handleDelete = () => {
+    setIsDeletePopupOpen(true)
+  }
+
+  const handleCloseDeletePopup = () => {
+    setIsDeletePopupOpen(false)
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -273,7 +297,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
             <div className="mt-4 flex justify-between">
-            <Button onClick={onDelete} className={buttonVariants({ variant: "destructive" })}>
+            <Button onClick={handleDelete} className={buttonVariants({ variant: "destructive" })}>
               Delete Task
             </Button>
             <Button onClick={handleSaveChanges} disabled={!isSaveEnabled} className={buttonVariants({ variant: "secondary" })}>
@@ -282,6 +306,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
             </div>
         </div>
       </div>
+      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} fetchData={fetchData} itemName={task.title} entity="TaskCard" />}
     </div>
   )
 }

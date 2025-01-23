@@ -125,7 +125,7 @@ export function TaskCard({ task, isOverlay, columnsData, priorities }: TaskCardP
           </CardContent>
         </Card>
       </div>
-      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => { /* handle delete */ }} columnsData={columnsData} priorities={priorities} />}
+      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} columnsData={columnsData} priorities={priorities} />}
     </>
   )
 }

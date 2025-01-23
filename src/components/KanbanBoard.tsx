@@ -95,7 +95,7 @@ export function KanbanBoard() {
   useEffect(() => {
     async function fetchTasks() {
       try {
-        const response = await api.get('/TaskCard')
+        const response = await api.get('/v1/TaskCard')
         console.log("fetchTasks response.data.data", response.data.data)
         const tasksData = response.data.data.map((task: any) => ({
           id: task.id,
@@ -238,7 +238,7 @@ export function KanbanBoard() {
         dueDate: taskDetails.dueDate ? new Date(taskDetails.dueDate).toISOString() : null // Convert to UTC for Postgres
       }
 
-      api.post('/TaskCard', taskData)
+      api.post('/v1/TaskCard', taskData)
         .then(response => {
           const task = response.data.data
           const newTask: Task = {
