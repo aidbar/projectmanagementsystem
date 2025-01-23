@@ -1,0 +1,69 @@
+.
+├── README.md
+├── components.json
+├── directory_structure.txt
+├── index.html
+├── package.json
+├── postcss.config.js
+├── public
+│   └── vite.svg
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── api
+│   │   ├── index.ts
+│   │   ├── task-management.ts
+│   │   └── tasks.ts
+│   ├── components
+│   │   ├── CreateTaskPopup.tsx
+│   │   ├── DeleteConfirmationPopup.tsx
+│   │   ├── Header.tsx
+│   │   ├── KanbanBoard.tsx
+│   │   ├── LoginPopup.tsx
+│   │   ├── ProjectBoardPopup.tsx
+│   │   ├── ProjectBoardsTable.tsx
+│   │   ├── SignupPopup.tsx
+│   │   ├── StatusPopup.tsx
+│   │   ├── TaskCardPopup.tsx
+│   │   ├── WorkspacePopup.tsx
+│   │   ├── WorkspacesTable.tsx
+│   │   └── ui
+│   │       ├── badge.tsx
+│   │       ├── board-column.tsx
+│   │       ├── button.tsx
+│   │       ├── calendar.tsx
+│   │       ├── card.tsx
+│   │       ├── checkbox.tsx
+│   │       ├── dropdown-menu.tsx
+│   │       ├── dropdown.tsx
+│   │       ├── input.tsx
+│   │       ├── navmenu.tsx
+│   │       ├── popover.tsx
+│   │       ├── scroll-area.tsx
+│   │       ├── table.tsx
+│   │       └── task-card.tsx
+│   ├── context
+│   │   ├── ColumnsContext.tsx
+│   │   ├── PrioritiesContext.tsx
+│   │   └── TasksContext.tsx
+│   ├── index.css
+│   ├── lib
+│   │   ├── dnd.ts
+│   │   └── utils.ts
+│   ├── main.tsx
+│   ├── pages
+│   │   ├── Dashboard.tsx
+│   │   ├── LoggedOut.tsx
+│   │   ├── ProjectBoard.tsx
+│   │   ├── Workspace.tsx
+│   │   └── home.tsx
+│   ├── schemas
+│   │   └── tasks.ts
+│   ├── types
+│   │   └── index.ts
+│   └── vite-env.d.ts
+├── tailwind.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── yarn.lock
