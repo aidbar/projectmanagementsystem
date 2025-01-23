@@ -235,7 +235,7 @@ export function KanbanBoard() {
         title: taskDetails.title,
         priorityId: taskDetails.priority || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         statusId: newTaskColumnId,
-        dueDate: taskDetails.dueDate
+        dueDate: taskDetails.dueDate ? new Date(taskDetails.dueDate).toISOString() : null // Convert to UTC for Postgres
       }
 
       api.post('/TaskCard', taskData)
@@ -311,7 +311,9 @@ export function KanbanBoard() {
         <CreateTaskPopup
           onClose={() => setShowCreateTaskPopup(false)}
           onCreate={handleCreateTask}
-          //priorities={priorities}
+          columnsData={columns}
+          defaultStatus={newTaskColumnId || ""}
+          priorities={priorities}
         />
       )}
     </>

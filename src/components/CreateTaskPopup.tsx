@@ -1,14 +1,19 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Button, buttonVariants } from "./ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
+import { Column } from "./ui/board-column"
 
 interface CreateTaskPopupProps {
   onClose: () => void
   onCreate: (taskDetails: TaskDetailsState) => void
+  columnsData: Column[] // Add columnsData prop
+  defaultStatus: string // Add defaultStatus prop
+  priorities: { id: string, name: string }[] // Add priorities prop
 }
 
 export interface TaskDetailsState {
@@ -20,11 +25,11 @@ export interface TaskDetailsState {
   assignedUsers: string
 }
 
-export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
+export function CreateTaskPopup({ onClose, onCreate, columnsData, defaultStatus, priorities }: CreateTaskPopupProps) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsState>({
     title: "",
     description: "",
-    status: "",
+    status: defaultStatus, // Set default status
     priority: "",
     dueDate: "",
     assignedUsers: "",
@@ -41,6 +46,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
 
   const [isFormValid, setIsFormValid] = useState(false)
   const [date, setDate] = useState<Date | undefined>(undefined)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target
@@ -59,6 +65,8 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
       error = "Priority is required and cannot be empty."
     } else if (name === "status" && !value.trim()) {
       error = "Status is required and cannot be empty."
+    } else if (name === "dueDate" && !date) { // Add due date validation
+      error = "Due date is required."
     }
 
     setErrors((prev) => ({ ...prev, [name]: error }))
@@ -68,13 +76,36 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
       taskDetails.description.length <= 500 &&
       !!taskDetails.priority.trim() &&
       !!taskDetails.status.trim() &&
+      !!date && // Add due date validation
       !error
     )
   }
 
+  useEffect(() => {
+    setIsFormValid(
+      !!taskDetails.title.trim() &&
+      !!taskDetails.description.trim() &&
+      taskDetails.description.length <= 500 &&
+      !!taskDetails.priority.trim() &&
+      !!taskDetails.status.trim() &&
+      !!date && // Add due date validation
+      !errors.title &&
+      !errors.description &&
+      !errors.priority &&
+      !errors.status
+    )
+  }, [taskDetails, errors, date]) // Add date to dependency array
+
   const handleSave = () => {
     onCreate({ ...taskDetails, dueDate: date ? format(date, "yyyy-MM-dd") : "" })
     onClose()
+  }
+
+  const handleOpenDatePickerChange = (open: boolean) => {
+    setIsDatePickerOpen(open)
+    if (!open && !date) {
+      setErrors((prev) => ({ ...prev, dueDate: "Due date is required." }))
+    }
   }
 
   return (
@@ -110,32 +141,46 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
           <div className="mt-6">
             {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
             <strong>Status: </strong>
-            <input
-              type="text"
-              name="status"
+            <Select
               value={taskDetails.status}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Status"
-              className="border border-gray-500 p-3 w-full"
-            />
+              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value }))}
+            >
+              <SelectTrigger className="border border-gray-500 p-3 w-full">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                {columnsData.map((column) => (
+                  <SelectItem key={column.id} value={column.id.toString()}>
+                    {column.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="mt-4">
             {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
             <strong>Priority: </strong>
-            <input
-              type="text"
-              name="priority"
+            <Select
               value={taskDetails.priority}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Priority"
-              className="border border-gray-500 p-3 w-full"
-            />
+              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}
+              onOpenChange={(isDatePickerOpen) => !isDatePickerOpen && handleBlur({ target: { name: "priority", value: taskDetails.priority } })} // Change onBlur to onOpenChange
+            >
+              <SelectTrigger className="border border-gray-500 p-3 w-full">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                {priorities.map((priority) => (
+                  <SelectItem key={priority.id} value={priority.id}>
+                    {priority.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="mt-4">
             <strong>Due Date: </strong>
-            <Popover>
+            <Popover open={isDatePickerOpen} onOpenChange={handleOpenDatePickerChange}>
+            {errors.dueDate && <p className="text-red-500 italic">{errors.dueDate}</p>}
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
@@ -144,7 +189,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
                     !date && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon />
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
@@ -152,12 +197,15 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(newDate) => {
+                    setDate(newDate)
+                    setErrors((prev) => ({ ...prev, dueDate: "" }))
+                  }}
                 />
               </PopoverContent>
             </Popover>
           </div>
-          <div className="mt-4">
+          {/*<div className="mt-4">
             <strong>Assigned Users: </strong>
             <input
               type="text"
@@ -168,7 +216,7 @@ export function CreateTaskPopup({ onClose, onCreate }: CreateTaskPopupProps) {
               placeholder="Assigned Users"
               className="border border-gray-500 p-3 w-full"
             />
-          </div>
+          </div>*/}
           <div className="mt-4 flex justify-start">
             <Button
               onClick={handleSave}
