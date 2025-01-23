@@ -12,16 +12,17 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import api from "@/api"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
+import { useColumns } from "@/context/ColumnsContext"
 
 interface TaskCardPopupProps {
   task: Task
   onClose: () => void
   onDelete: () => void
-  columnsData: Column[] //{ id: string, title: string }[] // Add columnsData prop
-  priorities: { id: string, name: string }[] // Add priorities prop
+  priorities: { id: string, name: string }[]
 }
 
-export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities }: TaskCardPopupProps) {
+export function TaskCardPopup({ task, onClose, onDelete, priorities }: TaskCardPopupProps) {
+  const { columns } = useColumns()
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,
@@ -86,7 +87,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
       const updatedColumnsData = response.data.data;
       // Update the columnsData state or prop here
       // setColumnsData(updatedColumnsData); // Uncomment and use this if columnsData is a state
-      columnsData = updatedColumnsData; // Use this if columnsData is a prop
+      //columnsData = updatedColumnsData; // Use this if columnsData is a prop
       console.log("Data fetched successfully:", updatedColumnsData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -142,7 +143,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
   };
 
   const getStatusTitle = (statusId: string) => {
-    const status = columnsData.find(col => col.id === statusId);
+    const status = columns.find(col => col.id === statusId);
     return status ? status.title : "Unknown Status";
   };
 
@@ -210,13 +211,12 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
               <>
                 <Select
                   value={taskDetails.status}
-                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}
-                >
+                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}>
                   <SelectTrigger className="border border-gray-500 p-3">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {columnsData.map((column) => (
+                    {columns.map((column) => (
                       <SelectItem key={column.id} value={column.id.toString()}>
                         {column.title}
                       </SelectItem>
@@ -237,8 +237,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
               <>
                 <Select
                   value={taskDetails.priority}
-                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}
-                >
+                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}>
                   <SelectTrigger className="border border-gray-500 p-3">
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
@@ -267,8 +266,7 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
                     className={cn(
                       "w-[240px] justify-start text-left font-normal",
                       !date && "text-muted-foreground"
-                    )}
-                  >
+                    )}>
                     <CalendarIcon />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
@@ -278,8 +276,8 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
                     mode="single"
                     selected={date}
                     onSelect={(selectedDate) => {
-                      if (selectedDate) setDate(selectedDate);
-                      setTaskDetails((prev) => ({ ...prev, dueDate: selectedDate ? selectedDate.toLocaleDateString() : "" }));
+                      if (selectedDate) setDate(selectedDate)
+                      setTaskDetails((prev) => ({ ...prev, dueDate: selectedDate ? selectedDate.toLocaleDateString() : "" }))
                     }}
                   />
                 </PopoverContent>
@@ -296,14 +294,14 @@ export function TaskCardPopup({ task, onClose, onDelete, columnsData, priorities
           <div className="mt-4">
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
-            <div className="mt-4 flex justify-between">
+          <div className="mt-4 flex justify-between">
             <Button onClick={handleDelete} className={buttonVariants({ variant: "destructive" })}>
               Delete Task
             </Button>
             <Button onClick={handleSaveChanges} disabled={!isSaveEnabled} className={buttonVariants({ variant: "secondary" })}>
               Save changes
             </Button>
-            </div>
+          </div>
         </div>
       </div>
       {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} fetchData={fetchData} itemName={task.title} entity="TaskCard" />}

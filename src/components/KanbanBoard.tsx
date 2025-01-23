@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import axios from "axios"
 //import styled from "styled-components"
-
+import {useColumns} from "../context/ColumnsContext"
 import { BoardColumn, BoardContainer } from "./ui/board-column"
 import {
   DndContext,
@@ -52,7 +52,7 @@ export function KanbanBoard() {
   const { tasks } = useTasksFindAll()
   console.log("data:", tasks)
 
-  const [columns, setColumns] = useState<Column[]>(defaultCols)
+  const { columns, setColumns } = useColumns() //useState<Column[]>(defaultCols)
   const pickedUpTaskColumn = useRef<ColumnId | null>(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
 
@@ -74,23 +74,6 @@ export function KanbanBoard() {
       coordinateGetter: coordinateGetter
     })
   )
-
-  useEffect(() => {
-    async function fetchColumns() {
-      try {
-        const response = await api.get('/Status')
-        const columnsData = response.data.data.map((col: { id: string, name: string }) => ({
-          id: col.id as ColumnId,
-          title: col.name
-        }))
-        console.log("columnsData", columnsData)
-        setColumns(columnsData)
-      } catch (error) {
-        console.error("Error fetching columns:", error)
-      }
-    }
-    fetchColumns()
-  }, [])
 
   useEffect(() => {
     async function fetchTasks() {
@@ -282,7 +265,7 @@ export function KanbanBoard() {
                 column={col}
                 tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
-                columnsData={columns}
+                //columnsData={columns}
                 priorities={priorities}
               />
             ))}
@@ -297,11 +280,11 @@ export function KanbanBoard() {
                   isOverlay
                   column={activeColumn}
                   tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
-                  columnsData={columns}
+                  //columnsData={columns}
                   priorities={priorities}
                 />
               )}
-              {activeTask && <TaskCard task={activeTask} isOverlay columnsData={columns} priorities={priorities} />}
+              {activeTask && <TaskCard task={activeTask} isOverlay priorities={priorities} />}
             </DragOverlay>,
             document.body
           )}
@@ -311,7 +294,7 @@ export function KanbanBoard() {
         <CreateTaskPopup
           onClose={() => setShowCreateTaskPopup(false)}
           onCreate={handleCreateTask}
-          columnsData={columns}
+          //columnsData={columns}
           defaultStatus={newTaskColumnId || ""}
           priorities={priorities}
         />

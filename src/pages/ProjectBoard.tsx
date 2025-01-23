@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import api from "../api"
 import { AxiosError } from "axios"
 import { StatusPopup } from "../components/StatusPopup"
+import { ColumnsProvider } from "@/context/ColumnsContext"
 
 export function ProjectBoard() {
   const navigate = useNavigate()
@@ -59,7 +60,9 @@ export function ProjectBoard() {
         <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
           New status column
         </Button>
-        <KanbanBoard />
+        <ColumnsProvider>
+          <KanbanBoard />
+        </ColumnsProvider>
         {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
       </div>
     </div>

@@ -9,6 +9,7 @@ import { Button } from "./button"
 import { GripVertical } from "lucide-react"
 import { ScrollArea, ScrollBar } from "./scroll-area"
 import { ColumnId } from "../KanbanBoard"
+import { useColumns } from "@/context/ColumnsContext"
 
 export interface Column {
   id: UniqueIdentifier
@@ -27,11 +28,12 @@ interface BoardColumnProps {
   tasks: Task[]
   isOverlay?: boolean
   onAddTask?: (columnId: UniqueIdentifier) => void
-  columnsData: Column[]
-  priorities: { id: string, name: string }[] // Add priorities prop
+  priorities: { id: string, name: string }[]
 }
 
-export function BoardColumn({ column, tasks, isOverlay, onAddTask, columnsData, priorities }: BoardColumnProps) {
+export function BoardColumn({ column, tasks, isOverlay, onAddTask, priorities }: BoardColumnProps) {
+  const { columns } = useColumns()
+
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id)
   }, [tasks])
@@ -92,7 +94,7 @@ export function BoardColumn({ column, tasks, isOverlay, onAddTask, columnsData, 
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
             {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} columnsData={columnsData} priorities={priorities} />
+              <TaskCard key={task.id} task={task} priorities={priorities} />
             ))}
           </SortableContext>
         </CardContent>

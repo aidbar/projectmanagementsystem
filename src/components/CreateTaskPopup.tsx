@@ -7,11 +7,11 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
 import { Column } from "./ui/board-column"
+import { useColumns } from "@/context/ColumnsContext"
 
 interface CreateTaskPopupProps {
   onClose: () => void
   onCreate: (taskDetails: TaskDetailsState) => void
-  columnsData: Column[] // Add columnsData prop
   defaultStatus: string // Add defaultStatus prop
   priorities: { id: string, name: string }[] // Add priorities prop
 }
@@ -25,7 +25,7 @@ export interface TaskDetailsState {
   assignedUsers: string
 }
 
-export function CreateTaskPopup({ onClose, onCreate, columnsData, defaultStatus, priorities }: CreateTaskPopupProps) {
+export function CreateTaskPopup({ onClose, onCreate, defaultStatus, priorities }: CreateTaskPopupProps) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsState>({
     title: "",
     description: "",
@@ -47,6 +47,7 @@ export function CreateTaskPopup({ onClose, onCreate, columnsData, defaultStatus,
   const [isFormValid, setIsFormValid] = useState(false)
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+  const {columns} = useColumns()
 
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target
@@ -149,7 +150,7 @@ export function CreateTaskPopup({ onClose, onCreate, columnsData, defaultStatus,
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                {columnsData.map((column) => (
+                {columns.map((column) => (
                   <SelectItem key={column.id} value={column.id.toString()}>
                     {column.title}
                   </SelectItem>

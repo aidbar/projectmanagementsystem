@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { ColumnId } from "@/components/KanbanBoard"
 import React, { useState } from "react"
 import { TaskCardPopup } from "../TaskCardPopup"
-import { Column } from "./board-column"
+import { useColumns } from "@/context/ColumnsContext"
 
 export interface Status {
   id: UniqueIdentifier
@@ -39,8 +39,7 @@ export interface Task {
 interface TaskCardProps {
   task: Task
   isOverlay?: boolean
-  columnsData: Column[]
-  priorities: { id: string, name: string }[] // Add priorities prop
+  priorities: { id: string, name: string }[]
 }
 
 export type TaskType = "Task"
@@ -50,7 +49,8 @@ export interface TaskDragData {
   task: Task
 }
 
-export function TaskCard({ task, isOverlay, columnsData, priorities }: TaskCardProps) {
+export function TaskCard({ task, isOverlay, priorities }: TaskCardProps) {
+  const { columns } = useColumns()
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: {
@@ -125,7 +125,7 @@ export function TaskCard({ task, isOverlay, columnsData, priorities }: TaskCardP
           </CardContent>
         </Card>
       </div>
-      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} columnsData={columnsData} priorities={priorities} />}
+      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} priorities={priorities} />}
     </>
   )
 }
