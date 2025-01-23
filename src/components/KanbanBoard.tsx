@@ -28,6 +28,7 @@ import { useTasksFindAll } from "../api/task-management"
 import { z } from "zod"
 import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
 import api from "@/api"
+import { usePriorities } from "../context/PrioritiesContext"
 
 const defaultCols = [
   {
@@ -65,7 +66,7 @@ export function KanbanBoard() {
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
   const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
 
-  const [priorities, setPriorities] = useState<Priority[]>([])
+  const { priorities, setPriorities } = usePriorities()
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -115,7 +116,7 @@ export function KanbanBoard() {
       }
     }
     fetchPriorities()
-  }, [])
+  }, [setPriorities])
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)
@@ -265,8 +266,6 @@ export function KanbanBoard() {
                 column={col}
                 tasks={tasksLegacy.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
-                //columnsData={columns}
-                priorities={priorities}
               />
             ))}
           </SortableContext>
@@ -280,11 +279,9 @@ export function KanbanBoard() {
                   isOverlay
                   column={activeColumn}
                   tasks={tasksLegacy.filter((task) => task.columnId === activeColumn.id)}
-                  //columnsData={columns}
-                  priorities={priorities}
                 />
               )}
-              {activeTask && <TaskCard task={activeTask} isOverlay priorities={priorities} />}
+              {activeTask && <TaskCard task={activeTask} isOverlay />}
             </DragOverlay>,
             document.body
           )}
@@ -296,7 +293,6 @@ export function KanbanBoard() {
           onCreate={handleCreateTask}
           //columnsData={columns}
           defaultStatus={newTaskColumnId || ""}
-          priorities={priorities}
         />
       )}
     </>

@@ -7,6 +7,7 @@ import api from "../api"
 import { AxiosError } from "axios"
 import { StatusPopup } from "../components/StatusPopup"
 import { ColumnsProvider } from "@/context/ColumnsContext"
+import { PrioritiesProvider } from "@/context/PrioritiesContext"
 
 export function ProjectBoard() {
   const navigate = useNavigate()
@@ -61,7 +62,9 @@ export function ProjectBoard() {
           New status column
         </Button>
         <ColumnsProvider>
-          <KanbanBoard />
+          <PrioritiesProvider>
+            <KanbanBoard />
+          </PrioritiesProvider>
         </ColumnsProvider>
         {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
       </div>

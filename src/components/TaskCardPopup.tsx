@@ -13,16 +13,17 @@ import { cn } from "@/lib/utils"
 import api from "@/api"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useColumns } from "@/context/ColumnsContext"
+import { usePriorities } from "@/context/PrioritiesContext"
 
 interface TaskCardPopupProps {
   task: Task
   onClose: () => void
   onDelete: () => void
-  priorities: { id: string, name: string }[]
 }
 
-export function TaskCardPopup({ task, onClose, onDelete, priorities }: TaskCardPopupProps) {
+export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   const { columns } = useColumns()
+  const { priorities } = usePriorities()
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,

@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
 import { Column } from "./ui/board-column"
 import { useColumns } from "@/context/ColumnsContext"
+import { usePriorities } from "@/context/PrioritiesContext"
 
 interface CreateTaskPopupProps {
   onClose: () => void
   onCreate: (taskDetails: TaskDetailsState) => void
   defaultStatus: string // Add defaultStatus prop
-  priorities: { id: string, name: string }[] // Add priorities prop
 }
 
 export interface TaskDetailsState {
@@ -25,7 +25,7 @@ export interface TaskDetailsState {
   assignedUsers: string
 }
 
-export function CreateTaskPopup({ onClose, onCreate, defaultStatus, priorities }: CreateTaskPopupProps) {
+export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTaskPopupProps) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsState>({
     title: "",
     description: "",
@@ -48,6 +48,7 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus, priorities }
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
   const {columns} = useColumns()
+  const {priorities} = usePriorities()
 
   const handleChange = (e: { target: { name: any; value: any } }): void => {
     const { name, value } = e.target
