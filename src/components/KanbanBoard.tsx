@@ -19,7 +19,7 @@ import {
   MouseSensor
 } from "@dnd-kit/core"
 import { SortableContext, arrayMove } from "@dnd-kit/sortable"
-import { type Task, TaskCard } from "./ui/task-card"
+import { type Task, TaskCard, updateTaskColumn } from "./ui/task-card"
 import type { Column } from "./ui/board-column"
 import { hasDraggableData } from "../lib/utils"
 import { coordinateGetter } from "../lib/dnd"
@@ -359,6 +359,7 @@ export function KanbanBoard() {
         const overTask = tasks[overIndex]
         if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
           activeTask.columnId = overTask.columnId
+          updateTaskColumn(activeTask.id, overTask.columnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, overIndex - 1)
         }
         return arrayMove(tasks, activeIndex, overIndex)
@@ -394,6 +395,7 @@ export function KanbanBoard() {
         const overTask = tasks[overIndex]
         if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
           activeTask.columnId = overTask.columnId
+          updateTaskColumn(activeTask.id, overTask.columnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, overIndex - 1)
         }
         return arrayMove(tasks, activeIndex, overIndex)
@@ -409,6 +411,7 @@ export function KanbanBoard() {
         const activeTask = tasks[activeIndex]
         if (activeTask) {
           activeTask.columnId = overId as ColumnId
+          updateTaskColumn(activeTask.id, overId as ColumnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, activeIndex)
         }
         return tasks
