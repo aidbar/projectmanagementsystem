@@ -164,7 +164,7 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { projectBoards, fetchProjectBoards, loading } = useProjectBoards();
+  const { projectBoards, setProjectBoards, fetchProjectBoards, loading } = useProjectBoards();
   const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
   const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
@@ -328,7 +328,12 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
           deleteItem={deleteProjectBoard}
-          updateState={fetchData}
+          updateState={() => {
+            setProjectBoards((prevProjectBoards) =>
+              prevProjectBoards.filter((pb) => pb.id !== deleteProjectBoard.id)
+            );
+            setDeletePopupOpen(false);
+            }}
           itemName={deleteProjectBoard.name}
           entity="ProjectBoards"
         />
