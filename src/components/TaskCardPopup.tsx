@@ -87,7 +87,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
         statusId: taskDetails.status
       });
       console.log("Changes saved:", response.data);
-      setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString() } : t))
+      setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status } : t))
     } catch (error) {
       console.error("Error saving changes:", error);
     }
