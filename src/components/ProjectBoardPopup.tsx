@@ -6,6 +6,7 @@ import api from "../api"
 import { ProjectBoard } from "./ProjectBoardsTable"
 import { AxiosError } from "axios"
 import { useLocation } from "react-router-dom"
+import { useProjectBoards } from "@/context/ProjectBoardsContext"; // Import useProjectBoards
 
 interface ProjectBoardPopupProps {
   onClose: () => void
@@ -23,6 +24,8 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
   const location = useLocation()
   // Remove the following line as workspaceId is now passed as a prop
   // const workspaceId = new URLSearchParams(location.search).get("workspaceId")
+
+  const { setProjectBoards } = useProjectBoards(); // Use global state functions
 
   useEffect(() => {
     if (projectBoard) {
@@ -45,13 +48,15 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
           updatedAt,
           workspaceId
         })
+        setProjectBoards(prev => prev.map(pb => pb.id === projectBoard.id ? { ...pb, name, description, isPublic, updatedAt } : pb)) // Update global state
       } else {
-        await api.post("/ProjectBoards", {
+        const newProjectBoard = await api.post("/ProjectBoards", {
           name,
           description,
           isPublic,
           workspaceId
         })
+        setProjectBoards(prev => [...prev, newProjectBoard.data]) // Add new project board to global state
       }
       onCreate()
       onClose()

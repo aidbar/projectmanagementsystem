@@ -17,6 +17,7 @@ import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
 import { ProjectBoardPopup } from "./ProjectBoardPopup"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
+import { useProjectBoards } from '@/context/ProjectBoardsContext'
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -163,8 +164,7 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const [data, setData] = useState<ProjectBoard[]>([])
-  const [loading, setLoading] = useState(true)
+  const { projectBoards, fetchProjectBoards, loading } = useProjectBoards();
   const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
   const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
@@ -172,29 +172,23 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
 
   const navigate = useNavigate()
   const fetchData = async () => {
-    try {
-      //const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
-      const response = await api.get(`/ProjectBoards/workspace/${workspaceId || paramWorkspaceId}`) // Use workspaceId from props or params
-      setData(response.data)
-    } catch (error) {
-      console.error("Error fetching project boards:", error)
-    } finally {
-      setLoading(false)
+    if (workspaceId || paramWorkspaceId) {
+      await fetchProjectBoards(workspaceId || paramWorkspaceId!);
     }
   }
 
-  useImperativeHandle(ref, () => ({
+  /*useImperativeHandle(ref, () => ({
     fetchData
-  }))
+  }))*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     fetchData()
-  }, [])
+  }, [workspaceId, paramWorkspaceId]) // Add dependencies*/
 
 
   const columns = createColumns(navigate, setEditProjectBoard, setOpenPopup, setDeleteProjectBoard, setDeletePopupOpen);
   const table = useReactTable({
-    data,
+    data: projectBoards,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
