@@ -59,6 +59,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
         <h2 className="text-xl mb-4">Sign Up</h2>
         {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
         {firstNameError && <p className="text-red-500 mb-2">{firstNameError}</p>}
+        <label className="text-sm block mb-1">
+          First Name <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           placeholder="First Name"
@@ -74,6 +77,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-2 p-2 border rounded w-full ${firstNameError ? 'border-red-500' : ''}`}
         />
         {lastNameError && <p className="text-red-500 mb-2">{lastNameError}</p>}
+        <label className="text-sm block mb-1">
+          Last Name <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           placeholder="Last Name"
@@ -89,6 +95,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-2 p-2 border rounded w-full ${lastNameError ? 'border-red-500' : ''}`}
         />
         {usernameError && <p className="text-red-500 mb-2">{usernameError}</p>}
+        <label className="text-sm block mb-1">
+          Username <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           placeholder="Username"
@@ -104,6 +113,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-2 p-2 border rounded w-full ${usernameError ? 'border-red-500' : ''}`}
         />
         {emailError && <p className="text-red-500 mb-2">{emailError}</p>}
+        <label className="text-sm block mb-1">
+          Email <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           placeholder="Email"
@@ -119,6 +131,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-2 p-2 border rounded w-full ${emailError ? 'border-red-500' : ''}`}
         />
         {passwordError && <p className="text-red-500 mb-2 w-64 h-34 break-words">{passwordError}</p>}
+        <label className="text-sm block mb-1">
+          Password <span className="text-red-500">*</span>
+        </label>
         <input
           type="password"
           placeholder="Password"
@@ -134,6 +149,9 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-2 p-2 border rounded w-full ${passwordError ? 'border-red-500' : ''}`}
         />
         {confirmPasswordError && <p className="text-red-500 mb-2">{confirmPasswordError}</p>}
+        <label className="text-sm block mb-1">
+          Confirm Password <span className="text-red-500">*</span>
+        </label>
         <input
           type="password"
           placeholder="Confirm Password"

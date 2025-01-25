@@ -72,6 +72,9 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
         <h2 className="text-xl mb-4">{workspace ? "Edit workspace" : "Create a new workspace"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
+            <label className="text-sm block mb-1">
+              Workspace name <span className="text-red-500">*</span>
+            </label>
             {nameError && <p className="text-red-500 mb-2 italic">{nameError}</p>}
             <Input
               placeholder="Workspace name"
@@ -90,6 +93,7 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
             />
           </div>
           <div className="mb-4">
+            <label className="text-sm block mb-1">Description</label>
             <Input
               placeholder="Description"
               value={description}

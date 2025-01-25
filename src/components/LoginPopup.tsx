@@ -50,6 +50,9 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
         <h2 className="text-xl mb-4">Login</h2>
         {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
         {emailError && <p className="text-red-500 mb-2">{emailError}</p>}
+        <label className="text-sm block mb-1">
+          Email <span className="text-red-500">*</span>
+        </label>
         <input
           type="text"
           placeholder="Email"
@@ -65,6 +68,9 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
           className={`mb-2 p-2 border rounded w-full ${emailError ? 'border-red-500' : ''}`}
         />
         {passwordError && <p className="text-red-500 mb-2 w-64 h-34 break-words">{passwordError}</p>}
+        <label className="text-sm block mb-1">
+          Password <span className="text-red-500">*</span>
+        </label>
         <input
           type="password"
           placeholder="Password"

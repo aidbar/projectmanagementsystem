@@ -119,6 +119,9 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
           {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
+            <label className="text-sm block mb-1">
+              Title <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               name="title"
@@ -131,6 +134,9 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
           </div>
           <div className="mt-2">
             {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
+            <label className="text-sm block mb-1">
+              Description <span className="text-red-500">*</span>
+            </label>
             <textarea
               name="description"
               value={taskDetails.description}
@@ -142,7 +148,9 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
           </div>
           <div className="mt-6">
             {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
-            <strong>Status: </strong>
+            <label className="text-sm block mb-1">
+              Status <span className="text-red-500">*</span>
+            </label>
             <Select
               value={taskDetails.status}
               onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value }))}
@@ -161,7 +169,9 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
           </div>
           <div className="mt-4">
             {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
-            <strong>Priority: </strong>
+            <label className="text-sm block mb-1">
+              Priority <span className="text-red-500">*</span>
+            </label>
             <Select
               value={taskDetails.priority}
               onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}
@@ -180,7 +190,7 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
             </Select>
           </div>
           <div className="mt-4">
-            <strong>Due Date: </strong>
+            <strong>Due Date: <span className="text-red-500">*</span></strong>
             <Popover open={isDatePickerOpen} onOpenChange={handleOpenDatePickerChange}>
             {errors.dueDate && <p className="text-red-500 italic">{errors.dueDate}</p>}
               <PopoverTrigger asChild>

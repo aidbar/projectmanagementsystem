@@ -65,7 +65,16 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
       taskDetails.priority !== task.priorityId ||
       taskDetails.dueDate !== new Date(task.dueDate).toLocaleDateString() ||
       (date ? date.toLocaleDateString() !== new Date(task.dueDate).toLocaleDateString() : false);
-    setIsSaveEnabled(hasChanges);
+
+    const isValid = 
+      taskDetails.title.trim() !== "" &&
+      taskDetails.description.trim() !== "" &&
+      taskDetails.description.length <= 500 &&
+      taskDetails.priority.trim() !== "" &&
+      taskDetails.status.trim() !== "" &&
+      taskDetails.dueDate.trim() !== "";
+
+    setIsSaveEnabled(hasChanges && isValid);
   }, [taskDetails, task, date]);
 
   const handleSaveChanges = async () => {
@@ -177,35 +186,37 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
           {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
+            <label className="font-bold text-sm block mb-1">
+              Title {isEditing.title && <span className="text-red-500">*</span>}
+            </label>
             {isEditing.title ? (
-              <>
-                <input
-                  type="text"
-                  name="title"
-                  value={taskDetails.title}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('title')}
-                  className="border border-gray-500 p-3"
-                />
-              </>
+              <input
+                type="text"
+                name="title"
+                value={taskDetails.title}
+                onChange={handleChange}
+                onBlur={() => handleSave('title')}
+                className="border border-gray-500 p-3"
+              />
             ) : (
               <>
-                {taskDetails.title} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
+                {taskDetails.title} <span className="ml-2"><a href="#" className="text-sm italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-2">
             {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
+            <label className="font-bold text-sm block mb-1">
+              Description {isEditing.description && <span className="text-red-500">*</span>}
+            </label>
             {isEditing.description ? (
-              <>
-                <textarea
-                  name="description"
-                  value={taskDetails.description}
-                  onChange={handleChange}
-                  onBlur={() => handleSave('description')}
-                  className="border border-gray-500 p-3"
-                />
-              </>
+              <textarea
+                name="description"
+                value={taskDetails.description}
+                onChange={handleChange}
+                onBlur={() => handleSave('description')}
+                className="border border-gray-500 p-3"
+              />
             ) : (
               <>
                 {taskDetails.description} <span className="ml-2 italic"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')}>Edit</a></span>
@@ -214,24 +225,24 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           </div>
           <div className="mt-6">
             {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
-            <strong>Status: </strong>
+            <label className="font-bold text-sm block mb-1">
+              Status {isEditing.status && <span className="text-red-500">*</span>}
+            </label>
             {isEditing.status ? (
-              <>
-                <Select
-                  value={taskDetails.status}
-                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}>
-                  <SelectTrigger className="border border-gray-500 p-3">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {columns.map((column) => (
-                      <SelectItem key={column.id} value={column.id.toString()}>
-                        {column.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
+              <Select
+                value={taskDetails.status}
+                onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}>
+                <SelectTrigger className="border border-gray-500 p-3">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {columns.map((column) => (
+                    <SelectItem key={column.id} value={column.id.toString()}>
+                      {column.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             ) : (
               <>
                 {getStatusTitle(taskDetails.status.toString())} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')}>Edit</a></span>
@@ -240,24 +251,24 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           </div>
           <div className="mt-4">
             {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
-            <strong>Priority: </strong>
+            <label className="font-bold text-sm block mb-1">
+              Priority {isEditing.priority && <span className="text-red-500">*</span>}
+            </label>
             {isEditing.priority ? (
-              <>
-                <Select
-                  value={taskDetails.priority}
-                  onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}>
-                  <SelectTrigger className="border border-gray-500 p-3">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {priorities.map((priority) => (
-                      <SelectItem key={priority.id} value={priority.id}>
-                        {priority.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </>
+              <Select
+                value={taskDetails.priority}
+                onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}>
+                <SelectTrigger className="border border-gray-500 p-3">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priorities.map((priority) => (
+                    <SelectItem key={priority.id} value={priority.id}>
+                      {priority.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             ) : (
               <>
                 {getPriorityName(taskDetails.priority)} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')}>Edit</a></span>
@@ -265,7 +276,9 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
             )}
           </div>
           <div className="mt-4">
-            <strong>Due Date: </strong>
+            <label className="font-bold text-sm block mb-1">
+              Due Date {isEditing.dueDate && <span className="text-red-500">*</span>}
+            </label>
             {isEditing.dueDate ? (
               <Popover>
                 <PopoverTrigger asChild>
@@ -296,10 +309,11 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
               </>
             )}
           </div>
-          <div className="mt-4">
+          <br />
+          <div className="mt-4 italic">
             <strong>Created At: </strong> { new Date(task.createdAt).toLocaleString() }
           </div>
-          <div className="mt-4">
+          <div className="mt-4 italic">
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
           <div className="mt-4 flex justify-between">

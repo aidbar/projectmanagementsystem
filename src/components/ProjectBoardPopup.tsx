@@ -75,6 +75,9 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
         <h2 className="text-xl mb-4">{projectBoard ? "Edit project board" : "Create a new project board"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
+            <label className="text-sm block mb-1">
+              Project board name <span className="text-red-500">*</span>
+            </label>
             {nameError && <p className="text-red-500 mb-2 italic">{nameError}</p>}
             <Input
               placeholder="Project board name"
@@ -93,6 +96,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
             />
           </div>
           <div className="mb-4">
+            <label className="text-sm block mb-1">Description</label>
             <Input
               placeholder="Description"
               value={description}

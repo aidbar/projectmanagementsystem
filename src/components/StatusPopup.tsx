@@ -28,6 +28,9 @@ export function StatusPopup({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-4 rounded shadow-lg">
         <h2 className="text-xl mb-4">New status column</h2>
+        <label className="text-sm block mb-1">
+          Status name <span className="text-red-500">*</span>
+        </label>
         <Input
           type="text"
           value={statusName}
