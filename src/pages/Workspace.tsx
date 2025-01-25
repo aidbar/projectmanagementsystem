@@ -7,6 +7,7 @@ import api from "../api"
 import { AxiosError } from "axios"
 import { ProjectBoardPopup } from "../components/ProjectBoardPopup"
 import { DeleteConfirmationPopup } from "@/components/DeleteConfirmationPopup"
+import { useWorkspaces } from "@/context/WorkspacesContext"
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void; 
@@ -14,26 +15,25 @@ export type ProjectBoardsTableRef = {
 
 export function Workspace() {
   const navigate = useNavigate()
+  const { setWorkspaces } = useWorkspaces()
   const { id = "" } = useParams<{ id: string }>()
   const [workspaceData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
   const [fetchError, setFetchError] = useState("")
     
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [editProjectBoard, setEditProjectBoard] = useState<ProjectBoard | undefined>(undefined)
-  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
-  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined)
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false)
   const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
   
   const handleCreate = () => {
-      if (projectBoardsTableRef.current) {
-        projectBoardsTableRef.current.fetchData()
-      }
-    }
+    projectBoardsTableRef.current?.fetchData()
+  }
   
   const handleEdit = (projectBoard: ProjectBoard) => {
-      setEditProjectBoard(projectBoard)
-      setIsPopupOpen(true)
-    }
+    setEditProjectBoard(projectBoard)
+    setIsPopupOpen(true)
+  }
 
   useEffect(() => {
     async function fetchWorkspaceData() {
@@ -68,10 +68,10 @@ export function Workspace() {
             <h1 className="text-2xl text-center p-4">{workspaceData.name}</h1>
             <p className="italic text-center">{workspaceData.description}</p>
             <div>
-            <p>Created by: {workspaceData.creatorUsername || <em>username hidden from others</em>}</p>
-            <p>Created at: {new Date(workspaceData.createdAt).toLocaleString()}</p>
-            <p>Last updated: {new Date(workspaceData.updatedAt).toLocaleString()}</p>
-            <p>Visibility: <strong>{workspaceData.isPublic ? "Public" : "Private"}</strong></p>
+              <p>Created by: {workspaceData.creatorUsername || <em>username hidden from others</em>}</p>
+              <p>Created at: {new Date(workspaceData.createdAt).toLocaleString()}</p>
+              <p>Last updated: {new Date(workspaceData.updatedAt).toLocaleString()}</p>
+              <p>Visibility: <strong>{workspaceData.isPublic ? "Public" : "Private"}</strong></p>
             </div>
             <p>Workspace ID: {id}</p>
           </div>
@@ -80,10 +80,10 @@ export function Workspace() {
         )}
         <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>New project board</Button>
         <ProjectBoardsTable ref={projectBoardsTableRef}
-              onEdit={handleEdit}
-              setOpenPopup={setIsPopupOpen}
-              setEditProjectBoard={setEditProjectBoard}
-              workspaceId={id}
+          onEdit={handleEdit}
+          setOpenPopup={setIsPopupOpen}
+          setEditProjectBoard={setEditProjectBoard}
+          workspaceId={id}
         />
       </div>
       {isPopupOpen && (

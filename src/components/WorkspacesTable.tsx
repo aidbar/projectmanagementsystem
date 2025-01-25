@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom"
 import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
+import { useWorkspaces } from "@/context/WorkspacesContext"
 
 // import { Checkbox } from "./ui/checkbox"
 import {
@@ -178,48 +179,36 @@ type WorkspacesTableProps = {
 };
 
 export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTableProps>(({ onEdit, setOpenPopup, setEditWorkspace }, ref) => {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [data, setData] = useState<Workspace[]>([])
-  const [loading, setLoading] = useState(true)
+  const { workspaces, setWorkspaces, fetchWorkspaces, loading } = useWorkspaces()
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
   const workspacesTableRef = useRef<WorkspacesTableRef>(null)
   const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined);
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
 
-  function handleUpdate() {
+  /*function handleUpdate() {
     if (workspacesTableRef.current) {
       workspacesTableRef.current.fetchData()
     }
-  }
+  }*/
 
   const navigate = useNavigate()
-  const fetchData = async () => {
-    try {
-      const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
-      const response = await api.get(`/Workspaces/user/${userId}`)
-      setData(response.data)
-    } catch (error) {
-      console.error("Error fetching workspaces:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  useImperativeHandle(ref, () => ({
-    fetchData
-  }))
+  /*useImperativeHandle(ref, () => ({
+    fetchData: fetchWorkspaces
+  }))*/
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  /*useEffect(() => {
+    fetchWorkspaces()
+  }, [])*/
 
-  const handleDelete = async () => {
+  /*const handleDelete = async () => {
     if (deleteWorkspace) {
       try {
         await api.delete(`/Workspaces/${deleteWorkspace.id}`);
-        fetchData();
+        fetchWorkspaces();
       } catch (error) {
         console.error("Error deleting workspace:", error);
       } finally {
@@ -227,11 +216,11 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         setDeleteWorkspace(undefined);
       }
     }
-  };
+  };*/
 
   const columns = createColumns(navigate, setEditWorkspace, setOpenPopup, setDeleteWorkspace, setDeletePopupOpen);
   const table = useReactTable({
-    data,
+    data: workspaces,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -256,125 +245,130 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter names..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <Input
+        placeholder="Filter names..."
+        value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+        onChange={(event) =>
+        table.getColumn("name")?.setFilterValue(event.target.value)
+        }
+        className="max-w-sm"
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="ml-auto">
+          Columns <ChevronDown />
+        </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+        {table
+          .getAllColumns()
+          .filter((column) => column.getCanHide())
+          .map((column) => {
+          return (
+            <DropdownMenuCheckboxItem
+            key={column.id}
+            className="capitalize"
+            checked={column.getIsVisible()}
+            onCheckedChange={(value) =>
+              column.toggleVisibility(!!value)
+            }
+            >
+            {column.id}
+            </DropdownMenuCheckboxItem>
+          )
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
       </div>
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
+      <Table>
+        <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+          {headerGroup.headers.map((header) => {
+            return (
+            <TableHead key={header.id}>
+              {header.isPlaceholder
+              ? null
+              : flexRender(
+                header.column.columnDef.header,
+                header.getContext()
+                )}
+            </TableHead>
+            )
+          })}
+          </TableRow>
+        ))}
+        </TableHeader>
+        <TableBody>
+        {table.getRowModel().rows?.length ? (
+          table.getRowModel().rows.map((row) => (
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && "selected"}
+            onClick={() => navigate(`/workspace/${row.original.id}`)}
+            className="cursor-pointer"
+          >
+            {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id}>
+              {flexRender(
+              cell.column.columnDef.cell,
+              cell.getContext()
+              )}
+            </TableCell>
             ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  onClick={() => navigate(`/workspace/${row.original.id}`)}
-                  className="cursor-pointer"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No workspaces to show.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+          </TableRow>
+          ))
+        ) : (
+          <TableRow>
+          <TableCell
+            colSpan={columns.length}
+            className="h-24 text-center"
+          >
+            No workspaces to show.
+          </TableCell>
+          </TableRow>
+        )}
+        </TableBody>
+      </Table>
       </div>
       {/* <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+      {table.getFilteredSelectedRowModel().rows.length} of{" "}
+      {table.getFilteredRowModel().rows.length} row(s) selected.
       </div> */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+      <div className="space-x-2">
+        <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+        >
+        Previous
+        </Button>
+        <Button
+        variant="outline"
+        size="sm"
+        onClick={() => table.nextPage()}
+        disabled={!table.getCanNextPage()}
+        >
+        Next
+        </Button>
+      </div>
       </div>
       {deletePopupOpen && deleteWorkspace && (
-        <DeleteConfirmationPopup
-          onClose={() => setDeletePopupOpen(false)}
-          deleteItem={deleteWorkspace}
-          updateState={fetchData}
-          itemName={deleteWorkspace.name}
-          entity="Workspaces"
-        />
+      <DeleteConfirmationPopup
+        onClose={() => setDeletePopupOpen(false)}
+        deleteItem={deleteWorkspace}
+        updateState={() => {
+        setWorkspaces((prevWorkspaces) =>
+          prevWorkspaces.filter((workspace) => workspace.id !== deleteWorkspace.id)
+        );
+        setDeletePopupOpen(false);
+        }}
+        itemName={deleteWorkspace.name}
+        entity="Workspaces"
+      />
       )}
     </div>
   )

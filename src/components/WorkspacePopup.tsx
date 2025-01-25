@@ -5,19 +5,17 @@ import { Checkbox } from "./ui/checkbox"
 import api from "../api"
 import { Workspace } from "./WorkspacesTable"
 import { AxiosError } from "axios"
+import { useWorkspaces } from "@/context/WorkspacesContext"
+import { set } from "date-fns"
 
 interface WorkspacePopupProps {
   onClose: () => void
   onCreate: () => void
-  workspace?: Workspace /*{
-    id: string
-    name: string
-    description: string
-    isPublic: boolean
-  }*/
+  workspace?: Workspace
 }
 
 export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupProps) {
+  const { setWorkspaces } = useWorkspaces()
   const [name, setName] = useState(workspace?.name || "")
   const [description, setDescription] = useState(workspace?.description || "")
   const [isPublic, setIsPublic] = useState(workspace?.isPublic || false)
@@ -43,12 +41,14 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
           isPublic,
           updatedAt
         })
+        setWorkspaces(prev => prev.map(w => w.id === workspace.id ? { ...w, name, description, isPublic, updatedAt } : w))
       } else {
-        await api.post("/Workspaces", {
+        const response = await api.post("/Workspaces", {
           name,
           description,
           isPublic
         })
+        setWorkspaces(prev => [...prev, response.data])
       }
       onCreate()
       onClose()
