@@ -2,19 +2,23 @@ import { useState } from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import api from "../api"
+import { useColumns } from "@/context/ColumnsContext"
 
 export function StatusPopup({ onClose }: { onClose: () => void }) {
   const [statusName, setStatusName] = useState("")
+  const { setColumns } = useColumns()
 
   const handleSave = async () => {
     try {
-      const response = await api.post('/Status', {
+      const newStatus = {
         id: crypto.randomUUID(),
         name: statusName
-      });
+      }
+      const response = await api.post('/Status', newStatus);
 
-    if (response.status >= 200 && response.status < 300) {
+      if (response.status >= 200 && response.status < 300) {
         console.log("New status column:", statusName);
+        setColumns((prevColumns) => [...prevColumns, { id: newStatus.id, title: newStatus.name }])
         onClose();
       } else {
         console.error("Failed to save the new status column");

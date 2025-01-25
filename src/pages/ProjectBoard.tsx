@@ -60,17 +60,17 @@ export function ProjectBoard() {
         ) : (
           <p>Loading project board data...</p>
         )}
-        <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
-          New status column
-        </Button>
         <ColumnsProvider>
+          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
+            New status column
+          </Button>
           <PrioritiesProvider>
             <TasksProvider>
               <KanbanBoard />
             </TasksProvider>
           </PrioritiesProvider>
+          {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
         </ColumnsProvider>
-        {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
       </div>
     </div>
   )
