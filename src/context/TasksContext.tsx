@@ -24,7 +24,7 @@ export const TasksProvider = ({ children } : {children : ReactNode}) => {
   useEffect(() => {
     async function fetchTasks() {
       try {
-        const response = await api.get('/v1/TaskCard');
+        const response = await api.get('/TaskCard');
         const tasksData = response.data.data.map((task : any) => ({
           id: task.id,
           columnId: task.statusId,

@@ -4,7 +4,7 @@ import { taskReponseSchema } from "../schemas/tasks"
 
 export default {
   findAll: async (): Promise<Task[]> => {
-    const res = await api.get("/v1/TaskCard")
+    const res = await api.get("/TaskCard")
 
     const validatedTasks = taskReponseSchema.safeParse(res.data.data)
     console.log("validatedTasks:", validatedTasks)

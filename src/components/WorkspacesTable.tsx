@@ -198,7 +198,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
   const fetchData = async () => {
     try {
       const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
-      const response = await api.get(`/v1/Workspaces/user/${userId}`)
+      const response = await api.get(`/Workspaces/user/${userId}`)
       setData(response.data)
     } catch (error) {
       console.error("Error fetching workspaces:", error)
@@ -218,7 +218,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
   const handleDelete = async () => {
     if (deleteWorkspace) {
       try {
-        await api.delete(`/v1/Workspaces/${deleteWorkspace.id}`);
+        await api.delete(`/Workspaces/${deleteWorkspace.id}`);
         fetchData();
       } catch (error) {
         console.error("Error deleting workspace:", error);

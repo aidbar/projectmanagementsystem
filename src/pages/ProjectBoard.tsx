@@ -22,7 +22,7 @@ export function ProjectBoard() {
     async function fetchProjectBoardData() {
       setFetchError("")
       try {
-        const response = await api.get(`/v1/ProjectBoards/${id}`)
+        const response = await api.get(`/ProjectBoards/${id}`)
         setProjectBoardData(response.data)
       } catch (error) {
         if (error instanceof AxiosError) {

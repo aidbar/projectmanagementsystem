@@ -33,7 +33,7 @@ export function Dashboard() {
   /*const handleDelete = async () => {
     if (deleteWorkspace) {
       try {
-        await api.delete(`/v1/Workspaces/${deleteWorkspace.id}`);
+        await api.delete(`/Workspaces/${deleteWorkspace.id}`);
         if (workspacesTableRef.current) {
           workspacesTableRef.current.fetchData();
         }

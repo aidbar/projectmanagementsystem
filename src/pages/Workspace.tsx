@@ -39,7 +39,7 @@ export function Workspace() {
     async function fetchWorkspaceData() {
       setFetchError("")
       try {
-        const response = await api.get(`/v1/Workspaces/${id}`)
+        const response = await api.get(`/Workspaces/${id}`)
         setProjectBoardData(response.data)
       } catch (error) {
         if (error instanceof AxiosError) {

@@ -4,15 +4,15 @@ import { error } from 'console'
 const PUBLIC_ROUTES: string[] = [
   '/',
   '*',
-  '/v1/Authenticate/login',
-  '/v1/Users',
+  '/Authenticate/login',
+  '/Users',
 ]
 
 const isDevelopment = import.meta.env.MODE === 'development'
-let baseURL = 'http://localhost:5140/api/'
+let baseURL = 'http://localhost:5140/api/v1/'
 
 if (!isDevelopment) {
-  baseURL = 'https://integrifyfullstackproject.azurewebsites.net/api/'
+  baseURL = 'https://integrifyfullstackproject.azurewebsites.net/api/v1/'
 }
 
 const api = axios.create({

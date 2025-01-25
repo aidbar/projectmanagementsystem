@@ -9,7 +9,7 @@ export function Header() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await api.delete("/v1/Authenticate/logout")
+      const response = await api.delete("/Authenticate/logout")
       return response.data
     },
     onSuccess: () => {

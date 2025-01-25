@@ -37,14 +37,14 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
     try {
       if (workspace) {
         const updatedAt = new Date().toISOString()
-        await api.put(`/v1/Workspaces/${workspace.id}`, {
+        await api.put(`/Workspaces/${workspace.id}`, {
           name,
           description,
           isPublic,
           updatedAt
         })
       } else {
-        await api.post("/v1/Workspaces", {
+        await api.post("/Workspaces", {
           name,
           description,
           isPublic

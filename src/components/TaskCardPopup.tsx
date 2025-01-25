@@ -79,7 +79,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await api.put(`/v1/TaskCard/${task.id}`, {
+      const response = await api.put(`/TaskCard/${task.id}`, {
         description: taskDetails.description,
         title: taskDetails.title,
         priorityId: taskDetails.priority,
@@ -95,7 +95,7 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
 
   const fetchData = async () => {
     try {
-      const response = await api.get('/v1/TaskCard/');
+      const response = await api.get('/TaskCard/');
       // Assuming the response contains the updated columns data
       const updatedColumnsData = response.data.data;
       // Update the columnsData state or prop here

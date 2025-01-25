@@ -38,7 +38,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
     try {
       if (projectBoard) {
         const updatedAt = new Date().toISOString()
-        await api.put(`/v1/ProjectBoards/${projectBoard.id}`, {
+        await api.put(`/ProjectBoards/${projectBoard.id}`, {
           name,
           description,
           isPublic,
@@ -46,7 +46,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
           workspaceId
         })
       } else {
-        await api.post("/v1/ProjectBoards", {
+        await api.post("/ProjectBoards", {
           name,
           description,
           isPublic,

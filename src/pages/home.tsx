@@ -16,7 +16,7 @@ export function Home() {
 
   const loginMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await api.post("/v1/Authenticate/login", 
+      const response = await api.post("/Authenticate/login", 
         { "email": email, "password": password }
       )
       return response.data
@@ -33,7 +33,7 @@ export function Home() {
 
   const signupMutation = useMutation({
     mutationFn: async ({ firstname, lastname, username, email, password, confirmPassword }: { firstname: string; lastname: string; username: string; email: string; password: string; confirmPassword: string }) => {
-      const response = await api.post("/v1/Users", 
+      const response = await api.post("/Users", 
         { "firstname" : firstname, "lastname" : lastname, "username": username, "email": email, "password": password, "confirmPassword": confirmPassword }
       )
       return { data: response.data, email, password }

@@ -174,7 +174,7 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
   const fetchData = async () => {
     try {
       //const userId = JSON.parse(localStorage.getItem('userInfo') || '{}').id
-      const response = await api.get(`/v1/ProjectBoards/workspace/${workspaceId || paramWorkspaceId}`) // Use workspaceId from props or params
+      const response = await api.get(`/ProjectBoards/workspace/${workspaceId || paramWorkspaceId}`) // Use workspaceId from props or params
       setData(response.data)
     } catch (error) {
       console.error("Error fetching project boards:", error)

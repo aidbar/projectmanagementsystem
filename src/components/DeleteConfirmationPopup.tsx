@@ -17,7 +17,7 @@ export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = (
 const handleDelete = async () => {
     setDeleteError("");
     try {
-        await api.delete(`/v1/${entity}/${deleteItem.id}`);
+        await api.delete(`/${entity}/${deleteItem.id}`);
         updateState();
         onClose();
     } catch (error) {
