@@ -3,35 +3,51 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import api from "../api"
 import { useColumns } from "@/context/ColumnsContext"
+import { Column } from "./ui/board-column"
 
-export function StatusPopup({ onClose }: { onClose: () => void }) {
-  const [statusName, setStatusName] = useState("")
+export function StatusPopup({ onClose, column }: { onClose: () => void, column?: Column }) {
+  const [statusName, setStatusName] = useState(column?.title || "")
   const { setColumns } = useColumns()
 
   const handleSave = async () => {
     try {
-      const newStatus = {
-        id: crypto.randomUUID(),
-        name: statusName
-      }
-      const response = await api.post('/Status', newStatus);
+      if (column) {
+        // Edit existing column
+        const updatedColumn = { id: column.id.toString(), name: statusName }
+        const response = await api.put(`/Status/${column.id}`, updatedColumn)
 
-      if (response.status >= 200 && response.status < 300) {
-        console.log("New status column:", statusName);
-        setColumns((prevColumns) => [...prevColumns, { id: newStatus.id, title: newStatus.name }])
-        onClose();
+        if (response.status >= 200 && response.status < 300) {
+          setColumns((prevColumns) =>
+        prevColumns.map((col) => (col.id === column.id ? { ...col, title: statusName } : col))
+          )
+          onClose()
+        } else {
+          console.error("Failed to update the status column")
+        }
       } else {
-        console.error("Failed to save the new status column");
+        // Create new column
+        const newStatus = {
+          id: crypto.randomUUID().toString(),
+          name: statusName
+        }
+        const response = await api.post('/Status', newStatus)
+
+        if (response.status >= 200 && response.status < 300) {
+          setColumns((prevColumns) => [...prevColumns, { id: newStatus.id, title: newStatus.name }])
+          onClose()
+        } else {
+          console.error("Failed to save the new status column")
+        }
       }
     } catch (error) {
-      console.error("Error saving the new status column", error);
+      console.error("Error saving the status column", error)
     }
   }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-4 rounded shadow-lg">
-        <h2 className="text-xl mb-4">New status column</h2>
+        <h2 className="text-xl mb-4">{column ? "Edit status column" : "New status column"}</h2>
         <label className="text-sm block mb-1">
           Status name <span className="text-red-500">*</span>
         </label>

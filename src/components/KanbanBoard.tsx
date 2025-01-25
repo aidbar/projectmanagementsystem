@@ -30,6 +30,7 @@ import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
 import api from "@/api"
 import { usePriorities } from "../context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
+import { StatusPopup } from "./StatusPopup"
 
 const defaultCols = [
   {
@@ -78,6 +79,8 @@ export function KanbanBoard() {
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
   const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
+  const [showEditStatusPopup, setShowEditStatusPopup] = useState(false)
+  const [editColumn, setEditColumn] = useState<Column | null>(null)
 
   const { priorities, setPriorities } = usePriorities()
 
@@ -207,6 +210,11 @@ export function KanbanBoard() {
     setShowCreateTaskPopup(true)
   }
 
+  function handleEditColumn(column: Column) {
+    setEditColumn(column)
+    setShowEditStatusPopup(true)
+  }
+
   function handleCreateTask(taskDetails: TaskDetailsState) {
     if (newTaskColumnId) {
       const taskData = {
@@ -262,6 +270,7 @@ export function KanbanBoard() {
                 column={col}
                 //tasks={tasks.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
+                onEditColumn={() => handleEditColumn(col)}
               />
             ))}
           </SortableContext>
@@ -289,6 +298,13 @@ export function KanbanBoard() {
           onCreate={handleCreateTask}
           //columnsData={columns}
           defaultStatus={newTaskColumnId || ""}
+        />
+      )}
+
+      {showEditStatusPopup && editColumn && (
+        <StatusPopup
+          onClose={() => setShowEditStatusPopup(false)}
+          column={editColumn}
         />
       )}
     </>

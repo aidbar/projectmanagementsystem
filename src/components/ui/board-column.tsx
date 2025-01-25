@@ -6,7 +6,7 @@ import { Task, TaskCard } from "./task-card"
 import { cva } from "class-variance-authority"
 import { Card, CardContent, CardHeader } from "./card"
 import { Button } from "./button"
-import { GripVertical } from "lucide-react"
+import { GripVertical, Edit, Plus } from "lucide-react"
 import { ScrollArea, ScrollBar } from "./scroll-area"
 import { ColumnId } from "../KanbanBoard"
 import { useColumns } from "@/context/ColumnsContext"
@@ -29,9 +29,10 @@ interface BoardColumnProps {
   column: Column
   isOverlay?: boolean
   onAddTask?: (columnId: UniqueIdentifier) => void
+  onEditColumn?: () => void
 }
 
-export function BoardColumn({ column, isOverlay, onAddTask }: BoardColumnProps) {
+export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn }: BoardColumnProps) {
   const { columns } = useColumns()
   const { priorities } = usePriorities()
   const { tasks } = useTasks() // Use global state for tasks
@@ -91,10 +92,13 @@ export function BoardColumn({ column, isOverlay, onAddTask }: BoardColumnProps) 
           <span className="sr-only">{`Move column: ${column.title}`}</span>
           <GripVertical />
         </Button>
-        <Button onClick={() => onAddTask?.(column.id)} className="mt-2">
-            Add Task
-          </Button>
-        <span className="ml-auto"> {column.title}</span>
+        <Button onClick={() => onAddTask?.(column.id)} variant={"ghost"} className="mt-2">
+          <Plus />
+        </Button>
+        <h2 className="ml-auto font-bold"> {column.title}</h2>
+        <Button onClick={onEditColumn} variant={"ghost"} className="ml-2">
+          <Edit />
+        </Button>
       </CardHeader>
       <ScrollArea>
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
