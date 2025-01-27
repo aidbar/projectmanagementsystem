@@ -31,6 +31,7 @@ import api from "@/api"
 import { usePriorities } from "../context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
 import { StatusPopup } from "./StatusPopup"
+import * as Toast from "@radix-ui/react-toast";
 
 const defaultCols = [
   {
@@ -91,6 +92,9 @@ export function KanbanBoard() {
       coordinateGetter: coordinateGetter
     })
   )
+
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     async function fetchTasks() {
@@ -244,9 +248,13 @@ export function KanbanBoard() {
             status: task.status*/
           }
           setTasks((prevTasks) => [...prevTasks, newTask])
+          setToastMessage("Task created");
+          setToastOpen(true);
         })
         .catch(error => {
           console.error("Error creating task:", error)
+          setToastMessage("Failed to create task");
+          setToastOpen(true);
         })
     }
   }
@@ -307,6 +315,13 @@ export function KanbanBoard() {
           column={editColumn}
         />
       )}
+
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
     </>
   )
 
