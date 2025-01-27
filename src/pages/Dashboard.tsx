@@ -6,6 +6,7 @@ import { WorkspacesTable, Workspace } from "../components/WorkspacesTable"
 import { WorkspacePopup } from "../components/WorkspacePopup"
 import { DeleteConfirmationPopup } from "../components/DeleteConfirmationPopup"
 import { useWorkspaces } from "@/context/WorkspacesContext"
+import * as Toast from "@radix-ui/react-toast"
 
 export type WorkspacesTableRef = {
   fetchData: () => void;
@@ -18,14 +19,17 @@ export function Dashboard() {
   const [editWorkspace, setEditWorkspace] = useState<Workspace | undefined>(undefined)
   const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined)
   const [deletePopupOpen, setDeletePopupOpen] = useState(false)
-
-  /*const handleCreate = () => {
-    setWorkspaces()
-  }*/
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
 
   const handleEdit = (workspace: Workspace) => {
     setEditWorkspace(workspace)
     setIsPopupOpen(true)
+  }
+
+  const handleCreate = (success: boolean, isEdit: boolean) => {
+    setToastMessage(success ? (isEdit ? "Changes saved" : "Workspace created") : (isEdit ? "Failed to save changes" : "Failed to create workspace"))
+    setToastOpen(true)
   }
 
   return (
@@ -46,11 +50,16 @@ export function Dashboard() {
         setEditWorkspace(undefined)
         setIsPopupOpen(false)
       }}
-      onCreate={() => {
-      }}
+      onCreate={handleCreate}
       workspace={editWorkspace}
       />
       )}
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
       {/*deletePopupOpen && deleteWorkspace && (
       <DeleteConfirmationPopup
       onClose={() => setDeletePopupOpen(false)}

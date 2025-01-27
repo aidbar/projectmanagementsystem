@@ -15,6 +15,7 @@ import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
+import * as Toast from "@radix-ui/react-toast"
 
 interface TaskCardPopupProps {
   task: Task
@@ -56,6 +57,8 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
   const [date, setDate] = useState<Date>(new Date(task.dueDate));
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
 
   useEffect(() => {
     const hasChanges = 
@@ -175,6 +178,11 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
 
   const handleCloseDeletePopup = () => {
     setIsDeletePopupOpen(false)
+  }
+
+  const handleDeleteToast = (success: boolean) => {
+    setToastMessage(success ? "Task deleted" : "Failed to delete task")
+    setToastOpen(true)
   }
 
   return (
@@ -326,7 +334,13 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
           </div>
         </div>
       </div>
-      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" />}
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
+      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" onDelete={handleDeleteToast} />}
     </div>
   )
 }

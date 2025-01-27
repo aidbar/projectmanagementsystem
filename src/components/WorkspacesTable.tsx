@@ -185,8 +185,17 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const workspacesTableRef = useRef<WorkspacesTableRef>(null)
-  const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined);
-  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined)
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
+
+  const navigate = useNavigate()
+
+  const handleDelete = (success: boolean) => {
+    setToastMessage(success ? "Workspace deleted" : "Failed to delete workspace")
+    setToastOpen(true)
+  }
 
   /*function handleUpdate() {
     if (workspacesTableRef.current) {
@@ -194,7 +203,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
     }
   }*/
 
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
 
   /*useImperativeHandle(ref, () => ({
     fetchData: fetchWorkspaces
@@ -356,6 +365,12 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         </Button>
       </div>
       </div>
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
       {deletePopupOpen && deleteWorkspace && (
       <DeleteConfirmationPopup
         onClose={() => setDeletePopupOpen(false)}
@@ -368,6 +383,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         }}
         itemName={deleteWorkspace.name}
         entity="Workspaces"
+        onDelete={handleDelete}
       />
       )}
     </div>

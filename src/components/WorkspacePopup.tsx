@@ -6,11 +6,11 @@ import api from "../api"
 import { Workspace } from "./WorkspacesTable"
 import { AxiosError } from "axios"
 import { useWorkspaces } from "@/context/WorkspacesContext"
-import { set } from "date-fns"
+import * as Toast from "@radix-ui/react-toast"
 
 interface WorkspacePopupProps {
   onClose: () => void
-  onCreate: () => void
+  onCreate: (success: boolean, isEdit: boolean) => void
   workspace?: Workspace
 }
 
@@ -42,6 +42,7 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
           updatedAt
         })
         setWorkspaces(prev => prev.map(w => w.id === workspace.id ? { ...w, name, description, isPublic, updatedAt } : w))
+        onCreate(true, true)
       } else {
         const response = await api.post("/Workspaces", {
           name,
@@ -49,8 +50,8 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
           isPublic
         })
         setWorkspaces(prev => [...prev, response.data])
+        onCreate(true, false)
       }
-      onCreate()
       onClose()
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -62,6 +63,7 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
       } else {
         setNameError("An error occurred")
       }
+      onCreate(false, !!workspace)
       console.error("Error creating/updating workspace:", error)
     }
   }

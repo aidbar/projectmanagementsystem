@@ -9,9 +9,10 @@ type DeleteConfirmationPopupProps = {
   updateState: () => void;
   itemName: string;
   entity: string;
+  onDelete: (success: boolean) => void;
 };
 
-export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ onClose, deleteItem, updateState, itemName, entity }) => {
+export const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ onClose, deleteItem, updateState, itemName, entity, onDelete }) => {
   const [deleteError, setDeleteError] = useState("");
 
 const handleDelete = async () => {
@@ -19,6 +20,7 @@ const handleDelete = async () => {
     try {
         await api.delete(`/${entity}/${deleteItem.id}`);
         updateState();
+        onDelete(true);
         onClose();
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -30,6 +32,7 @@ const handleDelete = async () => {
         } else {
             setDeleteError("An error occurred");
         }
+        onDelete(false);
         console.error("Error deleting item:", error);
     }
 };

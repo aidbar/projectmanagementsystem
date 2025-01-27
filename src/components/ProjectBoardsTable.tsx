@@ -164,17 +164,24 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { projectBoards, setProjectBoards, fetchProjectBoards, loading } = useProjectBoards();
+  const { projectBoards, setProjectBoards, fetchProjectBoards, loading } = useProjectBoards()
   const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
-  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
-  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
-  const { workspaceId: paramWorkspaceId } = useParams<{ workspaceId: string }>();
+  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined)
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
+  const { workspaceId: paramWorkspaceId } = useParams<{ workspaceId: string }>()
 
   const navigate = useNavigate()
   const fetchData = async () => {
     if (workspaceId || paramWorkspaceId) {
-      await fetchProjectBoards(workspaceId || paramWorkspaceId!);
+      await fetchProjectBoards(workspaceId || paramWorkspaceId!)
     }
+  }
+
+  const handleDelete = (success: boolean) => {
+    setToastMessage(success ? "Project board deleted" : "Failed to delete project board")
+    setToastOpen(true)
   }
 
   /*useImperativeHandle(ref, () => ({
@@ -324,6 +331,12 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
           </Button>
         </div>
       </div>
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
       {deletePopupOpen && deleteProjectBoard && (
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
@@ -331,11 +344,12 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
           updateState={() => {
             setProjectBoards((prevProjectBoards) =>
               prevProjectBoards.filter((pb) => pb.id !== deleteProjectBoard.id)
-            );
-            setDeletePopupOpen(false);
-            }}
+            )
+            setDeletePopupOpen(false)
+          }}
           itemName={deleteProjectBoard.name}
           entity="ProjectBoards"
+          onDelete={handleDelete}
         />
       )}
     </div>
