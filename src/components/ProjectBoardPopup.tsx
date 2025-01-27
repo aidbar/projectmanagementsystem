@@ -10,7 +10,7 @@ import { useProjectBoards } from "@/context/ProjectBoardsContext"; // Import use
 
 interface ProjectBoardPopupProps {
   onClose: () => void
-  onCreate: () => void
+  onCreate: (success: boolean, isEdit: boolean) => void // Update onCreate prop type
   projectBoard?: ProjectBoard
   workspaceId: string // Add workspaceId to props
 }
@@ -49,6 +49,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
           workspaceId
         })
         setProjectBoards(prev => prev.map(pb => pb.id === projectBoard.id ? { ...pb, name, description, isPublic, updatedAt } : pb)) // Update global state
+        onCreate(true, true); // Pass true on success and true for edit
       } else {
         const newProjectBoard = await api.post("/ProjectBoards", {
           name,
@@ -57,8 +58,8 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
           workspaceId
         })
         setProjectBoards(prev => [...prev, newProjectBoard.data]) // Add new project board to global state
+        onCreate(true, false); // Pass true on success and false for create
       }
-      onCreate()
       onClose()
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -71,6 +72,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
         setNameError("An error occurred")
       }
       console.error("Error creating/updating projectBoard:", error)
+      onCreate(false, !!projectBoard); // Pass false on failure and whether it was an edit
     }
   }
 

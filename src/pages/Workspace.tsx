@@ -9,6 +9,7 @@ import { ProjectBoardPopup } from '../components/ProjectBoardPopup';
 import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
 import { useWorkspaces } from '@/context/WorkspacesContext';
 import { ProjectBoardsProvider, useProjectBoards } from '@/context/ProjectBoardsContext';
+import * as Toast from "@radix-ui/react-toast";
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void;
@@ -36,7 +37,12 @@ const Workspace = () => {
 
   const { projectBoards, fetchProjectBoards, loading } = useProjectBoards();
 
-  const handleCreate = () => {
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const handleCreateOrEdit = (success: boolean, isEdit: boolean) => {
+    setToastMessage(success ? (isEdit ? "Changes saved" : "Project board created") : (isEdit ? "Failed to save changes" : "Failed to create project board"));
+    setToastOpen(true);
     projectBoardsTableRef.current?.fetchData();
   };
 
@@ -81,6 +87,12 @@ const Workspace = () => {
   return (
     <div>
       <Header />
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+      </Toast.Provider>
       <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
         {fetchError && <p className="text-red-500">{fetchError}</p>}
         {workspaceData ? (
@@ -119,12 +131,12 @@ const Workspace = () => {
             setEditProjectBoard(undefined);
             setIsPopupOpen(false);
           }}
-          onCreate={handleCreate}
+          onCreate={(success) => handleCreateOrEdit(success, !!editProjectBoard)}
           projectBoard={editProjectBoard}
           workspaceId={id}
         />
       )}
-      {deletePopupOpen && deleteProjectBoard && (
+      {/*deletePopupOpen && deleteProjectBoard && (
         <DeleteConfirmationPopup
           onClose={() => setDeletePopupOpen(false)}
           deleteItem={deleteProjectBoard}
@@ -132,7 +144,7 @@ const Workspace = () => {
           itemName={deleteProjectBoard.name}
           entity="ProjectBoards"
         />
-      )}
+      )*/}
     </div>
   );
 };
