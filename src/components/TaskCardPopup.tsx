@@ -21,9 +21,10 @@ interface TaskCardPopupProps {
   task: Task
   onClose: () => void
   onDelete: () => void
+  onSave: (success: boolean) => void // Add this line
 }
 
-export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
+export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopupProps) { // Add onSave to destructured props
   const { columns } = useColumns()
   const { priorities } = usePriorities()
   const { tasks, setTasks } = useTasks() // Use global state for tasks
@@ -91,8 +92,10 @@ export function TaskCardPopup({ task, onClose, onDelete }: TaskCardPopupProps) {
       });
       console.log("Changes saved:", response.data);
       setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status } : t))
+      onSave(true) // Call onSave with true
     } catch (error) {
       console.error("Error saving changes:", error);
+      onSave(false) // Call onSave with false
     }
   };
 

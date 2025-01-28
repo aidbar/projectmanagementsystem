@@ -13,6 +13,7 @@ import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
 import api from "@/api"
 import { title } from "process"
+import * as Toast from "@radix-ui/react-toast"
 
 export interface Status {
   id: UniqueIdentifier
@@ -75,6 +76,8 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [toastOpen, setToastOpen] = useState(false)
+  const [toastMessage, setToastMessage] = useState("")
 
   const style = {
     transition,
@@ -104,6 +107,11 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
 
   const handleMouseHoverEvents = (isHovered: boolean) => () => {
     setIsHovered(isHovered)
+  }
+
+  const handleSaveChangesToast = (success: boolean) => {
+    setToastMessage(success ? "Changes saved" : "Failed to save changes")
+    setToastOpen(true)
   }
 
   return (
@@ -136,7 +144,13 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
           </CardContent>
         </Card>
       </div>
-      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} />}
+      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} onSave={handleSaveChangesToast} />}
+      <Toast.Provider>
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+          <Toast.Title>{toastMessage}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-0 right-0 p-4" style={{ zIndex: 100 }} />
+      </Toast.Provider>
     </>
   )
 }
