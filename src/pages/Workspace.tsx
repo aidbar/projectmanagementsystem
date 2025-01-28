@@ -204,7 +204,7 @@ const Workspace = () => {
                 </div>
                 )}
             </h1>
-            <p className="italic text-center">
+            <div className="italic text-center">
               {isEditing.description ? (
                 <div className="flex justify-center items-center">
                   <Input
@@ -216,11 +216,11 @@ const Workspace = () => {
                   />
                 </div>
               ) : (
-                <>
+                <div className="italic text-center">
                   {workspaceDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')}><Edit /></Button>
-                </>
+                </div>
               )}
-            </p>
+            </div>
             <div>
               <p>
                 Created by: {workspaceData.creatorUsername || <em>username hidden from others</em>}

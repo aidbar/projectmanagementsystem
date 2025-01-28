@@ -152,7 +152,7 @@ export function ProjectBoard() {
                 </div>
               )}
             </h1>
-            <p className="italic text-center">
+            <div className="italic text-center">
               {isEditing.description ? (
                 <div className="flex justify-center items-center">
                   <Input
@@ -164,11 +164,11 @@ export function ProjectBoard() {
                   />
                 </div>
               ) : (
-                <>
+                <div className="italic text-center">
                   {projectBoardDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')}><Edit /></Button>
-                </>
+                </div>
               )}
-            </p>
+            </div>
             <div>
               <p>Created at: {new Date(projectBoardData.createdAt).toLocaleString()}</p>
               <p>Last updated: {new Date(projectBoardData.updatedAt).toLocaleString()}</p>
