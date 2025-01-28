@@ -20,7 +20,7 @@ import * as Toast from "@radix-ui/react-toast"
 interface TaskCardPopupProps {
   task: Task
   onClose: () => void
-  onDelete: () => void
+  onDelete: (success: boolean) => void
   onSave: (success: boolean) => void // Add this line
 }
 
@@ -183,11 +183,6 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
     setIsDeletePopupOpen(false)
   }
 
-  const handleDeleteToast = (success: boolean) => {
-    setToastMessage(success ? "Task deleted" : "Failed to delete task")
-    setToastOpen(true)
-  }
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded shadow-md w-96 relative">
@@ -343,7 +338,7 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
         </Toast.Root>
         <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
       </Toast.Provider>
-      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" onDelete={handleDeleteToast} />}
+      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" onDelete={onDelete} />}
     </div>
   )
 }

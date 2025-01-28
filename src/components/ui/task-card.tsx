@@ -42,7 +42,8 @@ export interface Task {
 
 interface TaskCardProps {
   task: Task
-  isOverlay?: boolean
+  isOverlay?: boolean,
+  onDelete?: (success: boolean) => void
 }
 
 export type TaskType = "Task"
@@ -60,7 +61,7 @@ export const updateTaskColumn = async (taskId: UniqueIdentifier, newColumnId: Co
   }
 };
 
-export function TaskCard({ task, isOverlay }: TaskCardProps) {
+export function TaskCard({ task, isOverlay, onDelete = () => {} }: TaskCardProps) {
   const { columns } = useColumns()
   const { priorities } = usePriorities()
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -114,6 +115,11 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     setToastOpen(true)
   }
 
+  const handleDeleteToast = (success: boolean) => {
+    setToastMessage(success ? "Task deleted successfully" : "Failed to delete task")
+    setToastOpen(true)
+  }
+
   return (
     <>
       <div onClick={handleClick} onMouseEnter={handleMouseHoverEvents(true)} onMouseLeave={handleMouseHoverEvents(false)}>
@@ -144,7 +150,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
           </CardContent>
         </Card>
       </div>
-      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={() => {}} onSave={handleSaveChangesToast} />}
+      {isPopupOpen && <TaskCardPopup task={task} onClose={handleClosePopup} onDelete={onDelete} onSave={handleSaveChangesToast} />}
       <Toast.Provider>
         <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
           <Toast.Title>{toastMessage}</Toast.Title>

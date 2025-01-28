@@ -29,10 +29,11 @@ interface BoardColumnProps {
   column: Column
   isOverlay?: boolean
   onAddTask?: (columnId: UniqueIdentifier) => void
-  onEditColumn?: () => void
+  onEditColumn?: () => void,
+  onDeleteTask: (success: boolean) => void
 }
 
-export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn }: BoardColumnProps) {
+export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn, onDeleteTask }: BoardColumnProps) {
   const { columns } = useColumns()
   const { priorities } = usePriorities()
   const { tasks } = useTasks() // Use global state for tasks
@@ -104,7 +105,7 @@ export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn }: Boar
         <CardContent className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
             {tasksInColumn.map((task) => (
-              <TaskCard key={task.id} task={task} />
+              <TaskCard key={task.id} task={task} onDelete={onDeleteTask} />
             ))}
           </SortableContext>
         </CardContent>

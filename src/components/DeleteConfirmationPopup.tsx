@@ -19,8 +19,8 @@ const handleDelete = async () => {
     setDeleteError("");
     try {
         await api.delete(`/${entity}/${deleteItem.id}`);
-        updateState();
         onDelete(true);
+        updateState();
         onClose();
     } catch (error) {
         if (error instanceof AxiosError) {

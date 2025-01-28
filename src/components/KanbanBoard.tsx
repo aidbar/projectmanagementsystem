@@ -96,6 +96,12 @@ export function KanbanBoard() {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  const handleDeleteToast = (success: boolean) => {
+    console.log("handleDeleteToast", success)
+    setToastMessage(success ? "Task deleted successfully" : "Failed to delete task")
+    setToastOpen(true)
+  }
+
   useEffect(() => {
     async function fetchTasks() {
       try {
@@ -279,6 +285,7 @@ export function KanbanBoard() {
                 //tasks={tasks.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
                 onEditColumn={() => handleEditColumn(col)}
+                onDeleteTask={handleDeleteToast}
               />
             ))}
           </SortableContext>
@@ -291,6 +298,7 @@ export function KanbanBoard() {
                 <BoardColumn
                   isOverlay
                   column={activeColumn}
+                  onDeleteTask={handleDeleteToast}
                   //tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
                 />
               )}
