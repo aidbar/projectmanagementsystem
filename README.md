@@ -272,10 +272,7 @@ API integration is done using custom hooks and services defined in the `api` dir
 
 ## Roadmap
 
-- Improve user feedback
-- Create an utilize API endpoints for more specific data retrieval
-- Persist the change of a task's status when the task is moved to a different column
-- Utilize state for updating components in `Workspace.tsx` and `ProjectBoard.tsx` instead of refecthing
+- Create and utilize API endpoints for more specific data retrieval
 - Create tests
 - Ensure responsiveness and accessibility
 - Implement "assigned users" feature
