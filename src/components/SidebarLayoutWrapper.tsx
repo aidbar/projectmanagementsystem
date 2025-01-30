@@ -6,7 +6,7 @@ export default function SidebarLayoutWrapper({ children }: { children: React.Rea
     <SidebarProvider>
       <AppSidebar />
       {/*<main>*/}
-        <SidebarTrigger />
+        <SidebarTrigger aria-label="Toggle Sidebar">Toggle Sidebar</SidebarTrigger>
         {children}
       {/*</main>*/}
     </SidebarProvider>

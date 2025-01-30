@@ -128,7 +128,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditP
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-red-500"
+                className="text-red-700"
                 disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== projectBoard.creatorUserId}
                 onClick={(e) => {
                   e.stopPropagation();

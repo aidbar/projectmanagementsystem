@@ -185,60 +185,65 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded shadow-md w-96 relative">
+      <div className="bg-white p-6 rounded shadow-md w-96 relative" role="dialog" aria-labelledby="task-card-popup-title">
+        <h2 id="task-card-popup-title" className="sr-only">Task</h2>
         <div className="flex justify-between items-center mb-4 absolute top-4 right-4">
-          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Close">Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
+          {errors.title && <p className="text-red-700 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
-            <label className="font-bold text-sm block mb-1">
-              Title {isEditing.title && <span className="text-red-500">*</span>}
+            <label className="font-bold text-sm block mb-1" htmlFor="task-title-input">
+              Title {isEditing.title && <span className="text-red-700">*</span>}
             </label>
             {isEditing.title ? (
               <input
+                id="task-title-input"
                 type="text"
                 name="title"
                 value={taskDetails.title}
                 onChange={handleChange}
                 onBlur={() => handleSave('title')}
                 className="border border-gray-500 p-3"
+                aria-label="Task Title"
               />
             ) : (
               <>
-                {taskDetails.title} <span className="ml-2"><a href="#" className="text-sm italic underline" onClick={() => handleEditToggle('title')}>Edit</a></span>
+                {taskDetails.title} <span className="ml-2"><a href="#" className="text-sm italic underline" onClick={() => handleEditToggle('title')} aria-label="Edit Title">Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-2">
-            {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
-            <label className="font-bold text-sm block mb-1">
-              Description {isEditing.description && <span className="text-red-500">*</span>}
+            {errors.description && <p className="text-red-700 italic">{errors.description}</p>}
+            <label className="font-bold text-sm block mb-1" htmlFor="task-description-input">
+              Description {isEditing.description && <span className="text-red-700">*</span>}
             </label>
             {isEditing.description ? (
               <textarea
+                id="task-description-input"
                 name="description"
                 value={taskDetails.description}
                 onChange={handleChange}
                 onBlur={() => handleSave('description')}
                 className="border border-gray-500 p-3"
+                aria-label="Task Description"
               />
             ) : (
               <>
-                {taskDetails.description} <span className="ml-2 italic"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')}>Edit</a></span>
+                {taskDetails.description} <span className="ml-2 italic"><a href="#" className="italic underline" onClick={() => handleEditToggle('description')} aria-label="Edit Description">Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-6">
-            {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
-            <label className="font-bold text-sm block mb-1">
-              Status {isEditing.status && <span className="text-red-500">*</span>}
+            {errors.status && <p className="text-red-700 italic">{errors.status}</p>}
+            <label className="font-bold text-sm block mb-1" htmlFor="task-status-select">
+              Status {isEditing.status && <span className="text-red-700">*</span>}
             </label>
             {isEditing.status ? (
               <Select
                 value={taskDetails.status}
                 onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value as `${string}-${string}-${string}-${string}-${string}` }))}>
-                <SelectTrigger className="border border-gray-500 p-3">
+                <SelectTrigger id="task-status-select" className="border border-gray-500 p-3" aria-label="Select Status">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,20 +256,20 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
               </Select>
             ) : (
               <>
-                {getStatusTitle(taskDetails.status.toString())} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')}>Edit</a></span>
+                {getStatusTitle(taskDetails.status.toString())} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('status')} aria-label="Edit Status">Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-4">
-            {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
-            <label className="font-bold text-sm block mb-1">
-              Priority {isEditing.priority && <span className="text-red-500">*</span>}
+            {errors.priority && <p className="text-red-700 italic">{errors.priority}</p>}
+            <label className="font-bold text-sm block mb-1" htmlFor="task-priority-select">
+              Priority {isEditing.priority && <span className="text-red-700">*</span>}
             </label>
             {isEditing.priority ? (
               <Select
                 value={taskDetails.priority}
                 onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}>
-                <SelectTrigger className="border border-gray-500 p-3">
+                <SelectTrigger id="task-priority-select" className="border border-gray-500 p-3" aria-label="Select Priority">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
@@ -277,23 +282,26 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
               </Select>
             ) : (
               <>
-                {getPriorityName(taskDetails.priority)} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')}>Edit</a></span>
+                {getPriorityName(taskDetails.priority)} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('priority')} aria-label="Edit Priority">Edit</a></span>
               </>
             )}
           </div>
           <div className="mt-4">
-            <label className="font-bold text-sm block mb-1">
-              Due Date {isEditing.dueDate && <span className="text-red-500">*</span>}
+            <label className="font-bold text-sm block mb-1" htmlFor="task-due-date">
+              Due Date {isEditing.dueDate && <span className="text-red-700">*</span>}
             </label>
             {isEditing.dueDate ? (
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
+                    id="task-due-date"
                     variant={"outline"}
                     className={cn(
                       "w-[240px] justify-start text-left font-normal",
                       !date && "text-muted-foreground"
-                    )}>
+                    )}
+                    aria-label="Select Due Date"
+                  >
                     <CalendarIcon />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
@@ -311,7 +319,7 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
               </Popover>
             ) : (
               <>
-                {taskDetails.dueDate} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('dueDate')}>Edit</a></span>
+                {taskDetails.dueDate} <span className="ml-2"><a href="#" className="italic underline" onClick={() => handleEditToggle('dueDate')} aria-label="Edit Due Date">Edit</a></span>
               </>
             )}
           </div>
@@ -323,22 +331,22 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
             <strong>Updated At: </strong> { new Date(task.updatedAt).toLocaleString() }
           </div>
           <div className="mt-4 flex justify-between">
-            <Button onClick={handleDelete} className={buttonVariants({ variant: "destructive" })}>
+            <Button onClick={handleDelete} className={buttonVariants({ variant: "destructive" })} aria-label="Delete Task">
               Delete Task
             </Button>
-            <Button onClick={handleSaveChanges} disabled={!isSaveEnabled} className={buttonVariants({ variant: "secondary" })}>
+            <Button onClick={handleSaveChanges} disabled={!isSaveEnabled} className={buttonVariants({ variant: "secondary" })} aria-label="Save Changes">
               Save changes
             </Button>
           </div>
         </div>
       </div>
       <Toast.Provider>
-        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded" role="alert">
           <Toast.Title>{toastMessage}</Toast.Title>
         </Toast.Root>
         <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
       </Toast.Provider>
-      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" onDelete={onDelete} />}
+      {isDeletePopupOpen && <DeleteConfirmationPopup onClose={handleCloseDeletePopup} deleteItem={{ id: task.id.toString() }} updateState={updateState} itemName={task.title} entity="TaskCard" onDelete={onDelete} aria-label="Delete Confirmation Popup" />}
     </div>
   )
 }

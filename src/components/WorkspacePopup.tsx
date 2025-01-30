@@ -70,15 +70,16 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-md shadow-md">
-        <h2 className="text-xl mb-4">{workspace ? "Edit workspace" : "Create a new workspace"}</h2>
+      <div className="bg-white p-6 rounded-md shadow-md" role="dialog" aria-labelledby="workspace-dialog-title">
+        <h2 id="workspace-dialog-title" className="text-xl mb-4">{workspace ? "Edit workspace" : "Create a new workspace"}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="text-sm block mb-1">
-              Workspace name <span className="text-red-500">*</span>
+            <label className="text-sm block mb-1" htmlFor="workspace-name-input">
+              Workspace name <span className="text-red-700">*</span>
             </label>
-            {nameError && <p className="text-red-500 mb-2 italic">{nameError}</p>}
+            {nameError && <p className="text-red-700 mb-2 italic">{nameError}</p>}
             <Input
+              id="workspace-name-input"
               placeholder="Workspace name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -95,8 +96,9 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
             />
           </div>
           <div className="mb-4">
-            <label className="text-sm block mb-1">Description</label>
+            <label className="text-sm block mb-1" htmlFor="workspace-description-input">Description</label>
             <Input
+              id="workspace-description-input"
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -104,16 +106,18 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
           </div>
           <div className="mb-4 flex items-center">
             <Checkbox
+              id="public-checkbox"
               checked={isPublic}
               onCheckedChange={(value) => setIsPublic(!!value)}
+              aria-label="Public"
             />
-            <span className="ml-2">Public</span>
+            <span className="ml-2" id="public-label">Public</span>
           </div>
           <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} aria-label="Cancel">
               Cancel
             </Button>
-            <Button type="submit" disabled={name.length === 0 || name.length > 200}>
+            <Button type="submit" disabled={name.length === 0 || name.length > 200} aria-label={workspace ? "Save" : "Create"}>
               {workspace ? "Save" : "Create"}
             </Button>
           </div>

@@ -112,17 +112,19 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded shadow-md w-96 relative">
+      <div className="bg-white p-6 rounded shadow-md w-96 relative" role="dialog" aria-labelledby="create-task-popup-title">
+        <h2 id="create-task-popup-title" className="sr-only">Create Task Popup</h2>
         <div className="flex justify-between items-center mb-4 absolute top-4 right-4">
-          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Close</Button>
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Close">Close</Button>
         </div>
         <div className="mt-12 px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
+          {errors.title && <p className="text-red-700 italic">{errors.title}</p>}
           <div className="font-bold text-2xl">
-            <label className="text-sm block mb-1">
-              Title <span className="text-red-500">*</span>
+            <label className="text-sm block mb-1" htmlFor="task-title-input">
+              Title <span className="text-red-700">*</span>
             </label>
             <input
+              id="task-title-input"
               type="text"
               name="title"
               value={taskDetails.title}
@@ -130,32 +132,34 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
               onBlur={handleBlur}
               placeholder="Title"
               className="border border-gray-500 p-3 w-full"
+              aria-label="Task Title"
             />
           </div>
           <div className="mt-2">
-            {errors.description && <p className="text-red-500 italic">{errors.description}</p>}
-            <label className="text-sm block mb-1">
-              Description <span className="text-red-500">*</span>
+            {errors.description && <p className="text-red-700 italic">{errors.description}</p>}
+            <label className="text-sm block mb-1" htmlFor="task-description-input">
+              Description <span className="text-red-700">*</span>
             </label>
             <textarea
+              id="task-description-input"
               name="description"
               value={taskDetails.description}
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="Description"
               className="border border-gray-500 p-3 w-full"
+              aria-label="Task Description"
             />
           </div>
           <div className="mt-6">
-            {errors.status && <p className="text-red-500 italic">{errors.status}</p>}
-            <label className="text-sm block mb-1">
-              Status <span className="text-red-500">*</span>
+            {errors.status && <p className="text-red-700 italic">{errors.status}</p>}
+            <label className="text-sm block mb-1" htmlFor="task-status-select">
+              Status <span className="text-red-700">*</span>
             </label>
             <Select
               value={taskDetails.status}
-              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value }))}
-            >
-              <SelectTrigger className="border border-gray-500 p-3 w-full">
+              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, status: value }))}>
+              <SelectTrigger id="task-status-select" className="border border-gray-500 p-3 w-full" aria-label="Select Status">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
@@ -168,16 +172,14 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
             </Select>
           </div>
           <div className="mt-4">
-            {errors.priority && <p className="text-red-500 italic">{errors.priority}</p>}
-            <label className="text-sm block mb-1">
-              Priority <span className="text-red-500">*</span>
+            {errors.priority && <p className="text-red-700 italic">{errors.priority}</p>}
+            <label className="text-sm block mb-1" htmlFor="task-priority-select">
+              Priority <span className="text-red-700">*</span>
             </label>
             <Select
               value={taskDetails.priority}
-              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}
-              onOpenChange={(isDatePickerOpen) => !isDatePickerOpen && handleBlur({ target: { name: "priority", value: taskDetails.priority } })} // Change onBlur to onOpenChange
-            >
-              <SelectTrigger className="border border-gray-500 p-3 w-full">
+              onValueChange={(value) => setTaskDetails((prev) => ({ ...prev, priority: value }))}>
+              <SelectTrigger id="task-priority-select" className="border border-gray-500 p-3 w-full" aria-label="Select Priority">
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
               <SelectContent>
@@ -190,16 +192,18 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
             </Select>
           </div>
           <div className="mt-4">
-            <strong>Due Date: <span className="text-red-500">*</span></strong>
+            <strong>Due Date: <span className="text-red-700">*</span></strong>
             <Popover open={isDatePickerOpen} onOpenChange={handleOpenDatePickerChange}>
-            {errors.dueDate && <p className="text-red-500 italic">{errors.dueDate}</p>}
+              {errors.dueDate && <p className="text-red-700 italic">{errors.dueDate}</p>}
               <PopoverTrigger asChild>
                 <Button
+                  id="task-due-date"
                   variant={"outline"}
                   className={cn(
                     "w-[240px] justify-start text-left font-normal",
                     !date && "text-muted-foreground"
                   )}
+                  aria-label="Select Due Date"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -217,23 +221,12 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
               </PopoverContent>
             </Popover>
           </div>
-          {/*<div className="mt-4">
-            <strong>Assigned Users: </strong>
-            <input
-              type="text"
-              name="assignedUsers"
-              value={taskDetails.assignedUsers}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Assigned Users"
-              className="border border-gray-500 p-3 w-full"
-            />
-          </div>*/}
           <div className="mt-4 flex justify-start">
             <Button
               onClick={handleSave}
               className={buttonVariants({ variant: "default" })}
               disabled={!isFormValid}
+              aria-label="Create Task"
             >
               Create Task
             </Button>

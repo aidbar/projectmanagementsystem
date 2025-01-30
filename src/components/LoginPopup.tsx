@@ -46,14 +46,15 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-md">
-        <h2 className="text-xl mb-4">Login</h2>
-        {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
-        {emailError && <p className="text-red-500 mb-2">{emailError}</p>}
-        <label className="text-sm block mb-1">
-          Email <span className="text-red-500">*</span>
+      <div className="bg-white p-6 rounded shadow-md w-96" role="dialog" aria-labelledby="login-dialog-title">
+        <h2 id="login-dialog-title" className="text-xl mb-4">Login</h2>
+        {errorMessage && <p className="text-red-700 mb-2">{errorMessage}</p>}
+        {emailError && <p className="text-red-700 mb-2">{emailError}</p>}
+        <label className="text-sm block mb-1" htmlFor="email-input">
+          Email <span className="text-red-700">*</span>
         </label>
         <input
+          id="email-input"
           type="text"
           placeholder="Email"
           value={email}
@@ -67,11 +68,12 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
           }}
           className={`mb-2 p-2 border rounded w-full ${emailError ? 'border-red-500' : ''}`}
         />
-        {passwordError && <p className="text-red-500 mb-2 w-64 h-34 break-words">{passwordError}</p>}
-        <label className="text-sm block mb-1">
-          Password <span className="text-red-500">*</span>
+        {passwordError && <p className="text-red-700 mb-2 w-64 h-34 break-words">{passwordError}</p>}
+        <label className="text-sm block mb-1" htmlFor="password-input">
+          Password <span className="text-red-700">*</span>
         </label>
         <input
+          id="password-input"
           type="password"
           placeholder="Password"
           value={password}
@@ -86,10 +88,11 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
           className={`mb-4 p-2 border rounded w-full ${passwordError ? 'border-red-500' : ''}`}
         />
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Cancel</Button>
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Cancel">Cancel</Button>
           <Button 
             onClick={handleLogin} 
             disabled={!validateEmail(email) || !validatePassword(password)}
+            aria-label="Login"
           >
             Login
           </Button>

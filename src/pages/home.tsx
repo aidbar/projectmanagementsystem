@@ -57,16 +57,16 @@ export function Home() {
   })
 
   return (
-    <div className="flex flex-col justify-center items-center gap-10 h-screen relative">
-      <h1 className="text-2xl">Welcome to the Project Management System!</h1>
-      <div className="gap-1 items-center flex flex-col">
+    <div className="flex flex-col justify-center items-center gap-10 h-screen relative p-4">
+      <h1 className="text-2xl text-center">Welcome to the Project Management System!</h1>
+      <div className="gap-1 items-center flex flex-col text-center">
         <p className="italic pb-0">Please <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowLoginPopup(true); }}>sign in</a> to view your account.</p>
         <p className="italic">No account? <a className="underline" href="#" onClick={(e) => { e.preventDefault(); setShowSignupPopup(true); }}>Sign up.</a></p>
       </div>
       <div className="absolute top-4 right-4">
         <div className="flex gap-2">
-          <Button className={buttonVariants({variant: "secondary"})} onClick={() => setShowSignupPopup(true)}>Sign Up</Button>
-          <Button onClick={() => setShowLoginPopup(true)}>Login</Button>
+          <Button className={buttonVariants({variant: "secondary"})} onClick={() => setShowSignupPopup(true)} aria-label="Sign Up">Sign Up</Button>
+          <Button onClick={() => setShowLoginPopup(true)} aria-label="Login">Login</Button>
         </div>
       </div>
       {showLoginPopup && (
@@ -74,6 +74,7 @@ export function Home() {
         onClose={ () => { setShowLoginPopup(false); setLoginError("") } }
         onLogin={(email : string, password : string) => loginMutation.mutateAsync({ email, password }) }
         errorMessage={loginError}
+        aria-label="Login Popup"
       />
       )}
       {showSignupPopup && (
@@ -81,6 +82,7 @@ export function Home() {
         onClose={ () => { setShowSignupPopup(false); setSignupError("") } }
         onSignup={(firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) => signupMutation.mutateAsync({ firstname, lastname, username, email, password, confirmPassword }) }
         errorMessage={signupError}
+        aria-label="Signup Popup"
       />
       )}
     </div>

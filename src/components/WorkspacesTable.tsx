@@ -79,6 +79,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          aria-label="Sort by Name"
         >
           Name
           <ArrowUpDown />
@@ -117,7 +118,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0" aria-label={`Open menu for workspace ${workspace.name}`}>
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal />
               </Button>
@@ -148,7 +149,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-red-500"
+                className="text-red-700"
                 disabled={JSON.parse(localStorage.getItem('userInfo') || '{}').id !== workspace.creatorUserId}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -161,7 +162,7 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
             </DropdownMenuContent>
           </DropdownMenu>
           <Toast.Provider>
-            <Toast.Root open={open} onOpenChange={setOpen} className="bg-black text-white p-2 rounded">
+            <Toast.Root open={open} onOpenChange={setOpen} className="bg-black text-white p-2 rounded" role="alert">
               <Toast.Title>Copied!</Toast.Title>
             </Toast.Root>
             <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
@@ -261,10 +262,11 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         table.getColumn("name")?.setFilterValue(event.target.value)
         }
         className="max-w-sm"
+        aria-label="Filter names"
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="ml-auto">
+        <Button variant="outline" className="ml-auto" aria-label="Toggle columns">
           Columns <ChevronDown />
         </Button>
         </DropdownMenuTrigger>
@@ -317,6 +319,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
             data-state={row.getIsSelected() && "selected"}
             onClick={() => navigate(`/workspace/${row.original.id}`)}
             className="cursor-pointer"
+            aria-label={`Workspace ${row.original.name}`}
           >
             {row.getVisibleCells().map((cell) => (
             <TableCell key={cell.id}>
@@ -352,6 +355,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         size="sm"
         onClick={() => table.previousPage()}
         disabled={!table.getCanPreviousPage()}
+        aria-label="Previous page"
         >
         Previous
         </Button>
@@ -360,13 +364,14 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         size="sm"
         onClick={() => table.nextPage()}
         disabled={!table.getCanNextPage()}
+        aria-label="Next page"
         >
         Next
         </Button>
       </div>
       </div>
       <Toast.Provider>
-        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded" role="alert">
           <Toast.Title>{toastMessage}</Toast.Title>
         </Toast.Root>
         <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
@@ -384,6 +389,7 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         itemName={deleteWorkspace.name}
         entity="Workspaces"
         onDelete={handleDelete}
+        aria-label="Delete Confirmation Popup"
       />
       )}
     </div>

@@ -176,61 +176,63 @@ const Workspace = () => {
 
   return (
     <SidebarLayoutWrapper>
-    <div className="flex flex-col h-screen w-screen">
-      <Header />
-      <Toast.Provider>
-        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
-          <Toast.Title>{toastMessage}</Toast.Title>
-        </Toast.Root>
-        <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
-      </Toast.Provider>
-      <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
-        {fetchError && <p className="text-red-500">{fetchError}</p>}
-        {workspaceData ? (
-          <div>
-            <h1 className="text-2xl text-center p-4">
-                {isEditing.name ? (
-                <div className="flex justify-center items-center">
-                  <Input
-                    type="text"
-                    name="name"
-                    value={workspaceDetails.name}
-                    onChange={handleChange}
-                    onBlur={() => handleSave('name')}
-                    className={`border border-gray-500 p-3 w-50 flex justify-center items-center ${hasError ? 'border-red-500' : ''}`}
-                  />
-                </div>
-                ) : (
-                <div className="flex justify-center items-center">
-                  {workspaceDetails.name} <Button variant={"ghost"} onClick={() => handleEditToggle('name')}><Edit /></Button>
-                </div>
-                )}
-            </h1>
-            <div className="italic text-center">
-              {isEditing.description ? (
-                <div className="flex justify-center items-center">
-                  <Input
-                    name="description"
-                    value={workspaceDetails.description}
-                    onChange={handleChange}
-                    onBlur={() => handleSave('description')}
-                    className="border border-gray-500 p-3 w-50 flex justify-center items-center"
-                  />
-                </div>
-              ) : (
-                <div className="italic text-center">
-                  {workspaceDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')}><Edit /></Button>
-                </div>
-              )}
-            </div>
+      <div className="flex flex-col h-screen w-screen">
+        <Header />
+        <Toast.Provider>
+          <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded" role="alert">
+            <Toast.Title>{toastMessage}</Toast.Title>
+          </Toast.Root>
+          <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+        </Toast.Provider>
+        <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
+          {fetchError && <p className="text-red-700">{fetchError}</p>}
+          {workspaceData ? (
             <div>
-              <p>
-                Created by: {workspaceData.creatorUsername || <em>username hidden from others</em>}
-              </p>
-              <p>Created at: {new Date(workspaceData.createdAt).toLocaleString()}</p>
-              <p>Last updated: {new Date(workspaceData.updatedAt).toLocaleString()}</p>
-              <p>
-                Visibility: <strong>{isEditing.isPublic ? (
+              <h1 className="text-2xl text-center p-4">
+                {isEditing.name ? (
+                  <div className="flex justify-center items-center">
+                    <Input
+                      type="text"
+                      name="name"
+                      value={workspaceDetails.name}
+                      onChange={handleChange}
+                      onBlur={() => handleSave('name')}
+                      className={`border border-gray-500 p-3 w-50 flex justify-center items-center ${hasError ? 'border-red-500' : ''}`}
+                      aria-label="Workspace Name"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center">
+                    {workspaceDetails.name} <Button variant={"ghost"} onClick={() => handleEditToggle('name')} aria-label="Edit Workspace Name"><Edit /></Button>
+                  </div>
+                )}
+              </h1>
+              <div className="italic text-center">
+                {isEditing.description ? (
+                  <div className="flex justify-center items-center">
+                    <Input
+                      name="description"
+                      value={workspaceDetails.description}
+                      onChange={handleChange}
+                      onBlur={() => handleSave('description')}
+                      className="border border-gray-500 p-3 w-50 flex justify-center items-center"
+                      aria-label="Workspace Description"
+                    />
+                  </div>
+                ) : (
+                  <div className="italic text-center">
+                    {workspaceDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')} aria-label="Edit Workspace Description"><Edit /></Button>
+                  </div>
+                )}
+              </div>
+              <div>
+                <p>
+                  Created by: {workspaceData.creatorUsername || <em>username hidden from others</em>}
+                </p>
+                <p>Created at: {new Date(workspaceData.createdAt).toLocaleString()}</p>
+                <p>Last updated: {new Date(workspaceData.updatedAt).toLocaleString()}</p>
+                <p>
+                  Visibility: <strong>{isEditing.isPublic ? (
                     <Select
                       value={workspaceDetails.isPublic ? "true" : "false"}
                       onValueChange={(value) => {
@@ -241,7 +243,7 @@ const Workspace = () => {
                         }
                       }}
                     >
-                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')}>
+                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')} aria-label="Workspace Visibility">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -249,50 +251,52 @@ const Workspace = () => {
                         <SelectItem value="false">Private</SelectItem>
                       </SelectContent>
                     </Select>
-                ) : (
-                  <>
-                    {workspaceDetails.isPublic ? 'Public' : 'Private'} <Button variant={"ghost"} onClick={() => handleEditToggle('isPublic')}><Edit /></Button>
-                  </>
-                )}</strong>
-              </p>
+                  ) : (
+                    <>
+                      {workspaceDetails.isPublic ? 'Public' : 'Private'} <Button variant={"ghost"} onClick={() => handleEditToggle('isPublic')} aria-label="Edit Workspace Visibility"><Edit /></Button>
+                    </>
+                  )}</strong>
+                </p>
+              </div>
+              <p>Workspace ID: {id}</p>
             </div>
-            <p>Workspace ID: {id}</p>
-          </div>
-        ) : (
-          <p>Loading workspace data...</p>
+          ) : (
+            <p>Loading workspace data...</p>
+          )}
+          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Project Board">
+            New project board
+          </Button>
+          <ProjectBoardsTable
+            ref={projectBoardsTableRef}
+            onEdit={handleEdit}
+            setOpenPopup={setIsPopupOpen}
+            setEditProjectBoard={setEditProjectBoard}
+            workspaceId={id}
+          />
+        </div>
+        {isPopupOpen && (
+          <ProjectBoardPopup
+            onClose={() => {
+              setEditProjectBoard(undefined);
+              setIsPopupOpen(false);
+            }}
+            onCreate={(success) => handleCreateOrEdit(success, !!editProjectBoard)}
+            projectBoard={editProjectBoard}
+            workspaceId={id}
+            aria-label="Project Board Popup"
+          />
         )}
-        <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
-          New project board
-        </Button>
-        <ProjectBoardsTable
-          ref={projectBoardsTableRef}
-          onEdit={handleEdit}
-          setOpenPopup={setIsPopupOpen}
-          setEditProjectBoard={setEditProjectBoard}
-          workspaceId={id}
-        />
+        {/*deletePopupOpen && deleteProjectBoard && (
+          <DeleteConfirmationPopup
+            onClose={() => setDeletePopupOpen(false)}
+            deleteItem={deleteProjectBoard}
+            updateState={() => projectBoardsTableRef.current?.fetchData()}
+            itemName={deleteProjectBoard.name}
+            entity="ProjectBoards"
+            aria-label="Delete Confirmation Popup"
+          />
+        )*/}
       </div>
-      {isPopupOpen && (
-        <ProjectBoardPopup
-          onClose={() => {
-            setEditProjectBoard(undefined);
-            setIsPopupOpen(false);
-          }}
-          onCreate={(success) => handleCreateOrEdit(success, !!editProjectBoard)}
-          projectBoard={editProjectBoard}
-          workspaceId={id}
-        />
-      )}
-      {/*deletePopupOpen && deleteProjectBoard && (
-        <DeleteConfirmationPopup
-          onClose={() => setDeletePopupOpen(false)}
-          deleteItem={deleteProjectBoard}
-          updateState={() => projectBoardsTableRef.current?.fetchData()}
-          itemName={deleteProjectBoard.name}
-          entity="ProjectBoards"
-        />
-      )*/}
-    </div>
     </SidebarLayoutWrapper>
   );
 };

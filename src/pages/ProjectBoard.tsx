@@ -133,7 +133,7 @@ export function ProjectBoard() {
     <div className="flex flex-col w-screen h-screen">
       <Header />
       <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
-        {fetchError && <p className="text-red-500">{fetchError}</p>}
+        {fetchError && <p className="text-red-700">{fetchError}</p>}
         {projectBoardData ? (
           <div>
             <h1 className="text-2xl text-center p-4">
@@ -146,11 +146,12 @@ export function ProjectBoard() {
                     onChange={handleChange}
                     onBlur={() => handleSave('name')}
                     className={`border border-gray-500 p-3 w-50 flex justify-center items-center ${hasError ? 'border-red-500' : ''}`}
+                    aria-label="Project Board Name"
                   />
                 </div>
               ) : (
                 <div className="flex justify-center items-center">
-                  {projectBoardDetails.name} <Button variant={"ghost"} onClick={() => handleEditToggle('name')}><Edit /></Button>
+                  {projectBoardDetails.name} <Button variant={"ghost"} onClick={() => handleEditToggle('name')} aria-label="Edit Project Board Name"><Edit /></Button>
                 </div>
               )}
             </h1>
@@ -163,11 +164,12 @@ export function ProjectBoard() {
                     onChange={handleChange}
                     onBlur={() => handleSave('description')}
                     className="border border-gray-500 p-3 w-50 flex justify-center items-center"
+                    aria-label="Project Board Description"
                   />
                 </div>
               ) : (
                 <div className="italic text-center">
-                  {projectBoardDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')}><Edit /></Button>
+                  {projectBoardDetails.description} <Button variant={"ghost"} onClick={() => handleEditToggle('description')} aria-label="Edit Project Board Description"><Edit /></Button>
                 </div>
               )}
             </div>
@@ -186,7 +188,7 @@ export function ProjectBoard() {
                       }
                     }}
                   >
-                    <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')}>
+                    <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')} aria-label="Project Board Visibility">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -196,7 +198,7 @@ export function ProjectBoard() {
                   </Select>
                 ) : (
                   <>
-                    {projectBoardDetails.isPublic ? 'Public' : 'Private'} <Button variant={"ghost"} onClick={() => handleEditToggle('isPublic')}><Edit /></Button>
+                    {projectBoardDetails.isPublic ? 'Public' : 'Private'} <Button variant={"ghost"} onClick={() => handleEditToggle('isPublic')} aria-label="Edit Project Board Visibility"><Edit /></Button>
                   </>
                 )}</strong>
               </p>
@@ -207,7 +209,7 @@ export function ProjectBoard() {
           <p>Loading project board data...</p>
         )}
         <ColumnsProvider>
-          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)}>
+          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Status Column">
             New status column
           </Button>
           <PrioritiesProvider>
@@ -215,7 +217,7 @@ export function ProjectBoard() {
               <KanbanBoard />
             </TasksProvider>
           </PrioritiesProvider>
-          {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} />}
+          {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} aria-label="Status Popup" />}
         </ColumnsProvider>
       </div>
     </div>

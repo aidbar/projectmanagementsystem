@@ -89,15 +89,16 @@ export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn, onDele
           {...attributes}
           {...listeners}
           className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
+          aria-label={`Move column: ${column.title}`}
         >
           <span className="sr-only">{`Move column: ${column.title}`}</span>
           <GripVertical />
         </Button>
-        <Button onClick={() => onAddTask?.(column.id)} variant={"ghost"} className="mt-2">
+        <Button onClick={() => onAddTask?.(column.id)} variant={"ghost"} className="mt-2" aria-label="Add Task">
           <Plus />
         </Button>
         <h2 className="ml-auto font-bold"> {column.title}</h2>
-        <Button onClick={onEditColumn} variant={"ghost"} className="ml-2">
+        <Button onClick={onEditColumn} variant={"ghost"} className="ml-2" aria-label="Edit Column">
           <Edit />
         </Button>
       </CardHeader>

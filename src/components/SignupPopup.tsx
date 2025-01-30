@@ -55,14 +55,15 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-md w-96">
-        <h2 className="text-xl mb-4">Sign Up</h2>
-        {errorMessage && <p className="text-red-500 mb-2">{errorMessage}</p>}
-        {firstNameError && <p className="text-red-500 mb-2">{firstNameError}</p>}
-        <label className="text-sm block mb-1">
-          First Name <span className="text-red-500">*</span>
+      <div className="bg-white p-6 rounded shadow-md w-96" role="dialog" aria-labelledby="signup-dialog-title">
+        <h2 id="signup-dialog-title" className="text-xl mb-4">Sign Up</h2>
+        {errorMessage && <p className="text-red-700 mb-2">{errorMessage}</p>}
+        {firstNameError && <p className="text-red-700 mb-2">{firstNameError}</p>}
+        <label className="text-sm block mb-1" htmlFor="first-name-input">
+          First Name <span className="text-red-700">*</span>
         </label>
         <input
+          id="first-name-input"
           type="text"
           placeholder="First Name"
           value={firstName}
@@ -76,11 +77,12 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           }}
           className={`mb-2 p-2 border rounded w-full ${firstNameError ? 'border-red-500' : ''}`}
         />
-        {lastNameError && <p className="text-red-500 mb-2">{lastNameError}</p>}
-        <label className="text-sm block mb-1">
-          Last Name <span className="text-red-500">*</span>
+        {lastNameError && <p className="text-red-700 mb-2">{lastNameError}</p>}
+        <label className="text-sm block mb-1" htmlFor="last-name-input">
+          Last Name <span className="text-red-700">*</span>
         </label>
         <input
+          id="last-name-input"
           type="text"
           placeholder="Last Name"
           value={lastName}
@@ -94,11 +96,12 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           }}
           className={`mb-2 p-2 border rounded w-full ${lastNameError ? 'border-red-500' : ''}`}
         />
-        {usernameError && <p className="text-red-500 mb-2">{usernameError}</p>}
-        <label className="text-sm block mb-1">
-          Username <span className="text-red-500">*</span>
+        {usernameError && <p className="text-red-700 mb-2">{usernameError}</p>}
+        <label className="text-sm block mb-1" htmlFor="username-input">
+          Username <span className="text-red-700">*</span>
         </label>
         <input
+          id="username-input"
           type="text"
           placeholder="Username"
           value={username}
@@ -112,11 +115,12 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           }}
           className={`mb-2 p-2 border rounded w-full ${usernameError ? 'border-red-500' : ''}`}
         />
-        {emailError && <p className="text-red-500 mb-2">{emailError}</p>}
-        <label className="text-sm block mb-1">
-          Email <span className="text-red-500">*</span>
+        {emailError && <p className="text-red-700 mb-2">{emailError}</p>}
+        <label className="text-sm block mb-1" htmlFor="email-input">
+          Email <span className="text-red-700">*</span>
         </label>
         <input
+          id="email-input"
           type="text"
           placeholder="Email"
           value={email}
@@ -130,11 +134,12 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           }}
           className={`mb-2 p-2 border rounded w-full ${emailError ? 'border-red-500' : ''}`}
         />
-        {passwordError && <p className="text-red-500 mb-2 w-64 h-34 break-words">{passwordError}</p>}
-        <label className="text-sm block mb-1">
-          Password <span className="text-red-500">*</span>
+        {passwordError && <p className="text-red-700 mb-2 w-64 h-34 break-words">{passwordError}</p>}
+        <label className="text-sm block mb-1" htmlFor="password-input">
+          Password <span className="text-red-700">*</span>
         </label>
         <input
+          id="password-input"
           type="password"
           placeholder="Password"
           value={password}
@@ -148,11 +153,12 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           }}
           className={`mb-2 p-2 border rounded w-full ${passwordError ? 'border-red-500' : ''}`}
         />
-        {confirmPasswordError && <p className="text-red-500 mb-2">{confirmPasswordError}</p>}
-        <label className="text-sm block mb-1">
-          Confirm Password <span className="text-red-500">*</span>
+        {confirmPasswordError && <p className="text-red-700 mb-2">{confirmPasswordError}</p>}
+        <label className="text-sm block mb-1" htmlFor="confirm-password-input">
+          Confirm Password <span className="text-red-700">*</span>
         </label>
         <input
+          id="confirm-password-input"
           type="password"
           placeholder="Confirm Password"
           value={confirmPassword}
@@ -167,13 +173,14 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
           className={`mb-4 p-2 border rounded w-full ${confirmPasswordError ? 'border-red-500' : ''}`}
         />
         <div className="flex justify-end gap-2">
-          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })}>Cancel</Button>
+          <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Cancel">Cancel</Button>
           <Button 
             onClick={handleSignup} 
             disabled={
               !email || !password || !confirmPassword || !firstName || !lastName || !username ||
               !!emailError || !!passwordError || !!confirmPasswordError || !!firstNameError || !!lastNameError || !!usernameError
             }
+            aria-label="Sign Up"
           >
             Sign Up
           </Button>

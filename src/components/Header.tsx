@@ -39,7 +39,7 @@ export function Header() {
         </NavigationMenuList>
       </NavigationMenu> */}
       <div className="absolute top-3 right-4">
-        <Button className={buttonVariants({variant: "secondary"})} onClick={() => logoutMutation.mutate()}>Logout</Button>
+        <Button className={buttonVariants({variant: "secondary"})} onClick={() => logoutMutation.mutate()} aria-label="Logout">Logout</Button>
       </div>
     </header>
   )

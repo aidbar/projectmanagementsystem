@@ -286,6 +286,7 @@ export function KanbanBoard() {
                 onAddTask={handleAddTask}
                 onEditColumn={() => handleEditColumn(col)}
                 onDeleteTask={handleDeleteToast}
+                aria-label={`Column ${col.title}`}
               />
             ))}
           </SortableContext>
@@ -300,9 +301,10 @@ export function KanbanBoard() {
                   column={activeColumn}
                   onDeleteTask={handleDeleteToast}
                   //tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
+                  aria-label={`Overlay Column ${activeColumn.title}`}
                 />
               )}
-              {activeTask && <TaskCard task={activeTask} isOverlay />}
+              {activeTask && <TaskCard task={activeTask} isOverlay aria-label={`Overlay Task ${activeTask.title}`} />}
             </DragOverlay>,
             document.body
           )}
@@ -314,6 +316,7 @@ export function KanbanBoard() {
           onCreate={handleCreateTask}
           //columnsData={columns}
           defaultStatus={newTaskColumnId || ""}
+          aria-label="Create Task Popup"
         />
       )}
 
@@ -321,11 +324,12 @@ export function KanbanBoard() {
         <StatusPopup
           onClose={() => setShowEditStatusPopup(false)}
           column={editColumn}
+          aria-label="Edit Status Popup"
         />
       )}
 
       <Toast.Provider>
-        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
+        <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded" role="alert">
           <Toast.Title>{toastMessage}</Toast.Title>
         </Toast.Root>
         <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
