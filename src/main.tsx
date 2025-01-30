@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import App from "./App"
 import "./index.css"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
@@ -27,14 +27,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <WorkspacesProvider>
-        <Routes>
-          <Route path="/" element={<PublicRoute element={<App />} />} />
-          <Route path="dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
-          <Route path="workspace/:id" element={<ProtectedRoute element={<Workspace />} />} />
-          <Route path="project-board/:id" element={<ProtectedRoute element={<ProjectBoard />} />} />
-          <Route path="*" element={<h1>Not Found</h1>} />
-          <Route path="logged-out" element={<LoggedOut />} />
-        </Routes>
+          <Routes>
+            <Route path="/" element={<PublicRoute element={<App />} />} />
+            <Route path="dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+            <Route path="workspace/:id" element={<ProtectedRoute element={<Workspace />} />} />
+            <Route path="project-board/:id" element={<ProtectedRoute element={<ProjectBoard />} />} />
+            <Route path="*" element={<h1>Not Found</h1>} />
+            <Route path="logged-out" element={<LoggedOut />} />
+          </Routes>
       </WorkspacesProvider>
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />

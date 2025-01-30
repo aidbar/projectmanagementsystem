@@ -14,6 +14,7 @@ import { set } from 'date-fns';
 import { Edit } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/dropdown';
+import SidebarLayoutWrapper from '@/components/SidebarLayoutWrapper';
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void;
@@ -174,7 +175,8 @@ const Workspace = () => {
   }
 
   return (
-    <div>
+    <SidebarLayoutWrapper>
+    <div className="flex flex-col h-screen w-screen">
       <Header />
       <Toast.Provider>
         <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded">
@@ -291,6 +293,7 @@ const Workspace = () => {
         />
       )*/}
     </div>
+    </SidebarLayoutWrapper>
   );
 };
 

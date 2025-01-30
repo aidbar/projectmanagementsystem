@@ -7,6 +7,7 @@ import { WorkspacePopup } from "../components/WorkspacePopup"
 import { DeleteConfirmationPopup } from "../components/DeleteConfirmationPopup"
 import { useWorkspaces } from "@/context/WorkspacesContext"
 import * as Toast from "@radix-ui/react-toast"
+import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper"
 
 export type WorkspacesTableRef = {
   fetchData: () => void;
@@ -33,7 +34,8 @@ export function Dashboard() {
   }
 
   return (
-    <div>
+    <SidebarLayoutWrapper>
+    <div className="flex flex-col h-screen w-screen">
       <Header />
       <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
       <h1 className="text-2xl text-center p-4">Welcome, {JSON.parse(localStorage.getItem('userInfo') || '{}').firstName} {JSON.parse(localStorage.getItem('userInfo') || '{}').lastName}!</h1>
@@ -70,5 +72,6 @@ export function Dashboard() {
       />
       )*/}
     </div>
+    </SidebarLayoutWrapper>
   )
 }

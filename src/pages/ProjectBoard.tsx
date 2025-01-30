@@ -13,6 +13,7 @@ import { TasksProvider } from "@/context/TasksContext"
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/dropdown";
 import { Edit } from "lucide-react";
+import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper"
 
 export function ProjectBoard() {
   const navigate = useNavigate()
@@ -128,7 +129,8 @@ export function ProjectBoard() {
   }, [projectBoardData]);
 
   return (
-    <div>
+    <SidebarLayoutWrapper>
+    <div className="flex flex-col w-screen h-screen">
       <Header />
       <div className="flex flex-col gap-10 h-screen p-[0.5rem]">
         {fetchError && <p className="text-red-500">{fetchError}</p>}
@@ -217,5 +219,6 @@ export function ProjectBoard() {
         </ColumnsProvider>
       </div>
     </div>
+    </SidebarLayoutWrapper>
   )
 }
