@@ -61,7 +61,7 @@ export function Dashboard() {
           <Toast.Root open={toastOpen} onOpenChange={setToastOpen} className="bg-black text-white p-2 rounded" role="alert">
             <Toast.Title>{toastMessage}</Toast.Title>
           </Toast.Root>
-          <Toast.Viewport className="fixed bottom-0 right-0 p-4" />
+          <Toast.Viewport className="fixed bottom-0 right-0 p-4"id="toast-viewport" />
         </Toast.Provider>
         {/*deletePopupOpen && deleteWorkspace && (
         <DeleteConfirmationPopup

@@ -214,7 +214,9 @@ export function ProjectBoard() {
           </Button>
           <PrioritiesProvider>
             <TasksProvider>
+              <div id="kanban-board">
               <KanbanBoard />
+              </div>
             </TasksProvider>
           </PrioritiesProvider>
           {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} aria-label="Status Popup" />}

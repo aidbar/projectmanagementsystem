@@ -69,7 +69,7 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" aria-label="Workspace Popup">
       <div className="bg-white p-6 rounded-md shadow-md" role="dialog" aria-labelledby="workspace-dialog-title">
         <h2 id="workspace-dialog-title" className="text-xl mb-4">{workspace ? "Edit workspace" : "Create a new workspace"}</h2>
         <form onSubmit={handleSubmit}>

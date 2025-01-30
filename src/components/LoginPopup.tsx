@@ -45,7 +45,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" aria-label="Login Popup">
       <div className="bg-white p-6 rounded shadow-md w-96" role="dialog" aria-labelledby="login-dialog-title">
         <h2 id="login-dialog-title" className="text-xl mb-4">Login</h2>
         {errorMessage && <p className="text-red-700 mb-2">{errorMessage}</p>}
@@ -92,7 +92,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
           <Button 
             onClick={handleLogin} 
             disabled={!validateEmail(email) || !validatePassword(password)}
-            aria-label="Login"
+            aria-label="Login button"
           >
             Login
           </Button>

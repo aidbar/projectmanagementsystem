@@ -247,8 +247,8 @@ const Workspace = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="true">Public</SelectItem>
-                        <SelectItem value="false">Private</SelectItem>
+                        <SelectItem value="true" id="value-public">Public</SelectItem>
+                        <SelectItem value="false" id="value-private">Private</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (
