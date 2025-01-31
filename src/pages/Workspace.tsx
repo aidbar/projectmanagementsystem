@@ -134,6 +134,19 @@ const Workspace = () => {
     setIsPopupOpen(true);
   };
 
+  const handleDeleteWorkspace = async () => {
+    try {
+      await api.delete(`/Workspaces/${id}`);
+      //navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to delete workspace:', error);
+      setToastMessage('Failed to delete workspace');
+      setToastOpen(true);
+    }
+  };
+
+  const [deleteWorkspacePopupOpen, setDeleteWorkspacePopupOpen] = useState(false);
+
   useEffect(() => {
     async function fetchWorkspaceData() {
       setFetchError('');
@@ -263,9 +276,14 @@ const Workspace = () => {
           ) : (
             <p>Loading workspace data...</p>
           )}
-          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Project Board">
-            New project board
-          </Button>
+          <div className="flex items-center">
+            <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Project Board">
+              New project board
+            </Button>
+            <Button className="w-1/6 ml-auto" variant="destructive" onClick={() => setDeleteWorkspacePopupOpen(true)} aria-label="Delete Workspace">
+              Delete workspace
+            </Button>
+          </div>
           <ProjectBoardsTable
             ref={projectBoardsTableRef}
             onEdit={handleEdit}
@@ -284,6 +302,20 @@ const Workspace = () => {
             projectBoard={editProjectBoard}
             workspaceId={id}
             aria-label="Project Board Popup"
+          />
+        )}
+        {deleteWorkspacePopupOpen && (
+          <DeleteConfirmationPopup
+            onClose={() => setDeleteWorkspacePopupOpen(false)}
+            deleteItem={{ id: id }}
+            updateState={handleDeleteWorkspace}
+            itemName={workspaceData.name}
+            entity="Workspace"
+            onDelete={() => { 
+              navigate('/dashboard'); 
+              setWorkspaces(prev => prev.filter(workspace => workspace.id !== id));
+            }}
+            aria-label="Delete Confirmation Popup"
           />
         )}
         {/*deletePopupOpen && deleteProjectBoard && (
