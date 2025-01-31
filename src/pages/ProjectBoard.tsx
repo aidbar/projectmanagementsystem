@@ -14,10 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/dropdown";
 import { Edit } from "lucide-react";
 import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper"
+import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
 
 export function ProjectBoard() {
   const navigate = useNavigate()
-  const { id } = useParams<{ id: string }>()
+  const { id = '' } = useParams<{ id: string }>()
   const [projectBoardData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
   const [fetchError, setFetchError] = useState("")
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -36,6 +37,7 @@ export function ProjectBoard() {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [hasError, setHasError] = useState(false);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
 
   const handleEditToggle = (field: keyof typeof isEditing): void => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -209,9 +211,14 @@ export function ProjectBoard() {
           <p>Loading project board data...</p>
         )}
         <ColumnsProvider>
-          <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Status Column">
-            New status column
-          </Button>
+          <div className="flex items-center">
+            <Button className="w-1/6" onClick={() => setIsPopupOpen(true)} aria-label="Create New Status Column">
+              New status column
+            </Button>
+            <Button className="w-1/6 ml-auto" variant="destructive" onClick={() => setDeletePopupOpen(true)} aria-label="Delete Project Board">
+              Delete project board
+            </Button>
+          </div>
           <PrioritiesProvider>
             <TasksProvider>
               <div id="kanban-board">
@@ -220,6 +227,17 @@ export function ProjectBoard() {
             </TasksProvider>
           </PrioritiesProvider>
           {isPopupOpen && <StatusPopup onClose={() => setIsPopupOpen(false)} aria-label="Status Popup" />}
+            {deletePopupOpen && (
+            <DeleteConfirmationPopup
+              onClose={() => setDeletePopupOpen(false)}
+              deleteItem={{ id: id }}
+              updateState={() => navigate(-1) }
+              itemName={projectBoardData.name}
+              entity="ProjectBoards"
+              onDelete={() => {}}
+              aria-label="Delete Confirmation Popup"
+            />
+            )}
         </ColumnsProvider>
       </div>
     </div>

@@ -134,17 +134,6 @@ const Workspace = () => {
     setIsPopupOpen(true);
   };
 
-  const handleDeleteWorkspace = async () => {
-    try {
-      await api.delete(`/Workspaces/${id}`);
-      //navigate('/dashboard');
-    } catch (error) {
-      console.error('Failed to delete workspace:', error);
-      setToastMessage('Failed to delete workspace');
-      setToastOpen(true);
-    }
-  };
-
   const [deleteWorkspacePopupOpen, setDeleteWorkspacePopupOpen] = useState(false);
 
   useEffect(() => {
@@ -308,13 +297,13 @@ const Workspace = () => {
           <DeleteConfirmationPopup
             onClose={() => setDeleteWorkspacePopupOpen(false)}
             deleteItem={{ id: id }}
-            updateState={handleDeleteWorkspace}
-            itemName={workspaceData.name}
-            entity="Workspace"
-            onDelete={() => { 
-              navigate('/dashboard'); 
+            updateState={() => {
+              navigate('/dashboard');
               setWorkspaces(prev => prev.filter(workspace => workspace.id !== id));
             }}
+            itemName={workspaceData.name}
+            entity="Workspaces"
+            onDelete={() => {}}
             aria-label="Delete Confirmation Popup"
           />
         )}
