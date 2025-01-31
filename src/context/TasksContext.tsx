@@ -8,6 +8,7 @@ interface TasksContextType {
   addTask: (newTask: Task) => void;
   updateTasks: (updatedTasks: Task[]) => void;
   removeTask: (taskId: string) => void;
+  projectBoardId: string; // Add projectBoardId to the context type
 }
 
 const TasksContext = createContext<TasksContextType>({
@@ -15,17 +16,18 @@ const TasksContext = createContext<TasksContextType>({
   setTasks: () => {},
   addTask: () => {},
   updateTasks: () => {},
-  removeTask: () => {}
+  removeTask: () => {},
+  projectBoardId: '' // Initialize projectBoardId
 });
 
-export const TasksProvider = ({ children } : {children : ReactNode}) => {
+export const TasksProvider = ({ children, projectBoardId } : {children : ReactNode, projectBoardId: string}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     async function fetchTasks() {
       try {
-        const response = await api.get('/TaskCard');
-        const tasksData = response.data.data.map((task : any) => ({
+        const response = await api.get(`/TaskCard/projectBoard/${projectBoardId}`);
+        const tasksData = response.data.map((task : any) => ({
           id: task.id,
           columnId: task.statusId,
           title: task.title,
@@ -37,12 +39,13 @@ export const TasksProvider = ({ children } : {children : ReactNode}) => {
           dueDate: task.dueDate
         }));
         setTasks(tasksData);
+        console.log("Tasks fetched:", tasksData);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       }
     }
     fetchTasks();
-  }, []);
+  }, [projectBoardId]);
 
   const addTask = (newTask : Task) => {
     setTasks((prevTasks) => [...prevTasks, newTask]);
@@ -57,7 +60,7 @@ export const TasksProvider = ({ children } : {children : ReactNode}) => {
   };
 
   return (
-    <TasksContext.Provider value={{ tasks, setTasks, addTask, updateTasks, removeTask }}>
+    <TasksContext.Provider value={{ tasks, setTasks, addTask, updateTasks, removeTask, projectBoardId }}>
       {children}
     </TasksContext.Provider>
   );

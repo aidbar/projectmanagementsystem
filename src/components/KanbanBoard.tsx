@@ -75,7 +75,7 @@ export function KanbanBoard() {
   const pickedUpTaskColumn = useRef<ColumnId | null>(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
 
-  const { tasks, setTasks } = useTasks() // Use global state for tasks
+  const { tasks, setTasks, projectBoardId } = useTasks() // Use global state for tasks
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
@@ -102,7 +102,7 @@ export function KanbanBoard() {
     setToastOpen(true)
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     async function fetchTasks() {
       try {
         const response = await api.get('/TaskCard')
@@ -125,7 +125,7 @@ export function KanbanBoard() {
       }
     }
     fetchTasks()
-  }, [setTasks])
+  }, [setTasks])*/
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)
@@ -233,6 +233,7 @@ export function KanbanBoard() {
         title: taskDetails.title,
         priorityId: taskDetails.priority || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         statusId: newTaskColumnId,
+        projectBoardId: projectBoardId,
         dueDate: taskDetails.dueDate ? new Date(taskDetails.dueDate).toISOString() : null // Convert to UTC for Postgres
       }
 

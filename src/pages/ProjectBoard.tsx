@@ -220,9 +220,9 @@ export function ProjectBoard() {
             </Button>
           </div>
           <PrioritiesProvider>
-            <TasksProvider>
+            <TasksProvider projectBoardId={id}>
               <div id="kanban-board">
-              <KanbanBoard />
+                <KanbanBoard />
               </div>
             </TasksProvider>
           </PrioritiesProvider>
