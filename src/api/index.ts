@@ -62,7 +62,7 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken');
       const accessToken = localStorage.getItem('accessToken');
       return new Promise(function (resolve, reject) {
-        axios.post('/Authenticate/refresh', { refreshToken: refreshToken, accessToken: accessToken })
+        api.post('/Authenticate/refresh', { refreshToken: refreshToken, accessToken: accessToken })
           .then(({ data }) => {
             localStorage.setItem('accessToken', data.accessToken);
             localStorage.setItem('refreshToken', data.refreshToken);
