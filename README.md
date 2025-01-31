@@ -272,11 +272,6 @@ API integration is done using custom hooks and services defined in the `api` dir
 
 ## Roadmap
 
-- Create and utilize API endpoints for more specific data retrieval
-- Create tests
-- Ensure responsiveness and accessibility
-- Implement "assigned users" feature
-- Implement refresh token
 - Refactor code to separate business logic from UI
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
