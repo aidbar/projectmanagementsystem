@@ -1,46 +1,18 @@
 import { useState } from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import api from "../api"
 import { useColumns } from "@/context/ColumnsContext"
 import { Column } from "./ui/board-column"
+import { saveStatus } from "../lib/status"
 
 export function StatusPopup({ onClose, column }: { onClose: () => void, column?: Column }) {
   const [statusName, setStatusName] = useState(column?.title || "")
   const { setColumns } = useColumns()
 
   const handleSave = async () => {
-    try {
-      if (column) {
-        // Edit existing column
-        const updatedColumn = { id: column.id.toString(), name: statusName }
-        const response = await api.put(`/Status/${column.id}`, updatedColumn)
-
-        if (response.status >= 200 && response.status < 300) {
-          setColumns((prevColumns) =>
-        prevColumns.map((col) => (col.id === column.id ? { ...col, title: statusName } : col))
-          )
-          onClose()
-        } else {
-          console.error("Failed to update the status column")
-        }
-      } else {
-        // Create new column
-        const newStatus = {
-          id: crypto.randomUUID().toString(),
-          name: statusName
-        }
-        const response = await api.post('/Status', newStatus)
-
-        if (response.status >= 200 && response.status < 300) {
-          setColumns((prevColumns) => [...prevColumns, { id: newStatus.id, title: newStatus.name }])
-          onClose()
-        } else {
-          console.error("Failed to save the new status column")
-        }
-      }
-    } catch (error) {
-      console.error("Error saving the status column", error)
+    const result = await saveStatus(column, statusName, setColumns)
+    if (result) {
+      onClose()
     }
   }
 

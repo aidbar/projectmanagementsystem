@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import api from '@/api';
 
 // Define Context
-interface Column {
+export interface Column {
   id: string;
   title: string;
 }
