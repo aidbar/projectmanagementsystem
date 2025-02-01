@@ -11,8 +11,7 @@ import React, { useState } from "react"
 import { TaskCardPopup } from "../TaskCardPopup"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
-import api from "@/api"
-import { title } from "process"
+import { updateTaskColumn } from "@/lib/task-cards"
 import * as Toast from "@radix-ui/react-toast"
 
 export interface Status {
@@ -52,14 +51,6 @@ export interface TaskDragData {
   type: TaskType
   task: Task
 }
-
-export const updateTaskColumn = async (taskId: UniqueIdentifier, newColumnId: ColumnId, task: Task) => {
-  try {
-    await api.put(`/TaskCard/${taskId}`, { statusId: newColumnId, title: task.title, description: task.description, priorityId: task.priorityId, dueDate: task.dueDate });
-  } catch (error) {
-    console.error("Error updating task column:", error);
-  }
-};
 
 export function TaskCard({ task, isOverlay, onDelete = () => {} }: TaskCardProps) {
   const { columns } = useColumns()
