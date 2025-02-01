@@ -1,5 +1,8 @@
 import { useState } from "react"
 import { Button, buttonVariants } from "./ui/button"
+import { handleSignup, signup, validateEmail, validatePassword } from "@/lib/auth"
+import { AxiosError } from "axios";
+import { set } from "date-fns";
 
 interface SignupPopupProps {
   onClose: () => void;
@@ -20,44 +23,23 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
   const [firstNameError, setFirstNameError] = useState("")
   const [lastNameError, setLastNameError] = useState("")
   const [usernameError, setUsernameError] = useState("")
+  const [serverError, setServerError] = useState(errorMessage)
 
-  const handleSignup = async () => {
-    if (!validateEmail(email)) {
-      setEmailError("Invalid email address")
-      return
-    }
-    if (!validatePassword(password)) {
-      setPasswordError("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-      return
-    }
-    if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match")
-      return
-    }
-    setEmailError("")
-    setPasswordError("")
+  const handleSignupClick = async () => {
     try {
+      await handleSignup(firstName, lastName, username, email, password, confirmPassword)
       await onSignup(firstName, lastName, username, email, password, confirmPassword)
-    } catch (error) {
+    } catch (error : any) {
+      setServerError(error.message)
       console.error("Signup failed", error)
     }
-  }
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
-
-  const validatePassword = (password: string) => {
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    return re.test(password)
   }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" aria-label="Signup Popup">
       <div className="bg-white p-6 rounded shadow-md w-96" role="dialog" aria-labelledby="signup-dialog-title">
         <h2 id="signup-dialog-title" className="text-xl mb-4">Sign Up</h2>
-        {errorMessage && <p className="text-red-700 mb-2">{errorMessage}</p>}
+        {serverError && <p className="text-red-700 mb-2">{serverError}</p>}
         {firstNameError && <p className="text-red-700 mb-2">{firstNameError}</p>}
         <label className="text-sm block mb-1" htmlFor="first-name-input">
           First Name <span className="text-red-700">*</span>
@@ -175,7 +157,7 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
         <div className="flex justify-end gap-2">
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Cancel">Cancel</Button>
           <Button 
-            onClick={handleSignup} 
+            onClick={handleSignupClick} 
             disabled={
               !email || !password || !confirmPassword || !firstName || !lastName || !username ||
               !!emailError || !!passwordError || !!confirmPasswordError || !!firstNameError || !!lastNameError || !!usernameError

@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button, buttonVariants } from "./ui/button"
+import { handleLogin, login, validateEmail, validatePassword } from "@/lib/auth"
 
 interface LoginPopupProps {
   onClose: () => void;
-  onLogin: (email: string, password: string) => Promise<{ token: { refreshToken: string, accessToken: string }, userInfo: { id: string, firstName: string, lastName: string, username: string, email: string, createdAt: string, updatedAt: string } }>;
+  onLogin: (email: string, password: string) => Promise<void>;
   errorMessage: string;
 }
 
@@ -13,35 +14,14 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
   const [emailError, setEmailError] = useState("")
   const [passwordError, setPasswordError] = useState("")
 
-  const handleLogin = async () => {
-    if (!validateEmail(email)) {
-      setEmailError("Invalid email address")
-      return
-    }
-    if (!validatePassword(password)) {
-      setPasswordError("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-      return
-    }
-    setEmailError("")
-    setPasswordError("")
+  const handleLoginClick = async () => {
     try {
-      const response = await onLogin(email, password)
-      localStorage.setItem('refreshToken', response.token.refreshToken)
-      localStorage.setItem('accessToken', response.token.accessToken)
-      localStorage.setItem('userInfo', JSON.stringify(response.userInfo))
-    } catch (error) {
+      await handleLogin(email, password)
+      await onLogin(email, password)
+    } catch (error : any) {
+      setEmailError(error.message)
       console.error("Login failed", error)
     }
-  }
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
-
-  const validatePassword = (password: string) => {
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    return re.test(password)
   }
 
   return (
@@ -90,7 +70,7 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
         <div className="flex justify-end gap-2">
           <Button onClick={onClose} className={buttonVariants({ variant: "secondary" })} aria-label="Cancel">Cancel</Button>
           <Button 
-            onClick={handleLogin} 
+            onClick={handleLoginClick} 
             disabled={!validateEmail(email) || !validatePassword(password)}
             aria-label="Login button"
           >

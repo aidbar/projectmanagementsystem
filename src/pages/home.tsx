@@ -1,10 +1,8 @@
 import { useState } from "react"
 import { Button, buttonVariants } from "../components/ui/button"
-import { useMutation } from "@tanstack/react-query"
-import axios, { AxiosError } from "axios"
 import { LoginPopup } from "../components/LoginPopup"
 import { SignupPopup } from "../components/SignupPopup"
-import api from "../api"
+import { useLoginMutation, useSignupMutation } from "@/lib/auth"
 import { useNavigate } from "react-router-dom"
 
 export function Home() {
@@ -14,47 +12,8 @@ export function Home() {
   const [signupError, setSignupError] = useState("")
   const navigate = useNavigate()
 
-  const loginMutation = useMutation({
-    mutationFn: async ({ email, password }: { email: string; password: string }) => {
-      const response = await api.post("/Authenticate/login", 
-        { "email": email, "password": password }
-      )
-      return response.data
-    },
-    onSuccess: () => {
-      setShowLoginPopup(false)
-      setLoginError("")
-      navigate("/dashboard")
-    },
-    onError: (error: AxiosError) => {
-      setLoginError(typeof error.response?.data === 'string' ? error.response.data : "Login failed")
-    }
-  })
-
-  const signupMutation = useMutation({
-    mutationFn: async ({ firstname, lastname, username, email, password, confirmPassword }: { firstname: string; lastname: string; username: string; email: string; password: string; confirmPassword: string }) => {
-      const response = await api.post("/Users", 
-        { "firstname" : firstname, "lastname" : lastname, "username": username, "email": email, "password": password, "confirmPassword": confirmPassword }
-      )
-      return { data: response.data, email, password }
-    },
-    onSuccess: async ({ data, email, password }) => {
-      setShowSignupPopup(false)
-      setSignupError("")
-      try {
-        const response = await loginMutation.mutateAsync({ email, password })
-        localStorage.setItem('refreshToken', response.token.refreshToken)
-        localStorage.setItem('accessToken', response.token.accessToken)
-        localStorage.setItem('userInfo', JSON.stringify(response.userInfo))
-      } catch (error) {
-        console.error("Auto-login failed", error)
-      }
-      navigate("/dashboard")
-    },
-    onError: (error : AxiosError) => {
-      setSignupError(typeof error.response?.data === 'string' ? error.response.data : "Signup failed")
-    }
-  })
+  const loginMutation = useLoginMutation(navigate)
+  const signupMutation = useSignupMutation(navigate, loginMutation)
 
   return (
     <div className="flex flex-col justify-center items-center gap-10 h-screen relative p-4">
@@ -72,7 +31,7 @@ export function Home() {
       {showLoginPopup && (
       <LoginPopup
         onClose={ () => { setShowLoginPopup(false); setLoginError("") } }
-        onLogin={(email : string, password : string) => loginMutation.mutateAsync({ email, password }) }
+        onLogin={(email : string, password : string) => loginMutation.mutateAsync({ email, password }).catch(error => setLoginError(error.message)) }
         errorMessage={loginError}
         aria-label="Login Popup"
       />
