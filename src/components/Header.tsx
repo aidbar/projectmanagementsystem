@@ -1,27 +1,10 @@
 import { Button, buttonVariants } from "@/components/ui/button"
-import { useMutation } from "@tanstack/react-query"
-import api from "@/api"
-import { useState } from "react"
+import { useLogout } from "@/lib/auth"
 import { useNavigate } from "react-router-dom"
 
 export function Header() {
   const navigate = useNavigate()
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.delete("/Authenticate/logout")
-      return response.data
-    },
-    onSuccess: () => {
-      localStorage.removeItem("accessToken")
-      localStorage.removeItem("refreshToken")
-      localStorage.removeItem("userInfo")
-      navigate("/logged-out")
-    },
-    onError: () => {
-      console.error("Logout failed")
-    }
-  })
+  const logoutMutation = useLogout(navigate)
 
   return (
     <header className="w-full p-4 bg-primary text-white text-left">
