@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api from '@/api';
 
-interface ProjectBoard {
+export interface ProjectBoard {
   id: string;
   name: string;
   description: string;

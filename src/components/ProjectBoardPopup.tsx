@@ -6,13 +6,15 @@ import api from "../api"
 import { ProjectBoard } from "./ProjectBoardsTable"
 import { AxiosError } from "axios"
 import { useLocation } from "react-router-dom"
-import { useProjectBoards } from "@/context/ProjectBoardsContext"; // Import useProjectBoards
+import { useProjectBoards } from "@/context/ProjectBoardsContext"
+import { createOrUpdateProjectBoard } from "../lib/project-boards" // Import the new function
+import {ProjectBoard as ProjectBoardType} from "@/context/ProjectBoardsContext"
 
 interface ProjectBoardPopupProps {
   onClose: () => void
-  onCreate: (success: boolean, isEdit: boolean) => void // Update onCreate prop type
+  onCreate: (success: boolean, isEdit: boolean) => void
   projectBoard?: ProjectBoard
-  workspaceId: string // Add workspaceId to props
+  workspaceId: string
 }
 
 export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId }: ProjectBoardPopupProps) {
@@ -21,11 +23,7 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
   const [isPublic, setIsPublic] = useState(projectBoard?.isPublic || false)
   const [nameError, setNameError] = useState("")
 
-  const location = useLocation()
-  // Remove the following line as workspaceId is now passed as a prop
-  // const workspaceId = new URLSearchParams(location.search).get("workspaceId")
-
-  const { setProjectBoards } = useProjectBoards(); // Use global state functions
+  const { setProjectBoards } = useProjectBoards()
 
   useEffect(() => {
     if (projectBoard) {
@@ -38,41 +36,20 @@ export function ProjectBoardPopup({ onClose, onCreate, projectBoard, workspaceId
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setNameError("")
-    try {
-      if (projectBoard) {
-        const updatedAt = new Date().toISOString()
-        await api.put(`/ProjectBoards/${projectBoard.id}`, {
-          name,
-          description,
-          isPublic,
-          updatedAt,
-          workspaceId
-        })
-        setProjectBoards(prev => prev.map(pb => pb.id === projectBoard.id ? { ...pb, name, description, isPublic, updatedAt } : pb)) // Update global state
-        onCreate(true, true); // Pass true on success and true for edit
-      } else {
-        const newProjectBoard = await api.post("/ProjectBoards", {
-          name,
-          description,
-          isPublic,
-          workspaceId
-        })
-        setProjectBoards(prev => [...prev, newProjectBoard.data]) // Add new project board to global state
-        onCreate(true, false); // Pass true on success and false for create
-      }
+    const result = await createOrUpdateProjectBoard({
+      projectBoard,
+      name,
+      description,
+      isPublic,
+      workspaceId,
+      setProjectBoards,
+    })
+    if (result.success) {
+      onCreate(true, !!projectBoard)
       onClose()
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.data) {
-          setNameError(error.response.data)
-        } else {
-          setNameError("ProjectBoard edit failed")
-        }
-      } else {
-        setNameError("An error occurred")
-      }
-      console.error("Error creating/updating projectBoard:", error)
-      onCreate(false, !!projectBoard); // Pass false on failure and whether it was an edit
+    } else {
+      setNameError(result.error || "An error occurred")
+      onCreate(false, !!projectBoard)
     }
   }
 
