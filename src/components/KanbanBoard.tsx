@@ -20,7 +20,7 @@ import {
 } from "@dnd-kit/core"
 import { SortableContext, arrayMove } from "@dnd-kit/sortable"
 import { type Task, TaskCard } from "./ui/task-card"
-import { updateTaskColumn } from "../lib/task-cards"
+import { updateTaskColumnCard } from "../lib/task-cards"
 import type { Column } from "./ui/board-column"
 import { hasDraggableData } from "../lib/utils"
 import { coordinateGetter } from "../lib/dnd"
@@ -33,6 +33,7 @@ import { usePriorities } from "../context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
 import { StatusPopup } from "./StatusPopup"
 import * as Toast from "@radix-ui/react-toast";
+import { createTask, fetchTasks } from "@/lib/kanban"
 
 const defaultCols = [
   {
@@ -103,30 +104,17 @@ export function KanbanBoard() {
     setToastOpen(true)
   }
 
-  /*useEffect(() => {
-    async function fetchTasks() {
+  useEffect(() => {
+    async function loadTasks() {
       try {
-        const response = await api.get('/TaskCard')
-        console.log("fetchTasks response.data.data", response.data.data)
-        const tasksData = response.data.data.map((task: any) => ({
-          id: task.id,
-          columnId: task.statusId,
-          title: task.title,
-          description: task.description,
-          priorityId: task.priorityId,
-          listId: task.listId,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
-          dueDate: task.dueDate
-        }))
-        setTasks(tasksData)
-        console.log("tasksData", tasksData)
+        const tasksData = await fetchTasks();
+        setTasks(tasksData);
       } catch (error) {
-        console.error("Error fetching tasks:", error)
+        console.error("Error loading tasks:", error);
       }
     }
-    fetchTasks()
-  }, [setTasks])*/
+    loadTasks();
+  }, [setTasks]);
 
   function getDraggingTaskData(taskId: UniqueIdentifier, columnId: ColumnId) {
     const tasksInColumn = tasks.filter((task) => task.columnId === columnId)
@@ -235,12 +223,11 @@ export function KanbanBoard() {
         priorityId: taskDetails.priority || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         statusId: newTaskColumnId,
         projectBoardId: projectBoardId,
-        dueDate: taskDetails.dueDate ? new Date(taskDetails.dueDate).toISOString() : null // Convert to UTC for Postgres
-      }
+        dueDate: taskDetails.dueDate ? new Date(taskDetails.dueDate).toISOString() : null,
+      };
 
-      api.post('/TaskCard', taskData)
-        .then(response => {
-          const task = response.data.data
+      createTask(taskData)
+        .then((task) => {
           const newTask: Task = {
             id: task.id,
             columnId: task.statusId,
@@ -251,19 +238,16 @@ export function KanbanBoard() {
             updatedAt: task.updatedAt,
             dueDate: task.dueDate,
             priorityId: task.priorityId,
-            /*activities: task.activities,
-            labels: task.labels,
-            status: task.status*/
-          }
-          setTasks((prevTasks) => [...prevTasks, newTask])
+          };
+          setTasks((prevTasks) => [...prevTasks, newTask]);
           setToastMessage("Task created");
           setToastOpen(true);
         })
-        .catch(error => {
-          console.error("Error creating task:", error)
+        .catch((error) => {
+          console.error("Error creating task:", error);
           setToastMessage("Failed to create task");
           setToastOpen(true);
-        })
+        });
     }
   }
 
@@ -388,7 +372,7 @@ export function KanbanBoard() {
         const overTask = tasks[overIndex]
         if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
           activeTask.columnId = overTask.columnId
-          updateTaskColumn(activeTask.id, overTask.columnId, activeTask) // Persist the status change
+          updateTaskColumnCard(activeTask.id, overTask.columnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, overIndex - 1)
         }
         return arrayMove(tasks, activeIndex, overIndex)
@@ -424,7 +408,7 @@ export function KanbanBoard() {
         const overTask = tasks[overIndex]
         if (activeTask && overTask && activeTask.columnId !== overTask.columnId) {
           activeTask.columnId = overTask.columnId
-          updateTaskColumn(activeTask.id, overTask.columnId, activeTask) // Persist the status change
+          updateTaskColumnCard(activeTask.id, overTask.columnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, overIndex - 1)
         }
         return arrayMove(tasks, activeIndex, overIndex)
@@ -440,7 +424,7 @@ export function KanbanBoard() {
         const activeTask = tasks[activeIndex]
         if (activeTask) {
           activeTask.columnId = overId as ColumnId
-          updateTaskColumn(activeTask.id, overId as ColumnId, activeTask) // Persist the status change
+          updateTaskColumnCard(activeTask.id, overId as ColumnId, activeTask) // Persist the status change
           return arrayMove(tasks, activeIndex, activeIndex)
         }
         return tasks

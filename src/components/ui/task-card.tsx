@@ -11,7 +11,7 @@ import React, { useState } from "react"
 import { TaskCardPopup } from "../TaskCardPopup"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
-import { updateTaskColumn } from "@/lib/task-cards"
+import { updateTaskColumnCard } from "@/lib/task-cards"
 import * as Toast from "@radix-ui/react-toast"
 
 export interface Status {
