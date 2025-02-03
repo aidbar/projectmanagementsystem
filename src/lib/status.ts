@@ -39,3 +39,10 @@ export async function saveStatus(column: Column | undefined, statusName: string,
     return false
   }
 }
+
+export async function handleSave(column: Column | undefined, statusName: string, setColumns: React.Dispatch<React.SetStateAction<ColumnType[]>>, onClose: () => void) {
+  const result = await saveStatus(column, statusName, setColumns)
+  if (result) {
+    onClose()
+  }
+}

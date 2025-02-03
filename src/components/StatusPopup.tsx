@@ -3,18 +3,11 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { useColumns } from "@/context/ColumnsContext"
 import { Column } from "./ui/board-column"
-import { saveStatus } from "../lib/status"
+import { saveStatus, handleSave } from "../lib/status"
 
 export function StatusPopup({ onClose, column }: { onClose: () => void, column?: Column }) {
   const [statusName, setStatusName] = useState(column?.title || "")
   const { setColumns } = useColumns()
-
-  const handleSave = async () => {
-    const result = await saveStatus(column, statusName, setColumns)
-    if (result) {
-      onClose()
-    }
-  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -34,7 +27,7 @@ export function StatusPopup({ onClose, column }: { onClose: () => void, column?:
         />
         <div className="flex justify-end gap-2">
           <Button onClick={onClose} variant={"secondary"} aria-label="Cancel">Cancel</Button>
-          <Button onClick={handleSave} disabled={!statusName} aria-label="Save">Save</Button>
+          <Button onClick={() => handleSave(column, statusName, setColumns, onClose)} disabled={!statusName} aria-label="Save">Save</Button>
         </div>
       </div>
     </div>
