@@ -7,6 +7,7 @@ import { Workspace } from "./WorkspacesTable"
 import { AxiosError } from "axios"
 import { useWorkspaces } from "@/context/WorkspacesContext"
 import * as Toast from "@radix-ui/react-toast"
+import { updateWorkspace, createWorkspace, handleSubmit } from "@/lib/workspaces"
 
 interface WorkspacePopupProps {
   onClose: () => void
@@ -29,50 +30,11 @@ export function WorkspacePopup({ onClose, onCreate, workspace }: WorkspacePopupP
     }
   }, [workspace])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setNameError("")
-    try {
-      if (workspace) {
-        const updatedAt = new Date().toISOString()
-        await api.put(`/Workspaces/${workspace.id}`, {
-          name,
-          description,
-          isPublic,
-          updatedAt
-        })
-        setWorkspaces(prev => prev.map(w => w.id === workspace.id ? { ...w, name, description, isPublic, updatedAt } : w))
-        onCreate(true, true)
-      } else {
-        const response = await api.post("/Workspaces", {
-          name,
-          description,
-          isPublic
-        })
-        setWorkspaces(prev => [...prev, response.data])
-        onCreate(true, false)
-      }
-      onClose()
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.response?.data) {
-          setNameError(error.response.data)
-        } else {
-          setNameError("Workspace edit failed")
-        }
-      } else {
-        setNameError("An error occurred")
-      }
-      onCreate(false, !!workspace)
-      console.error("Error creating/updating workspace:", error)
-    }
-  }
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" aria-label="Workspace Popup">
       <div className="bg-white p-6 rounded-md shadow-md" role="dialog" aria-labelledby="workspace-dialog-title">
         <h2 id="workspace-dialog-title" className="text-xl mb-4">{workspace ? "Edit workspace" : "Create a new workspace"}</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e, workspace, name, description, isPublic, setNameError, setWorkspaces, onCreate, onClose)}>
           <div className="mb-4">
             <label className="text-sm block mb-1" htmlFor="workspace-name-input">
               Workspace name <span className="text-red-700">*</span>

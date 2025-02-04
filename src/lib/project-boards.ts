@@ -54,3 +54,37 @@ export async function createOrUpdateProjectBoard({
     }
   }
 }
+
+export async function fetchProjectBoardData(id: string): Promise<{ data: ProjectBoardType | null, error: string }> {
+  try {
+    const response = await api.get(`/ProjectBoards/${id}`)
+    return { data: { ...response.data, workspaceId: response.data.workspaceId }, error: "" }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response?.data) {
+        return { data: null, error: error.response.data }
+      } else {
+        return { data: null, error: "Error fetching project board data" }
+      }
+    } else {
+      return { data: null, error: "An error occurred" }
+    }
+  }
+}
+
+export async function saveProjectBoardDetails(id: string, projectBoardDetails: Partial<ProjectBoardType> & { workspaceId: string }): Promise<{ data: ProjectBoardType | null, error: string }> {
+  try {
+    const response = await api.put(`/ProjectBoards/${id}`, projectBoardDetails)
+    return { data: response.data.data, error: "" }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response?.data) {
+        return { data: null, error: error.response.data }
+      } else {
+        return { data: null, error: "Failed to save changes" }
+      }
+    } else {
+      return { data: null, error: "An error occurred" }
+    }
+  }
+}

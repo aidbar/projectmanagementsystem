@@ -16,6 +16,7 @@ import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
 import * as Toast from "@radix-ui/react-toast"
+import { saveTaskChanges } from "@/lib/task-cards"
 
 interface TaskCardPopupProps {
   task: Task
@@ -82,36 +83,26 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
   }, [taskDetails, task, date]);
 
   const handleSaveChanges = async () => {
-    try {
-      const response = await api.put(`/TaskCard/${task.id}`, {
-        description: taskDetails.description,
-        title: taskDetails.title,
-        priorityId: taskDetails.priority,
-        dueDate: date.toISOString(),
-        statusId: taskDetails.status
-      });
-      console.log("Changes saved:", response.data);
-      setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status } : t))
-      onSave(true) // Call onSave with true
-    } catch (error) {
-      console.error("Error saving changes:", error);
-      onSave(false) // Call onSave with false
+    const result = await saveTaskChanges(task.id, { ...task, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status }, date);
+    if (result.success) {
+      console.log("Changes saved:", result.data);
+      setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status } : t));
+      onSave(true); // Call onSave with true
+    } else {
+      onSave(false); // Call onSave with false
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const response = await api.get('/TaskCard/');
-      // Assuming the response contains the updated columns data
-      const updatedColumnsData = response.data.data;
+  /*const fetchData = async () => {
+    const result = await fetchTaskData();
+    if (result.success) {
+      const updatedColumnsData = result.data;
+      console.log("Data fetched successfully:", updatedColumnsData);
       // Update the columnsData state or prop here
       // setColumnsData(updatedColumnsData); // Uncomment and use this if columnsData is a state
       //columnsData = updatedColumnsData; // Use this if columnsData is a prop
-      console.log("Data fetched successfully:", updatedColumnsData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
     }
-  };
+  };*/
 
   const updateState = async () => {
     setTasks((prevTasks) => prevTasks.filter(t => t.id !== task.id))

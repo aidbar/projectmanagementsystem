@@ -10,3 +10,29 @@ export const updateTaskColumnCard = async (taskId: UniqueIdentifier, newColumnId
     console.error("Error updating task column:", error);
   }
 };
+
+export const saveTaskChanges = async (taskId: UniqueIdentifier, taskDetails: Task, date: Date) => {
+  try {
+    const response = await api.put(`/TaskCard/${taskId}`, {
+      description: taskDetails.description,
+      title: taskDetails.title,
+      priorityId: taskDetails.priorityId,
+      dueDate: date.toISOString(),
+      statusId: taskDetails.columnId
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error saving changes:", error);
+    return { success: false, error };
+  }
+};
+
+/*export const fetchTaskData = async () => {
+  try {
+    const response = await api.get('/TaskCard/');
+    return { success: true, data: response.data.data };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return { success: false, error };
+  }
+};*/
