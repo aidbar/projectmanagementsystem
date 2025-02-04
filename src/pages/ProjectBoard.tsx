@@ -1,28 +1,26 @@
-import { Button } from "../components/ui/button"
-import { useNavigate, useParams } from "react-router-dom"
-import { Header } from "../components/Header"
-import { KanbanBoard } from "@/components/KanbanBoard"
-import { useEffect, useState } from "react"
-import { fetchProjectBoardData, saveProjectBoardDetails } from "@/lib/project-boards"
-import { AxiosError } from "axios"
-import { StatusPopup } from "../components/StatusPopup"
-import { ColumnsProvider } from "@/context/ColumnsContext"
-import { PrioritiesProvider } from "@/context/PrioritiesContext"
-import Tasks from "@/api/tasks"
-import { TasksProvider } from "@/context/TasksContext"
+import { Button } from "../components/ui/button";
+import { useNavigate, useParams } from "react-router-dom";
+import { Header } from "../components/Header";
+import { KanbanBoard } from "@/components/KanbanBoard";
+import { useEffect, useState } from "react";
+import { fetchProjectBoardData, handleSave } from "@/lib/project-boards";
+import { StatusPopup } from "../components/StatusPopup";
+import { ColumnsProvider } from "@/context/ColumnsContext";
+import { PrioritiesProvider } from "@/context/PrioritiesContext";
+import { TasksProvider } from "@/context/TasksContext";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/dropdown";
 import { Edit } from "lucide-react";
-import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper"
+import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper";
 import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
 import * as Toast from "@radix-ui/react-toast";
 
 export function ProjectBoard() {
-  const navigate = useNavigate()
-  const { id = '' } = useParams<{ id: string }>()
-  const [projectBoardData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" })
-  const [fetchError, setFetchError] = useState("")
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const navigate = useNavigate();
+  const { id = '' } = useParams<{ id: string }>();
+  const [projectBoardData, setProjectBoardData] = useState({ name: "", description: "", isPublic: false, createdAt: "", updatedAt: "", creatorUsername: "" });
+  const [fetchError, setFetchError] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isEditing, setIsEditing] = useState({
     name: false,
     description: false,
@@ -50,51 +48,10 @@ export function ProjectBoard() {
     setProjectBoardDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (field: keyof typeof isEditing) => {
-    setHasError(false);
-
-    if (projectBoardDetails.name.length === 0) {
-      console.log("Project board name is required.");
-      setHasError(true);
-      setToastMessage("Project board name is required.");
-      setToastOpen(true);
-      return;
-    } else if (projectBoardDetails.name.length > 200) {
-      setHasError(true);
-      setToastMessage("Project board name must not exceed 200 characters.");
-      setToastOpen(true);
-      return;
-    }
-
-    const { data, error } = await saveProjectBoardDetails(id, {
-      ...projectBoardDetails,
-      workspaceId, // Include workspaceId in the request body
-    });
-    if (error) {
-      setToastMessage(error);
-      setToastOpen(true);
-      return;
-    }
-
-    if (data) {
-      console.log("Changes saved:", data);
-      setProjectBoardData((prev) => ({
-        ...prev,
-        name: data.name,
-        description: data.description,
-        isPublic: data.isPublic,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-      }));
-      setProjectBoardDetails((prev) => ({
-        ...prev,
-        name: data.name,
-        description: data.description,
-        isPublic: data.isPublic,
-      }));
+  const handleSaveWrapper = async (field: keyof typeof isEditing) => {
+    const result = await handleSave(id, projectBoardDetails, setProjectBoardData, setProjectBoardDetails, setIsEditing, setToastMessage, setToastOpen, setHasError, workspaceId);
+    if (result) {
       setIsEditing((prev) => ({ ...prev, [field]: false }));
-      setToastMessage("Changes saved");
-      setToastOpen(true);
     }
   };
 
@@ -145,7 +102,7 @@ export function ProjectBoard() {
                       name="name"
                       value={projectBoardDetails.name}
                       onChange={handleChange}
-                      onBlur={() => handleSave('name')}
+                      onBlur={() => handleSaveWrapper('name')}
                       className={`border border-gray-500 p-3 w-50 flex justify-center items-center ${hasError ? 'border-red-500' : ''}`}
                       aria-label="Project Board Name"
                     />
@@ -163,7 +120,7 @@ export function ProjectBoard() {
                       name="description"
                       value={projectBoardDetails.description}
                       onChange={handleChange}
-                      onBlur={() => handleSave('description')}
+                      onBlur={() => handleSaveWrapper('description')}
                       className="border border-gray-500 p-3 w-50 flex justify-center items-center"
                       aria-label="Project Board Description"
                     />
@@ -189,7 +146,7 @@ export function ProjectBoard() {
                         }
                       }}
                     >
-                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')} aria-label="Project Board Visibility">
+                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSaveWrapper('isPublic')} aria-label="Project Board Visibility">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

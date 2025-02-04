@@ -2,6 +2,7 @@ import api from "../api"
 import { AxiosError } from "axios"
 import { ProjectBoard } from "@/components/ProjectBoardsTable"
 import { ProjectBoard as ProjectBoardType } from "@/context/ProjectBoardsContext"
+import { Dispatch, SetStateAction } from "react"
 
 interface CreateOrUpdateProjectBoardParams {
   projectBoard?: ProjectBoard
@@ -88,3 +89,62 @@ export async function saveProjectBoardDetails(id: string, projectBoardDetails: P
     }
   }
 }
+
+export const handleSave = async (
+  id: string,
+  projectBoardDetails: any,
+  setProjectBoardData: Dispatch<SetStateAction<any>>,
+  setProjectBoardDetails: Dispatch<SetStateAction<any>>,
+  setIsEditing: Dispatch<SetStateAction<any>>,
+  setToastMessage: Dispatch<SetStateAction<string>>,
+  setToastOpen: Dispatch<SetStateAction<boolean>>,
+  setHasError: Dispatch<SetStateAction<boolean>>,
+  workspaceId: string
+) => {
+  setHasError(false);
+
+  if (projectBoardDetails.name.length === 0) {
+    console.log("Project board name is required.");
+    setHasError(true);
+    setToastMessage("Project board name is required.");
+    setToastOpen(true);
+    return false;
+  } else if (projectBoardDetails.name.length > 200) {
+    setHasError(true);
+    setToastMessage("Project board name must not exceed 200 characters.");
+    setToastOpen(true);
+    return false;
+  }
+
+  const { data, error } = await saveProjectBoardDetails(id, {
+    ...projectBoardDetails,
+    workspaceId, // Include workspaceId in the request body
+  });
+  if (error) {
+    setToastMessage(error);
+    setToastOpen(true);
+    return false;
+  }
+
+  if (data) {
+    console.log("Changes saved:", data);
+    setProjectBoardData((prev: ProjectBoard) => ({
+      ...prev,
+      name: data.name,
+      description: data.description,
+      isPublic: data.isPublic,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    }));
+    setProjectBoardDetails((prev : ProjectBoard) => ({
+      ...prev,
+      name: data.name,
+      description: data.description,
+      isPublic: data.isPublic,
+    }));
+    setToastMessage("Changes saved");
+    setToastOpen(true);
+    return true;
+  }
+  return false;
+};
