@@ -26,13 +26,3 @@ export const saveTaskChanges = async (taskId: UniqueIdentifier, taskDetails: Tas
     return { success: false, error };
   }
 };
-
-/*export const fetchTaskData = async () => {
-  try {
-    const response = await api.get('/TaskCard/');
-    return { success: true, data: response.data.data };
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return { success: false, error };
-  }
-};*/

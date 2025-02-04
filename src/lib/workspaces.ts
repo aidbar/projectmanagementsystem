@@ -37,7 +37,6 @@ export const handleSave = async (
   workspaceDetails: any,
   setWorkspaceData: Dispatch<SetStateAction<any>>,
   setWorkspaceDetails: Dispatch<SetStateAction<any>>,
-  setIsEditing: Dispatch<SetStateAction<any>>,
   setToastMessage: Dispatch<SetStateAction<string>>,
   setToastOpen: Dispatch<SetStateAction<boolean>>,
   setHasError: Dispatch<SetStateAction<boolean>>

@@ -1,8 +1,6 @@
 import { useState } from "react"
 import { Button, buttonVariants } from "./ui/button"
-import { handleSignup, signup, validateEmail, validatePassword } from "@/lib/auth"
-import { AxiosError } from "axios";
-import { set } from "date-fns";
+import { validateEmail, validatePassword } from "@/lib/auth"
 
 interface SignupPopupProps {
   onClose: () => void;
@@ -27,7 +25,6 @@ export function SignupPopup({ onClose, onSignup, errorMessage }: SignupPopupProp
 
   const handleSignupClick = async () => {
     try {
-      await handleSignup(firstName, lastName, username, email, password, confirmPassword)
       await onSignup(firstName, lastName, username, email, password, confirmPassword)
     } catch (error : any) {
       setServerError(error.message)

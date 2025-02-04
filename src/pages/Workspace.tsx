@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Header } from '../components/Header';
@@ -12,7 +12,7 @@ import { Edit } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/dropdown';
 import SidebarLayoutWrapper from '@/components/SidebarLayoutWrapper';
-import { fetchWorkspaceData, handleSave, handleCreateOrEdit, handleSubmit } from '@/lib/workspaces';
+import { fetchWorkspaceData, handleSave, handleCreateOrEdit } from '@/lib/workspaces';
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void;
@@ -34,11 +34,9 @@ const Workspace = () => {
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editProjectBoard, setEditProjectBoard] = useState<ProjectBoard | undefined>(undefined);
-  const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined);
-  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
   const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null);
 
-  const { projectBoards, fetchProjectBoards, loading } = useProjectBoards();
+  const { fetchProjectBoards, loading } = useProjectBoards();
 
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -67,7 +65,7 @@ const Workspace = () => {
   };
 
   const handleSaveWrapper = async (field: keyof typeof isEditing) => {
-    const result = await handleSave(id, workspaceDetails, setWorkspaceData, setWorkspaceDetails, setIsEditing, setToastMessage, setToastOpen, setHasError);
+    const result = await handleSave(id, workspaceDetails, setWorkspaceData, setWorkspaceDetails, setToastMessage, setToastOpen, setHasError);
     if (result) {
       setIsEditing((prev) => ({ ...prev, [field]: false }));
     }
@@ -75,11 +73,6 @@ const Workspace = () => {
 
   const handleCreateOrEditWrapper = (success: boolean, isEdit: boolean) => {
     handleCreateOrEdit(success, isEdit, setToastMessage, setToastOpen, projectBoardsTableRef);
-  };
-
-  const handleEdit = (projectBoard: ProjectBoard) => {
-    setEditProjectBoard(projectBoard);
-    setIsPopupOpen(true);
   };
 
   const [deleteWorkspacePopupOpen, setDeleteWorkspacePopupOpen] = useState(false);
@@ -201,7 +194,6 @@ const Workspace = () => {
           </div>
           <ProjectBoardsTable
             ref={projectBoardsTableRef}
-            onEdit={handleEdit}
             setOpenPopup={setIsPopupOpen}
             setEditProjectBoard={setEditProjectBoard}
             workspaceId={id}
@@ -233,16 +225,6 @@ const Workspace = () => {
             aria-label="Delete Confirmation Popup"
           />
         )}
-        {/*deletePopupOpen && deleteProjectBoard && (
-          <DeleteConfirmationPopup
-            onClose={() => setDeletePopupOpen(false)}
-            deleteItem={deleteProjectBoard}
-            updateState={() => projectBoardsTableRef.current?.fetchData()}
-            itemName={deleteProjectBoard.name}
-            entity="ProjectBoards"
-            aria-label="Delete Confirmation Popup"
-          />
-        )*/}
       </div>
     </SidebarLayoutWrapper>
   );
@@ -255,5 +237,3 @@ const WorkspacePage = () => (
 );
 
 export { WorkspacePage as Workspace };
-
-//export default WorkspacePage;

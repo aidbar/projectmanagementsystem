@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { ChevronLeft, ChevronLeftIcon, ChevronRight, ChevronRightIcon } from "lucide-react"
-import { DayPicker, DayPickerProps, CustomComponents } from "react-day-picker"
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react" 
+import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -21,14 +21,8 @@ function Calendar({
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-        //month: "space-y-4",
         month_caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
-        //nav: "space-x-1 flex items-center",
-        /*nav_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-        ),*/
         button_previous: "absolute left-1",
         button_next: "absolute right-1",
         month_grid: "w-full border-collapse space-y-1",

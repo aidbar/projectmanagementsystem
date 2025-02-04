@@ -37,7 +37,7 @@ export function ProjectBoard() {
   const [toastMessage, setToastMessage] = useState('');
   const [hasError, setHasError] = useState(false);
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
-  const [workspaceId, setWorkspaceId] = useState(""); // Add workspaceId state
+  const [workspaceId, setWorkspaceId] = useState(""); 
 
   const handleEditToggle = (field: keyof typeof isEditing): void => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -49,7 +49,7 @@ export function ProjectBoard() {
   };
 
   const handleSaveWrapper = async (field: keyof typeof isEditing) => {
-    const result = await handleSave(id, projectBoardDetails, setProjectBoardData, setProjectBoardDetails, setIsEditing, setToastMessage, setToastOpen, setHasError, workspaceId);
+    const result = await handleSave(id, projectBoardDetails, setProjectBoardData, setProjectBoardDetails, setToastMessage, setToastOpen, setHasError, workspaceId);
     if (result) {
       setIsEditing((prev) => ({ ...prev, [field]: false }));
     }
@@ -69,7 +69,7 @@ export function ProjectBoard() {
           updatedAt: data.updatedAt,
           creatorUsername: data.creatorUserId || "",
         });
-        setWorkspaceId(data.workspaceId); // Set workspaceId from the fetched data
+        setWorkspaceId(data.workspaceId);
       }
     }
 
@@ -187,7 +187,7 @@ export function ProjectBoard() {
               <DeleteConfirmationPopup
                 onClose={() => setDeletePopupOpen(false)}
                 deleteItem={{ id: id }}
-                updateState={() => navigate(-1) }
+                updateState={() => navigate(`/workspace/${workspaceId}`) }
                 itemName={projectBoardData.name}
                 entity="ProjectBoards"
                 onDelete={() => {}}

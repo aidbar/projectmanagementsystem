@@ -30,6 +30,7 @@ export const WorkspacesProvider = ({ children }: { children: ReactNode }) => {
       setWorkspaces(response.data);
     } catch (error) {
       console.error('Error fetching workspaces:', error);
+      setWorkspaces([]);
     } finally {
       setLoading(false);
     }

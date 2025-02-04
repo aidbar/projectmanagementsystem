@@ -3,7 +3,7 @@ import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { useColumns } from "@/context/ColumnsContext"
 import { Column } from "./ui/board-column"
-import { saveStatus, handleSave } from "../lib/status"
+import { handleSave } from "../lib/status"
 
 export function StatusPopup({ onClose, column }: { onClose: () => void, column?: Column }) {
   const [statusName, setStatusName] = useState(column?.title || "")

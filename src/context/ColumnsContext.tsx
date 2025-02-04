@@ -30,6 +30,7 @@ export const ColumnsProvider = ({ children }: { children: ReactNode }) => {
         setColumns(columnsData);
       } catch (error) {
         console.error('Error fetching columns:', error);
+        setColumns([]);
       }
     }
     fetchColumns();

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import api from '@/api';
 
 export interface ProjectBoard {
@@ -32,21 +32,10 @@ export const ProjectBoardsProvider = ({ children }: { children: ReactNode }) => 
       setProjectBoards(response.data);
     } catch (error) {
       console.error('Error fetching project boards:', error);
+      setProjectBoards([]);
     } finally {
       setLoading(false);
     }
-  };
-
-  const addProjectBoard = (newProjectBoard: ProjectBoard) => {
-    setProjectBoards((prevBoards) => [...prevBoards, newProjectBoard]);
-  };
-
-  const updateProjectBoard = (updatedProjectBoard: ProjectBoard) => {
-    setProjectBoards((prevBoards) =>
-      prevBoards.map((board) =>
-        board.id === updatedProjectBoard.id ? updatedProjectBoard : board
-      )
-    );
   };
 
   return (

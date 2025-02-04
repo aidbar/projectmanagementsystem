@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react"
+import React, { useState, forwardRef } from "react" 
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,14 +12,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-import { useNavigate, useParams } from "react-router-dom"
-import api from "../api"
+import { useNavigate } from "react-router-dom"
 import * as Toast from "@radix-ui/react-toast"
-import { ProjectBoardPopup } from "./ProjectBoardPopup"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useProjectBoards } from '@/context/ProjectBoardsContext'
 
-// import { Checkbox } from "./ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -39,7 +36,6 @@ import {
   TableRow,
 } from "./ui/table"
 import { Button } from "./ui/button"
-import { set } from "zod"
 import { ProjectBoardsTableRef } from "@/pages/Workspace"
 
 export type ProjectBoard = {
@@ -79,7 +75,6 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditP
     header: () => <div className="text-center">Public</div>,
     cell: ({ row }) => {
 
-      // Format the isPublic as a dollar isPublic
       const formatted = row.getValue("isPublic") ? "Yes" : "No"
 
       return <div className="text-center font-medium">{formatted}</div>
@@ -153,44 +148,28 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditP
 ]
 
 type ProjectBoardsTableProps = {
-  onEdit: (projectBoard: ProjectBoard) => void;
   setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
   setEditProjectBoard: React.Dispatch<React.SetStateAction<ProjectBoard | undefined>>;
-  workspaceId: string; // Added workspaceId to props
+  workspaceId: string; 
 };
 
-export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoardsTableProps>(({ onEdit, setOpenPopup, setEditProjectBoard, workspaceId }, ref) => { // Added workspaceId to destructured props
+export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoardsTableProps>(({ setOpenPopup, setEditProjectBoard, workspaceId }, ref) => { // Added workspaceId to destructured props
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { projectBoards, setProjectBoards, fetchProjectBoards, loading } = useProjectBoards()
-  const projectBoardsTableRef = useRef<ProjectBoardsTableRef>(null)
+  const { projectBoards, setProjectBoards, loading } = useProjectBoards()
   const [deleteProjectBoard, setDeleteProjectBoard] = useState<ProjectBoard | undefined>(undefined)
   const [deletePopupOpen, setDeletePopupOpen] = useState(false)
   const [toastOpen, setToastOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
-  const { workspaceId: paramWorkspaceId } = useParams<{ workspaceId: string }>()
 
   const navigate = useNavigate()
-  const fetchData = async () => {
-    if (workspaceId || paramWorkspaceId) {
-      await fetchProjectBoards(workspaceId || paramWorkspaceId!)
-    }
-  }
 
   const handleDelete = (success: boolean) => {
     setToastMessage(success ? "Project board deleted" : "Failed to delete project board")
     setToastOpen(true)
   }
-
-  /*useImperativeHandle(ref, () => ({
-    fetchData
-  }))*/
-
-  /*useEffect(() => {
-    fetchData()
-  }, [workspaceId, paramWorkspaceId]) // Add dependencies*/
 
 
   const columns = createColumns(navigate, setEditProjectBoard, setOpenPopup, setDeleteProjectBoard, setDeletePopupOpen);
@@ -307,10 +286,6 @@ export const ProjectBoardsTable = forwardRef<ProjectBoardsTableRef, ProjectBoard
           </TableBody>
         </Table>
       </div>
-      {/* <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
           <Button

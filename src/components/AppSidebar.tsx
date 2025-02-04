@@ -1,4 +1,4 @@
-import { Calendar, Home, Slack, Search, Settings, Touchpad } from "lucide-react"
+import { Home, Slack } from "lucide-react"
 import { useWorkspaces } from "@/context/WorkspacesContext"
 
 import {
@@ -12,7 +12,6 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { useEffect } from "react"
 
 // Menu items.
 const items = [
@@ -68,7 +67,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        {/*<SidebarSeparator /> */}
       </SidebarContent>
     </Sidebar>
   )

@@ -2,15 +2,12 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable"
 import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { useMemo } from "react"
-import { Task, TaskCard } from "./task-card"
+import { TaskCard } from "./task-card" //Task
 import { cva } from "class-variance-authority"
 import { Card, CardContent, CardHeader } from "./card"
 import { Button } from "./button"
 import { GripVertical, Edit, Plus } from "lucide-react"
 import { ScrollArea, ScrollBar } from "./scroll-area"
-import { ColumnId } from "../KanbanBoard"
-import { useColumns } from "@/context/ColumnsContext"
-import { usePriorities } from "../../context/PrioritiesContext"
 import { useTasks } from "../../context/TasksContext"
 
 export interface Column {
@@ -34,9 +31,7 @@ interface BoardColumnProps {
 }
 
 export function BoardColumn({ column, isOverlay, onAddTask, onEditColumn, onDeleteTask }: BoardColumnProps) {
-  const { columns } = useColumns()
-  const { priorities } = usePriorities()
-  const { tasks } = useTasks() // Use global state for tasks
+  const { tasks } = useTasks() 
 
   const tasksInColumn = useMemo(() => {
     return tasks.filter((task) => task.columnId === column.id)

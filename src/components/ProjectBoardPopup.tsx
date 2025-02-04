@@ -2,13 +2,9 @@ import React, { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
-import api from "../api"
 import { ProjectBoard } from "./ProjectBoardsTable"
-import { AxiosError } from "axios"
-import { useLocation } from "react-router-dom"
 import { useProjectBoards } from "@/context/ProjectBoardsContext"
-import { createOrUpdateProjectBoard } from "../lib/project-boards" // Import the new function
-import {ProjectBoard as ProjectBoardType} from "@/context/ProjectBoardsContext"
+import { createOrUpdateProjectBoard } from "../lib/project-boards" 
 
 interface ProjectBoardPopupProps {
   onClose: () => void

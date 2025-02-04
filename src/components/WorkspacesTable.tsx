@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react"
+import React, { useState, forwardRef } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,12 +13,10 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import api from "../api"
 import * as Toast from "@radix-ui/react-toast"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useWorkspaces } from "@/context/WorkspacesContext"
 
-// import { Checkbox } from "./ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,7 +36,6 @@ import {
   TableRow,
 } from "./ui/table"
 import { Button } from "./ui/button"
-import { set } from "zod"
 import { WorkspacesTableRef } from "@/pages/Dashboard"
 
 export type Workspace = {
@@ -50,28 +47,6 @@ export type Workspace = {
 }
 
 export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>, setDeleteWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>, setDeletePopupOpen: React.Dispatch<React.SetStateAction<boolean>>): ColumnDef<Workspace>[] => [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -100,7 +75,6 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
     header: () => <div className="text-center">Public</div>,
     cell: ({ row }) => {
 
-      // Format the isPublic as a dollar isPublic
       const formatted = row.getValue("isPublic") ? "Yes" : "No"
 
       return <div className="text-center font-medium">{formatted}</div>
@@ -174,18 +148,16 @@ export const createColumns = (navigate: ReturnType<typeof useNavigate>, setEditW
 ]
 
 type WorkspacesTableProps = {
-  onEdit: (workspace: Workspace) => void;
   setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
   setEditWorkspace: React.Dispatch<React.SetStateAction<Workspace | undefined>>;
 };
 
-export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTableProps>(({ onEdit, setOpenPopup, setEditWorkspace }, ref) => {
-  const { workspaces, setWorkspaces, fetchWorkspaces, loading } = useWorkspaces()
+export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTableProps>(({ setOpenPopup, setEditWorkspace }, ref) => {
+  const { workspaces, setWorkspaces, loading } = useWorkspaces()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
-  const workspacesTableRef = useRef<WorkspacesTableRef>(null)
   const [deleteWorkspace, setDeleteWorkspace] = useState<Workspace | undefined>(undefined)
   const [deletePopupOpen, setDeletePopupOpen] = useState(false)
   const [toastOpen, setToastOpen] = useState(false)
@@ -197,36 +169,6 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
     setToastMessage(success ? "Workspace deleted" : "Failed to delete workspace")
     setToastOpen(true)
   }
-
-  /*function handleUpdate() {
-    if (workspacesTableRef.current) {
-      workspacesTableRef.current.fetchData()
-    }
-  }*/
-
-  //const navigate = useNavigate()
-
-  /*useImperativeHandle(ref, () => ({
-    fetchData: fetchWorkspaces
-  }))*/
-
-  /*useEffect(() => {
-    fetchWorkspaces()
-  }, [])*/
-
-  /*const handleDelete = async () => {
-    if (deleteWorkspace) {
-      try {
-        await api.delete(`/Workspaces/${deleteWorkspace.id}`);
-        fetchWorkspaces();
-      } catch (error) {
-        console.error("Error deleting workspace:", error);
-      } finally {
-        setDeletePopupOpen(false);
-        setDeleteWorkspace(undefined);
-      }
-    }
-  };*/
 
   const columns = createColumns(navigate, setEditWorkspace, setOpenPopup, setDeleteWorkspace, setDeletePopupOpen);
   const table = useReactTable({
@@ -344,10 +286,6 @@ export const WorkspacesTable = forwardRef<WorkspacesTableRef, WorkspacesTablePro
         </TableBody>
       </Table>
       </div>
-      {/* <div className="flex-1 text-sm text-muted-foreground">
-      {table.getFilteredSelectedRowModel().rows.length} of{" "}
-      {table.getFilteredRowModel().rows.length} row(s) selected.
-      </div> */}
       <div className="flex items-center justify-end space-x-2 py-4">
       <div className="space-x-2">
         <Button

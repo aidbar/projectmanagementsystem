@@ -7,11 +7,8 @@ import { cva } from "class-variance-authority"
 import { GripVertical } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ColumnId } from "@/components/KanbanBoard"
-import React, { useState } from "react"
+import { useState } from "react" 
 import { TaskCardPopup } from "../TaskCardPopup"
-import { useColumns } from "@/context/ColumnsContext"
-import { usePriorities } from "@/context/PrioritiesContext"
-import { updateTaskColumnCard } from "@/lib/task-cards"
 import * as Toast from "@radix-ui/react-toast"
 
 export interface Status {
@@ -34,9 +31,6 @@ export interface Task {
   updatedAt: string
   priorityId: string
   dueDate: string
-  /*activities: any[]
-  status: Status | null
-  labels: Label[] | null*/
 }
 
 interface TaskCardProps {
@@ -53,8 +47,6 @@ export interface TaskDragData {
 }
 
 export function TaskCard({ task, isOverlay, onDelete = () => {} }: TaskCardProps) {
-  const { columns } = useColumns()
-  const { priorities } = usePriorities()
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: {
@@ -103,11 +95,6 @@ export function TaskCard({ task, isOverlay, onDelete = () => {} }: TaskCardProps
 
   const handleSaveChangesToast = (success: boolean) => {
     setToastMessage(success ? "Changes saved" : "Failed to save changes")
-    setToastOpen(true)
-  }
-
-  const handleDeleteToast = (success: boolean) => {
-    setToastMessage(success ? "Task deleted successfully" : "Failed to delete task")
     setToastOpen(true)
   }
 

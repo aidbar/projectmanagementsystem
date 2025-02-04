@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
-import api from "../api"
 import { Workspace } from "./WorkspacesTable"
-import { AxiosError } from "axios"
 import { useWorkspaces } from "@/context/WorkspacesContext"
-import * as Toast from "@radix-ui/react-toast"
-import { updateWorkspace, createWorkspace, handleSubmit } from "@/lib/workspaces"
+import { handleSubmit } from "@/lib/workspaces"
 
 interface WorkspacePopupProps {
   onClose: () => void

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button, buttonVariants } from "./ui/button"
-import { handleLogin, login, validateEmail, validatePassword } from "@/lib/auth"
+import { validateEmail, validatePassword } from "@/lib/auth"
 
 interface LoginPopupProps {
   onClose: () => void;
@@ -16,7 +16,6 @@ export function LoginPopup({ onClose, onLogin, errorMessage }: LoginPopupProps) 
 
   const handleLoginClick = async () => {
     try {
-      await handleLogin(email, password)
       await onLogin(email, password)
     } catch (error : any) {
       setEmailError(error.message)

@@ -95,7 +95,6 @@ export const handleSave = async (
   projectBoardDetails: any,
   setProjectBoardData: Dispatch<SetStateAction<any>>,
   setProjectBoardDetails: Dispatch<SetStateAction<any>>,
-  setIsEditing: Dispatch<SetStateAction<any>>,
   setToastMessage: Dispatch<SetStateAction<string>>,
   setToastOpen: Dispatch<SetStateAction<boolean>>,
   setHasError: Dispatch<SetStateAction<boolean>>,
@@ -118,7 +117,7 @@ export const handleSave = async (
 
   const { data, error } = await saveProjectBoardDetails(id, {
     ...projectBoardDetails,
-    workspaceId, // Include workspaceId in the request body
+    workspaceId,
   });
   if (error) {
     setToastMessage(error);

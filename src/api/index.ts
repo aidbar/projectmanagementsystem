@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { error } from 'console'
 
 const PUBLIC_ROUTES: string[] = [
   '/',
@@ -18,8 +17,7 @@ if (!isDevelopment) {
 const api = axios.create({
   baseURL,
   headers: {
-    'Content-Type': 'application/json'//,
-    //Authorization: `Bearer ${localStorage.getItem('token')}`
+    'Content-Type': 'application/json'
   },
   withCredentials: true
 })

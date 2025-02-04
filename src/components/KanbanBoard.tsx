@@ -1,7 +1,5 @@
 import { useMemo, useRef, useState, useEffect } from "react"
 import { createPortal } from "react-dom"
-import axios from "axios"
-//import styled from "styled-components"
 import {useColumns} from "../context/ColumnsContext"
 import { BoardColumn, BoardContainer } from "./ui/board-column"
 import {
@@ -24,12 +22,7 @@ import { updateTaskColumnCard } from "../lib/task-cards"
 import type { Column } from "./ui/board-column"
 import { hasDraggableData } from "../lib/utils"
 import { coordinateGetter } from "../lib/dnd"
-import { useQuery } from "@tanstack/react-query"
-import { useTasksFindAll } from "../api/task-management"
-import { z } from "zod"
 import { CreateTaskPopup, TaskDetailsState } from "./CreateTaskPopup"
-import api from "@/api"
-import { usePriorities } from "../context/PrioritiesContext"
 import { useTasks } from "../context/TasksContext"
 import { StatusPopup } from "./StatusPopup"
 import * as Toast from "@radix-ui/react-toast";
@@ -39,11 +32,7 @@ const defaultCols = [
   {
     id: crypto.randomUUID(),
     title: "WIP"
-  }/*,
-  {
-    id: crypto.randomUUID(),
-    name: "Done"
-  }*/
+  },
 ] satisfies Column[]
 
 export type ColumnId = (typeof defaultCols)[number]["id"]
@@ -53,39 +42,19 @@ export interface Priority {
   name: string
 }
 
-const exampleTasks: Task[] = [
-  {
-    id: '1',
-    columnId: '00000000-0000-0000-0000-000000000001',
-    title: 'Example Task 1',
-    description: 'This is an example task',
-    priorityId: '1',
-    listId: 'list-1',
-    createdAt: '2023-01-01T00:00:00Z',
-    updatedAt: '2023-01-01T00:00:00Z',
-    dueDate: '2023-01-10T00:00:00Z',
-  },
-  // Add more example tasksLegacy as needed
-];
-
 export function KanbanBoard() {
-  console.log("KanbanBoard")
-  //const { tasksLegacy } = useTasksFindAll()
-  //console.log("data:", tasksLegacy)
 
-  const { columns, setColumns } = useColumns() //useState<Column[]>(defaultCols)
+  const { columns, setColumns } = useColumns() 
   const pickedUpTaskColumn = useRef<ColumnId | null>(null)
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns])
 
-  const { tasks, setTasks, projectBoardId } = useTasks() // Use global state for tasks
+  const { tasks, setTasks, projectBoardId } = useTasks() 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [showCreateTaskPopup, setShowCreateTaskPopup] = useState(false)
   const [newTaskColumnId, setNewTaskColumnId] = useState<ColumnId | null>(null)
   const [showEditStatusPopup, setShowEditStatusPopup] = useState(false)
   const [editColumn, setEditColumn] = useState<Column | null>(null)
-
-  const { priorities, setPriorities } = usePriorities()
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -268,7 +237,6 @@ export function KanbanBoard() {
               <BoardColumn
                 key={col.id}
                 column={col}
-                //tasks={tasks.filter((task) => task.columnId === col.id)}
                 onAddTask={handleAddTask}
                 onEditColumn={() => handleEditColumn(col)}
                 onDeleteTask={handleDeleteToast}
@@ -286,7 +254,6 @@ export function KanbanBoard() {
                   isOverlay
                   column={activeColumn}
                   onDeleteTask={handleDeleteToast}
-                  //tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
                   aria-label={`Overlay Column ${activeColumn.title}`}
                 />
               )}
@@ -300,7 +267,6 @@ export function KanbanBoard() {
         <CreateTaskPopup
           onClose={() => setShowCreateTaskPopup(false)}
           onCreate={handleCreateTask}
-          //columnsData={columns}
           defaultStatus={newTaskColumnId || ""}
           aria-label="Create Task Popup"
         />
@@ -399,7 +365,7 @@ export function KanbanBoard() {
 
     if (!isActiveATask) return
 
-    // Im dropping a Task over another Task
+    // Dropping a Task over another Task
     if (isActiveATask && isOverATask) {
       setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => t.id === activeId)
@@ -417,7 +383,7 @@ export function KanbanBoard() {
 
     const isOverAColumn = overData?.type === "Column"
 
-    // Im dropping a Task over a column
+    // Dropping a Task over a column
     if (isActiveATask && isOverAColumn) {
       setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => t.id === activeId)

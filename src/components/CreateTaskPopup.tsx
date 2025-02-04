@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Button, buttonVariants } from "./ui/button"
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
@@ -6,14 +6,13 @@ import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
-import { Column } from "./ui/board-column"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
 
 interface CreateTaskPopupProps {
   onClose: () => void
   onCreate: (taskDetails: TaskDetailsState) => void
-  defaultStatus: string // Add defaultStatus prop
+  defaultStatus: string
 }
 
 export interface TaskDetailsState {
@@ -29,7 +28,7 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
   const [taskDetails, setTaskDetails] = useState<TaskDetailsState>({
     title: "",
     description: "",
-    status: defaultStatus, // Set default status
+    status: defaultStatus,
     priority: "",
     dueDate: "",
     assignedUsers: "",
@@ -67,7 +66,7 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
       error = "Priority is required and cannot be empty."
     } else if (name === "status" && !value.trim()) {
       error = "Status is required and cannot be empty."
-    } else if (name === "dueDate" && !date) { // Add due date validation
+    } else if (name === "dueDate" && !date) {
       error = "Due date is required."
     }
 
@@ -78,7 +77,7 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
       taskDetails.description.length <= 500 &&
       !!taskDetails.priority.trim() &&
       !!taskDetails.status.trim() &&
-      !!date && // Add due date validation
+      !!date &&
       !error
     )
   }
@@ -90,13 +89,13 @@ export function CreateTaskPopup({ onClose, onCreate, defaultStatus }: CreateTask
       taskDetails.description.length <= 500 &&
       !!taskDetails.priority.trim() &&
       !!taskDetails.status.trim() &&
-      !!date && // Add due date validation
+      !!date &&
       !errors.title &&
       !errors.description &&
       !errors.priority &&
       !errors.status
     )
-  }, [taskDetails, errors, date]) // Add date to dependency array
+  }, [taskDetails, errors, date])
 
   const handleSave = () => {
     onCreate({ ...taskDetails, dueDate: date ? format(date, "yyyy-MM-dd") : "" })

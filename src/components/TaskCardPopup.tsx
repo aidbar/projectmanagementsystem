@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
+import { useState, useEffect } from "react"
 import { Task } from "./ui/task-card"
-import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "./ui/button"
-import { Column } from "./ui/board-column"
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "./ui/dropdown"
 import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover"
 import { Calendar } from "./ui/calendar"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import api from "@/api"
 import { DeleteConfirmationPopup } from "./DeleteConfirmationPopup"
 import { useColumns } from "@/context/ColumnsContext"
 import { usePriorities } from "@/context/PrioritiesContext"
@@ -22,13 +18,13 @@ interface TaskCardPopupProps {
   task: Task
   onClose: () => void
   onDelete: (success: boolean) => void
-  onSave: (success: boolean) => void // Add this line
+  onSave: (success: boolean) => void
 }
 
-export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopupProps) { // Add onSave to destructured props
+export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopupProps) { 
   const { columns } = useColumns()
   const { priorities } = usePriorities()
-  const { tasks, setTasks } = useTasks() // Use global state for tasks
+  const { setTasks } = useTasks() 
   const [isEditing, setIsEditing] = useState({
     title: false,
     description: false,
@@ -41,7 +37,7 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
   const [taskDetails, setTaskDetails] = useState({
     title: task.title,
     description: task.description,
-    status: task.columnId as `${string}-${string}-${string}-${string}-${string}`, //.status || "",
+    status: task.columnId as `${string}-${string}-${string}-${string}-${string}`, 
     priority: task.priorityId,
     dueDate: new Date(task.dueDate).toLocaleDateString(),
     assignedUsers: "",
@@ -87,22 +83,11 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
     if (result.success) {
       console.log("Changes saved:", result.data);
       setTasks((prevTasks) => prevTasks.map(t => t.id === task.id ? { ...t, ...taskDetails, dueDate: date.toISOString(), columnId: taskDetails.status } : t));
-      onSave(true); // Call onSave with true
+      onSave(true); 
     } else {
-      onSave(false); // Call onSave with false
+      onSave(false); 
     }
   };
-
-  /*const fetchData = async () => {
-    const result = await fetchTaskData();
-    if (result.success) {
-      const updatedColumnsData = result.data;
-      console.log("Data fetched successfully:", updatedColumnsData);
-      // Update the columnsData state or prop here
-      // setColumnsData(updatedColumnsData); // Uncomment and use this if columnsData is a state
-      //columnsData = updatedColumnsData; // Use this if columnsData is a prop
-    }
-  };*/
 
   const updateState = async () => {
     setTasks((prevTasks) => prevTasks.filter(t => t.id !== task.id))
@@ -115,15 +100,6 @@ export function TaskCardPopup({ task, onClose, onDelete, onSave }: TaskCardPopup
     priority: boolean;
     dueDate: boolean;
     assignedUsers: boolean;
-  }
-
-  interface TaskDetailsState {
-    title: string;
-    description: string;
-    status: string;
-    priority: string;
-    dueDate: string;
-    assignedUsers: string;
   }
 
   const handleEditToggle = (field: keyof IsEditingState): void => {

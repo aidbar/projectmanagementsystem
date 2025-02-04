@@ -85,26 +85,3 @@ export function useSignupMutation(navigate: NavigateFunction, loginMutation: Ret
     }
   })
 }
-
-export async function handleSignup(firstName: string, lastName: string, username: string, email: string, password: string, confirmPassword: string) {
-  if (!validateEmail(email)) {
-    throw new Error("Invalid email address")
-  }
-  if (!validatePassword(password)) {
-    throw new Error("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-  }
-  if (password !== confirmPassword) {
-    throw new Error("Passwords do not match")
-  }
-  //await signup(firstName, lastName, username, email, password, confirmPassword)
-}
-
-export async function handleLogin(email: string, password: string) {
-  if (!validateEmail(email)) {
-    throw new Error("Invalid email address")
-  }
-  if (!validatePassword(password)) {
-    throw new Error("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character")
-  }
-  //await login(email, password)
-}

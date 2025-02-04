@@ -8,7 +8,7 @@ interface TasksContextType {
   addTask: (newTask: Task) => void;
   updateTasks: (updatedTasks: Task[]) => void;
   removeTask: (taskId: string) => void;
-  projectBoardId: string; // Add projectBoardId to the context type
+  projectBoardId: string;
 }
 
 const TasksContext = createContext<TasksContextType>({
@@ -17,7 +17,7 @@ const TasksContext = createContext<TasksContextType>({
   addTask: () => {},
   updateTasks: () => {},
   removeTask: () => {},
-  projectBoardId: '' // Initialize projectBoardId
+  projectBoardId: ''
 });
 
 export const TasksProvider = ({ children, projectBoardId } : {children : ReactNode, projectBoardId: string}) => {
@@ -42,6 +42,7 @@ export const TasksProvider = ({ children, projectBoardId } : {children : ReactNo
         console.log("Tasks fetched:", tasksData);
       } catch (error) {
         console.error("Error fetching tasks:", error);
+        setTasks([]);
       }
     }
     fetchTasks();
