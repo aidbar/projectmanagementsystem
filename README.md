@@ -9,7 +9,7 @@
     <a href="https://github.com/aidbar/fs19_frontend"><strong>Explore the repository »</strong></a>
     <br />
     <br />
-    <a href="https://integrifyfrontendproject-3gjsl1qfw.vercel.app/">View Demo</a>
+    <a href="https://integrifyfrontendproject-jo2ctdnyn.vercel.app">View Demo</a>
     &middot;
     <a href="mailto:aide.barniskyte@integrify.io">Report Bug</a>
     &middot;
@@ -122,7 +122,7 @@ State management is handled using React's Context API, which provides a way to s
 
 ### API Integration
 
-API integration is done using custom hooks and services defined in the `api` directory. These services handle HTTP requests and manage data fetching, caching, and synchronization with the backend.
+API integration is done using custom hooks and services. These services handle HTTP requests and manage data fetching, caching, and synchronization with the backend.
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
@@ -131,67 +131,95 @@ API integration is done using custom hooks and services defined in the `api` dir
 ```
 ├── README.md
 ├── components.json
+├── cypress
+│   ├── downloads
+│   ├── e2e
+│   │   ├── dashboard.spec.ts
+│   │   ├── home.spec.ts
+│   │   ├── loggedOut.spec.ts
+│   │   ├── projectBoard.spec.ts
+│   │   └── workspace.spec.ts
+│   ├── fixtures
+│   │   └── example.json
+│   ├── screenshots
+│   └── support
+│       ├── commands.ts
+│       └── e2e.ts
+├── cypress.config.ts
 ├── directory_structure.txt
 ├── index.html
 ├── package.json
 ├── postcss.config.js
 ├── public
-│   └── vite.svg
+│   └── vite.svg
+├── screenshot.png
 ├── src
-│   ├── App.css
-│   ├── App.tsx
-│   ├── api
-│   │   ├── index.ts
-│   │   ├── task-management.ts
-│   │   └── tasks.ts
-│   ├── components
-│   │   ├── CreateTaskPopup.tsx
-│   │   ├── DeleteConfirmationPopup.tsx
-│   │   ├── Header.tsx
-│   │   ├── KanbanBoard.tsx
-│   │   ├── LoginPopup.tsx
-│   │   ├── ProjectBoardPopup.tsx
-│   │   ├── ProjectBoardsTable.tsx
-│   │   ├── SignupPopup.tsx
-│   │   ├── StatusPopup.tsx
-│   │   ├── TaskCardPopup.tsx
-│   │   ├── WorkspacePopup.tsx
-│   │   ├── WorkspacesTable.tsx
-│   │   └── ui
-│   │       ├── badge.tsx
-│   │       ├── board-column.tsx
-│   │       ├── button.tsx
-│   │       ├── calendar.tsx
-│   │       ├── card.tsx
-│   │       ├── checkbox.tsx
-│   │       ├── dropdown-menu.tsx
-│   │       ├── dropdown.tsx
-│   │       ├── input.tsx
-│   │       ├── navmenu.tsx
-│   │       ├── popover.tsx
-│   │       ├── scroll-area.tsx
-│   │       ├── table.tsx
-│   │       └── task-card.tsx
-│   ├── context
-│   │   ├── ColumnsContext.tsx
-│   │   ├── PrioritiesContext.tsx
-│   │   └── TasksContext.tsx
-│   ├── index.css
-│   ├── lib
-│   │   ├── dnd.ts
-│   │   └── utils.ts
-│   ├── main.tsx
-│   ├── pages
-│   │   ├── Dashboard.tsx
-│   │   ├── LoggedOut.tsx
-│   │   ├── ProjectBoard.tsx
-│   │   ├── Workspace.tsx
-│   │   └── home.tsx
-│   ├── schemas
-│   │   └── tasks.ts
-│   ├── types
-│   │   └── index.ts
-│   └── vite-env.d.ts
+│   ├── App.css
+│   ├── App.tsx
+│   ├── api
+│   │   └── index.ts
+│   ├── components
+│   │   ├── AppSidebar.tsx
+│   │   ├── CreateTaskPopup.tsx
+│   │   ├── DeleteConfirmationPopup.tsx
+│   │   ├── Header.tsx
+│   │   ├── KanbanBoard.tsx
+│   │   ├── LoginPopup.tsx
+│   │   ├── ProjectBoardPopup.tsx
+│   │   ├── ProjectBoardsTable.tsx
+│   │   ├── SidebarLayoutWrapper.tsx
+│   │   ├── SignupPopup.tsx
+│   │   ├── StatusPopup.tsx
+│   │   ├── TaskCardPopup.tsx
+│   │   ├── WorkspacePopup.tsx
+│   │   ├── WorkspacesTable.tsx
+│   │   └── ui
+│   │       ├── badge.tsx
+│   │       ├── board-column.tsx
+│   │       ├── button.tsx
+│   │       ├── calendar.tsx
+│   │       ├── card.tsx
+│   │       ├── checkbox.tsx
+│   │       ├── dropdown-menu.tsx
+│   │       ├── dropdown.tsx
+│   │       ├── input.tsx
+│   │       ├── navmenu.tsx
+│   │       ├── popover.tsx
+│   │       ├── scroll-area.tsx
+│   │       ├── separator.tsx
+│   │       ├── sheet.tsx
+│   │       ├── sidebar.tsx
+│   │       ├── skeleton.tsx
+│   │       ├── table.tsx
+│   │       ├── task-card.tsx
+│   │       └── tooltip.tsx
+│   ├── context
+│   │   ├── ColumnsContext.tsx
+│   │   ├── PrioritiesContext.tsx
+│   │   ├── ProjectBoardsContext.tsx
+│   │   ├── TasksContext.tsx
+│   │   └── WorkspacesContext.tsx
+│   ├── index.css
+│   ├── lib
+│   │   ├── auth.ts
+│   │   ├── dnd.ts
+│   │   ├── entity-deletion.ts
+│   │   ├── hooks
+│   │   │   └── use-mobile.ts
+│   │   ├── kanban.ts
+│   │   ├── project-boards.ts
+│   │   ├── status.ts
+│   │   ├── task-cards.ts
+│   │   ├── utils.ts
+│   │   └── workspaces.ts
+│   ├── main.tsx
+│   ├── pages
+│   │   ├── Dashboard.tsx
+│   │   ├── LoggedOut.tsx
+│   │   ├── ProjectBoard.tsx
+│   │   ├── Workspace.tsx
+│   │   └── home.tsx
+│   └── vite-env.d.ts
 ├── tailwind.config.js
 ├── tsconfig.json
 ├── tsconfig.node.json
@@ -201,20 +229,35 @@ API integration is done using custom hooks and services defined in the `api` dir
 
 - **README.md**: Project documentation.
 - **components.json**: Configuration file for components.
+- **cypress**: Contains end-to-end testing files.
+  - **downloads**: Directory for downloaded files during tests.
+  - **e2e**: Contains end-to-end test specifications.
+    - **dashboard.spec.ts**
+    - **home.spec.ts**
+    - **loggedOut.spec.ts**
+    - **projectBoard.spec.ts**
+    - **workspace.spec.ts**
+  - **fixtures**: Contains test data files.
+    - **example.json**
+  - **screenshots**: Directory for screenshots taken during tests.
+  - **support**: Contains support files for Cypress.
+    - **commands.ts**
+    - **e2e.ts**
+- **cypress.config.ts**: Configuration file for Cypress.
 - **directory_structure.txt**: Text file containing the directory structure.
 - **index.html**: Main HTML file.
-- **package.json**: Configuration file for React.
+- **package.json**: Configuration file for the project.
 - **postcss.config.js**: Configuration file for PostCSS.
 - **public**: Contains public assets like images and fonts.
   - **vite.svg**: Vite logo.
+- **screenshot.png**: Screenshot of the application.
 - **src**: Contains source files including global and component-specific styles.
   - **App.css**: Global CSS styles.
   - **App.tsx**: Main application component.
   - **api**: Contains API service files for making HTTP requests.
     - **index.ts**: API index file.
-    - **task-management.ts**
-    - **tasks.ts**
   - **components**: Contains React components used in the app's pages.
+    - **AppSidebar.tsx**
     - **CreateTaskPopup.tsx**
     - **DeleteConfirmationPopup.tsx**: Reusable component for delete confirmation.
     - **Header.tsx**
@@ -222,13 +265,14 @@ API integration is done using custom hooks and services defined in the `api` dir
     - **LoginPopup.tsx**
     - **ProjectBoardPopup.tsx**
     - **ProjectBoardsTable.tsx**
+    - **SidebarLayoutWrapper.tsx**
     - **SignupPopup.tsx**
     - **StatusPopup.tsx**
     - **TaskCardPopup.tsx**
     - **WorkspacePopup.tsx**
     - **WorkspacesTable.tsx**
     - **ui**: Contains UI elements used in components.
-      - **badge.tsx**.
+      - **badge.tsx**
       - **board-column.tsx**
       - **button.tsx**
       - **calendar.tsx**
@@ -240,16 +284,32 @@ API integration is done using custom hooks and services defined in the `api` dir
       - **navmenu.tsx**
       - **popover.tsx**
       - **scroll-area.tsx**
+      - **separator.tsx**
+      - **sheet.tsx**
+      - **sidebar.tsx**
+      - **skeleton.tsx**
       - **table.tsx**
       - **task-card.tsx**
+      - **tooltip.tsx**
   - **context**: Contains context providers for state management.
     - **ColumnsContext.tsx**
     - **PrioritiesContext.tsx**
+    - **ProjectBoardsContext.tsx**
     - **TasksContext.tsx**
+    - **WorkspacesContext.tsx**
   - **index.css**: Global CSS styles.
   - **lib**: Contains utility files.
+    - **auth.ts**: Authentication utilities.
     - **dnd.ts**: Drag and drop utilities.
+    - **entity-deletion.ts**: Entity deletion utilities.
+    - **hooks**: Contains custom hooks.
+      - **use-mobile.ts**
+    - **kanban.ts**: Kanban board utilities.
+    - **project-boards.ts**: Project boards utilities.
+    - **status.ts**: Status utilities.
+    - **task-cards.ts**: Task cards utilities.
     - **utils.ts**: General utilities.
+    - **workspaces.ts**: Workspaces utilities.
   - **main.tsx**: Main entry point for the application.
   - **pages**: Contains the pages used in the application.
     - **Dashboard.tsx**: Dashboard page (user's homepage).
@@ -257,10 +317,6 @@ API integration is done using custom hooks and services defined in the `api` dir
     - **ProjectBoard.tsx**: Project board page.
     - **Workspace.tsx**: Workspace page.
     - **home.tsx**: Home page.
-  - **schemas**: Contains schema definitions.
-    - **tasks.ts**
-  - **types**: Contains TypeScript type definitions.
-    - **index.ts**: Index of type definitions.
   - **vite-env.d.ts**: Vite environment definitions.
 - **tailwind.config.js**: Configuration file for Tailwind CSS.
 - **tsconfig.json**: TypeScript configuration file.
@@ -272,7 +328,7 @@ API integration is done using custom hooks and services defined in the `api` dir
 
 ## Roadmap
 
-- Refactor code to separate business logic from UI
+- "Assigned/Added Users" feature for task cards, project boards and workspaces
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
@@ -300,4 +356,5 @@ API integration is done using custom hooks and services defined in the `api` dir
 [Shadcn-url]: https://shadcn.dev/
 [Tanstack]: https://img.shields.io/badge/Tanstack-FF4154?style=for-the-badge&logo=react-query&logoColor=white
 [Tanstack-url]: https://tanstack.com/query/latest
+
 

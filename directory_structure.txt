@@ -1,20 +1,35 @@
 .
 ├── README.md
 ├── components.json
+├── cypress
+│   ├── downloads
+│   ├── e2e
+│   │   ├── dashboard.spec.ts
+│   │   ├── home.spec.ts
+│   │   ├── loggedOut.spec.ts
+│   │   ├── projectBoard.spec.ts
+│   │   └── workspace.spec.ts
+│   ├── fixtures
+│   │   └── example.json
+│   ├── screenshots
+│   └── support
+│       ├── commands.ts
+│       └── e2e.ts
+├── cypress.config.ts
 ├── directory_structure.txt
 ├── index.html
 ├── package.json
 ├── postcss.config.js
 ├── public
 │   └── vite.svg
+├── screenshot.png
 ├── src
 │   ├── App.css
 │   ├── App.tsx
 │   ├── api
-│   │   ├── index.ts
-│   │   ├── task-management.ts
-│   │   └── tasks.ts
+│   │   └── index.ts
 │   ├── components
+│   │   ├── AppSidebar.tsx
 │   │   ├── CreateTaskPopup.tsx
 │   │   ├── DeleteConfirmationPopup.tsx
 │   │   ├── Header.tsx
@@ -22,6 +37,7 @@
 │   │   ├── LoginPopup.tsx
 │   │   ├── ProjectBoardPopup.tsx
 │   │   ├── ProjectBoardsTable.tsx
+│   │   ├── SidebarLayoutWrapper.tsx
 │   │   ├── SignupPopup.tsx
 │   │   ├── StatusPopup.tsx
 │   │   ├── TaskCardPopup.tsx
@@ -40,16 +56,32 @@
 │   │       ├── navmenu.tsx
 │   │       ├── popover.tsx
 │   │       ├── scroll-area.tsx
+│   │       ├── separator.tsx
+│   │       ├── sheet.tsx
+│   │       ├── sidebar.tsx
+│   │       ├── skeleton.tsx
 │   │       ├── table.tsx
-│   │       └── task-card.tsx
+│   │       ├── task-card.tsx
+│   │       └── tooltip.tsx
 │   ├── context
 │   │   ├── ColumnsContext.tsx
 │   │   ├── PrioritiesContext.tsx
-│   │   └── TasksContext.tsx
+│   │   ├── ProjectBoardsContext.tsx
+│   │   ├── TasksContext.tsx
+│   │   └── WorkspacesContext.tsx
 │   ├── index.css
 │   ├── lib
+│   │   ├── auth.ts
 │   │   ├── dnd.ts
-│   │   └── utils.ts
+│   │   ├── entity-deletion.ts
+│   │   ├── hooks
+│   │   │   └── use-mobile.ts
+│   │   ├── kanban.ts
+│   │   ├── project-boards.ts
+│   │   ├── status.ts
+│   │   ├── task-cards.ts
+│   │   ├── utils.ts
+│   │   └── workspaces.ts
 │   ├── main.tsx
 │   ├── pages
 │   │   ├── Dashboard.tsx
@@ -57,10 +89,6 @@
 │   │   ├── ProjectBoard.tsx
 │   │   ├── Workspace.tsx
 │   │   └── home.tsx
-│   ├── schemas
-│   │   └── tasks.ts
-│   ├── types
-│   │   └── index.ts
 │   └── vite-env.d.ts
 ├── tailwind.config.js
 ├── tsconfig.json
