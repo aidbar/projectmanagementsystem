@@ -3,18 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Header } from '../components/Header';
 import { ProjectBoardsTable, ProjectBoard } from '../components/ProjectBoardsTable';
-import api from '../api';
-import { AxiosError } from 'axios';
 import { ProjectBoardPopup } from '../components/ProjectBoardPopup';
 import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
 import { useWorkspaces } from '@/context/WorkspacesContext';
 import { ProjectBoardsProvider, useProjectBoards } from '@/context/ProjectBoardsContext';
 import * as Toast from "@radix-ui/react-toast";
-import { set } from 'date-fns';
 import { Edit } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/dropdown';
 import SidebarLayoutWrapper from '@/components/SidebarLayoutWrapper';
+import { fetchWorkspaceData, handleSave, handleCreateOrEdit, handleSubmit } from '@/lib/workspaces';
 
 export type ProjectBoardsTableRef = {
   fetchData: () => void;
@@ -68,65 +66,15 @@ const Workspace = () => {
     setWorkspaceDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (field: keyof typeof isEditing) => {
-    setHasError(false);
-
-    try {
-      if (workspaceDetails.name.length === 0) {
-        setHasError(true);
-        setToastMessage("Workspace name is required.");
-        setToastOpen(true);
-        return;
-      } else if (workspaceDetails.name.length > 200) {
-        setHasError(true);
-        setToastMessage("Workspace name must not exceed 200 characters.");
-        setToastOpen(true);
-        return;
-      }
-
-      await api.put(`/Workspaces/${id}`, {
-        ...workspaceDetails,
-      }).then((response) => {
-        const data = response.data.data;
-        console.log("Changes saved:", data);
-        setWorkspaceData((prev) => ({
-          ...prev,
-          name: data.name,
-          description: data.description,
-          isPublic: data.isPublic,
-          createdAt: data.createdAt,
-          updatedAt: data.updatedAt,
-          creatorUsername: data.creatorUsername || prev.creatorUsername,
-        }));
-        setWorkspaceDetails((prev) => ({
-          ...prev,
-          name: data.name,
-          description: data.description,
-          isPublic: data.isPublic,
-        }));
-        setIsEditing((prev) => ({ ...prev, [field]: false }));
-        setToastMessage("Changes saved");
-        setToastOpen(true);
-      });
-    } catch (error) {
-      console.error("Error saving changes:", error);
-      if (error instanceof AxiosError) {
-        if (error.response?.data) {
-          setToastMessage(error.response.data);
-        } else {
-          setToastMessage("Failed to save changes");
-        }
-      } else {
-        setToastMessage("An error occurred");
-      }
-      setToastOpen(true);
+  const handleSaveWrapper = async (field: keyof typeof isEditing) => {
+    const result = await handleSave(id, workspaceDetails, setWorkspaceData, setWorkspaceDetails, setIsEditing, setToastMessage, setToastOpen, setHasError);
+    if (result) {
+      setIsEditing((prev) => ({ ...prev, [field]: false }));
     }
   };
 
-  const handleCreateOrEdit = (success: boolean, isEdit: boolean) => {
-    setToastMessage(success ? (isEdit ? "Changes saved" : "Project board created") : (isEdit ? "Failed to save changes" : "Failed to create project board"));
-    setToastOpen(true);
-    projectBoardsTableRef.current?.fetchData();
+  const handleCreateOrEditWrapper = (success: boolean, isEdit: boolean) => {
+    handleCreateOrEdit(success, isEdit, setToastMessage, setToastOpen, projectBoardsTableRef);
   };
 
   const handleEdit = (projectBoard: ProjectBoard) => {
@@ -137,29 +85,7 @@ const Workspace = () => {
   const [deleteWorkspacePopupOpen, setDeleteWorkspacePopupOpen] = useState(false);
 
   useEffect(() => {
-    async function fetchWorkspaceData() {
-      setFetchError('');
-      try {
-        const response = await api.get(`/Workspaces/${id}`);
-        setWorkspaceData(response.data);
-        setWorkspaceDetails(response.data);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.data) {
-            setFetchError(error.response.data);
-          } else {
-            setFetchError('Error fetching workspace data');
-          }
-        } else {
-          setFetchError('An error occurred');
-        }
-        console.error('Failed to fetch workspace data:', error);
-        setToastMessage(fetchError);
-        setToastOpen(true);
-      }
-    }
-
-    fetchWorkspaceData();
+    fetchWorkspaceData(id, setWorkspaceData, setWorkspaceDetails, setFetchError, setToastMessage, setToastOpen);
   }, [id]);
 
   useEffect(() => {
@@ -198,7 +124,7 @@ const Workspace = () => {
                       name="name"
                       value={workspaceDetails.name}
                       onChange={handleChange}
-                      onBlur={() => handleSave('name')}
+                      onBlur={() => handleSaveWrapper('name')}
                       className={`border border-gray-500 p-3 w-50 flex justify-center items-center ${hasError ? 'border-red-500' : ''}`}
                       aria-label="Workspace Name"
                     />
@@ -216,7 +142,7 @@ const Workspace = () => {
                       name="description"
                       value={workspaceDetails.description}
                       onChange={handleChange}
-                      onBlur={() => handleSave('description')}
+                      onBlur={() => handleSaveWrapper('description')}
                       className="border border-gray-500 p-3 w-50 flex justify-center items-center"
                       aria-label="Workspace Description"
                     />
@@ -245,7 +171,7 @@ const Workspace = () => {
                         }
                       }}
                     >
-                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSave('isPublic')} aria-label="Workspace Visibility">
+                      <SelectTrigger className="border border-gray-500 p-3 w-50 flex justify-center items-center" onBlur={() => handleSaveWrapper('isPublic')} aria-label="Workspace Visibility">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -287,7 +213,7 @@ const Workspace = () => {
               setEditProjectBoard(undefined);
               setIsPopupOpen(false);
             }}
-            onCreate={(success) => handleCreateOrEdit(success, !!editProjectBoard)}
+            onCreate={(success) => handleCreateOrEditWrapper(success, !!editProjectBoard)}
             projectBoard={editProjectBoard}
             workspaceId={id}
             aria-label="Project Board Popup"
