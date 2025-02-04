@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom";
 
 // Menu items.
 const items = [
@@ -24,6 +25,7 @@ const items = [
 
 export function AppSidebar() {
   const { workspaces, loading: workspacesLoading } = useWorkspaces();
+  const navigate  = useNavigate();
 
   return (
     <Sidebar>
@@ -56,10 +58,10 @@ export function AppSidebar() {
                 workspaces.map((workspace) => (
                   <SidebarMenuItem key={workspace.id}>
                     <SidebarMenuButton asChild>
-                      <a href={`/workspace/${workspace.id}`}>
+                      <button onClick={() => navigate(`/workspace/${workspace.id}`)}>
                         <Slack />
                         <span>{workspace.name}</span>
-                      </a>
+                      </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))
