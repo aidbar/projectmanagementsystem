@@ -5,6 +5,7 @@ import { WorkspacesTable, Workspace } from "../components/WorkspacesTable"
 import { WorkspacePopup } from "../components/WorkspacePopup"
 import * as Toast from "@radix-ui/react-toast"
 import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper"
+import { WorkspacesProvider } from "@/context/WorkspacesContext"
 
 export type WorkspacesTableRef = {
   fetchData: () => void;
@@ -22,6 +23,7 @@ export function Dashboard() {
   }
 
   return (
+    <WorkspacesProvider>
     <SidebarLayoutWrapper>
       <div className="flex flex-col h-screen w-screen">
         <Header />
@@ -52,5 +54,6 @@ export function Dashboard() {
         </Toast.Provider>
       </div>
     </SidebarLayoutWrapper>
+    </WorkspacesProvider>
   )
 }

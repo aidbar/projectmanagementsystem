@@ -26,7 +26,6 @@ const PublicRoute = ({ element }: { element: JSX.Element }) => {
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <WorkspacesProvider>
         <Routes>
           <Route path="/" element={<PublicRoute element={<App />} />} />
           <Route path="dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
@@ -35,7 +34,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           <Route path="*" element={<h1>Not Found</h1>} />
           <Route path="logged-out" element={<LoggedOut />} />
         </Routes>
-      </WorkspacesProvider>
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>

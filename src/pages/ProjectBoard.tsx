@@ -14,6 +14,7 @@ import { Edit } from "lucide-react";
 import SidebarLayoutWrapper from "@/components/SidebarLayoutWrapper";
 import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
 import * as Toast from "@radix-ui/react-toast";
+import { WorkspacesProvider } from "@/context/WorkspacesContext";
 
 export function ProjectBoard() {
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ export function ProjectBoard() {
   }, [projectBoardData]);
 
   return (
+    <WorkspacesProvider>
     <SidebarLayoutWrapper>
       <div className="flex flex-col w-screen h-screen">
         <Header />
@@ -198,5 +200,6 @@ export function ProjectBoard() {
         </div>
       </div>
     </SidebarLayoutWrapper>
+    </WorkspacesProvider>
   )
 }

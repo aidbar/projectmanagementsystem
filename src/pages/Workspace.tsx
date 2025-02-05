@@ -5,7 +5,7 @@ import { Header } from '../components/Header';
 import { ProjectBoardsTable, ProjectBoard } from '../components/ProjectBoardsTable';
 import { ProjectBoardPopup } from '../components/ProjectBoardPopup';
 import { DeleteConfirmationPopup } from '@/components/DeleteConfirmationPopup';
-import { useWorkspaces } from '@/context/WorkspacesContext';
+import { useWorkspaces, WorkspacesProvider } from '@/context/WorkspacesContext';
 import { ProjectBoardsProvider, useProjectBoards } from '@/context/ProjectBoardsContext';
 import * as Toast from "@radix-ui/react-toast";
 import { Edit } from "lucide-react";
@@ -96,6 +96,7 @@ const Workspace = () => {
   }
 
   return (
+    <WorkspacesProvider>
     <SidebarLayoutWrapper>
       <div className="flex flex-col h-screen w-screen">
         <Header />
@@ -227,6 +228,7 @@ const Workspace = () => {
         )}
       </div>
     </SidebarLayoutWrapper>
+    </WorkspacesProvider>
   );
 };
 
