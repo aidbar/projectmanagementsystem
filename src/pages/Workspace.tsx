@@ -96,7 +96,6 @@ const Workspace = () => {
   }
 
   return (
-    <WorkspacesProvider>
     <SidebarLayoutWrapper>
       <div className="flex flex-col h-screen w-screen">
         <Header />
@@ -228,14 +227,15 @@ const Workspace = () => {
         )}
       </div>
     </SidebarLayoutWrapper>
-    </WorkspacesProvider>
   );
 };
 
 const WorkspacePage = () => (
-  <ProjectBoardsProvider>
-    <Workspace />
-  </ProjectBoardsProvider>
+  <WorkspacesProvider>
+    <ProjectBoardsProvider>
+      <Workspace />
+    </ProjectBoardsProvider>
+  </WorkspacesProvider>
 );
 
 export { WorkspacePage as Workspace };
