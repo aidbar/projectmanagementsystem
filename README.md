@@ -9,7 +9,7 @@
     <a href="https://github.com/aidbar/fs19_frontend"><strong>Explore the repository »</strong></a>
     <br />
     <br />
-    <a href="https://integrifyfrontendproject-jo2ctdnyn.vercel.app">View Demo</a>
+    <a href="https://integrifyfrontendproject.vercel.app">View Demo</a>
     &middot;
     <a href="mailto:aide.barniskyte@integrify.io">Report Bug</a>
     &middot;
@@ -329,6 +329,8 @@ API integration is done using custom hooks and services. These services handle H
 ## Roadmap
 
 - "Assigned/Added Users" feature for task cards, project boards and workspaces
+- Improved user feedback for loading states
+- Other UI/UX improvements
 
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
 
