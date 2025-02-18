@@ -6,7 +6,7 @@
   <p align="center">
     An awesome project management system!
     <br />
-    <a href="https://github.com/aidbar/fs19_frontend"><strong>Explore the repository »</strong></a>
+    <a href="https://github.com/aidbar/projectmanagementsystem"><strong>Explore the repository »</strong></a>
     <br />
     <br />
     <a href="https://integrifyfrontendproject.vercel.app">View Demo</a>
